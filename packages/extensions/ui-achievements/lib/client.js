@@ -19,7 +19,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:D:\deepseek\deepseek-harness-master\packages\extensions\ui-achievements\src\client\AchievementsSection.module.css.mjs
-		const css$4 = ".S48bLa_section{--retro-bg:#050807;--retro-panel:#000;--retro-card:#060b09;--retro-line:#10b98159;--retro-line-strong:#10b981a6;--retro-emerald:#10b981;--retro-emerald-dim:#34d399;--retro-emerald-deep:#064e3b;--retro-text:#d1fae5;--retro-muted:#6ee7b7;--retro-faint:#4b8f76;--retro-amber:#fbbf24;--retro-glow:0 0 15px #10b9811a;max-width:920px;color:var(--retro-text);flex-direction:column;gap:16px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;display:flex}.S48bLa_loading{min-height:140px;color:var(--retro-muted);justify-content:center;align-items:center;gap:10px;font-size:12px;display:flex}.S48bLa_loadingSpinner{border:2px solid var(--retro-emerald-deep);border-top-color:var(--retro-emerald);border-radius:50%;width:15px;height:15px;animation:.8s linear infinite S48bLa_spin}.S48bLa_loadFailure{min-height:132px;color:var(--retro-text);background:var(--retro-panel);border:1px solid var(--retro-line-strong);box-shadow:var(--retro-glow);grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:24px;display:grid}.S48bLa_loadFailureIcon{width:34px;height:34px;color:var(--retro-amber);border:1px solid var(--retro-amber);place-items:center;font:700 18px/1 ui-monospace,monospace;display:grid}.S48bLa_loadFailure strong{color:var(--retro-text);font:600 15px/1.3 ui-monospace,monospace}.S48bLa_loadFailure p{color:var(--retro-faint);margin:5px 0 0;font-size:12px;line-height:1.5}.S48bLa_loadFailure button{color:var(--retro-emerald);border:1px solid var(--retro-line-strong);cursor:pointer;background:0 0;padding:8px 12px;font-family:inherit}.S48bLa_loadFailure button:hover{color:#0b0f0d;background:var(--retro-emerald)}.S48bLa_hero{border:1px solid var(--retro-emerald-deep);box-shadow:var(--retro-glow);background:#000000eb;flex-direction:column;gap:14px;padding:26px 20px 18px;display:flex;position:relative}.S48bLa_heroBadge{background:var(--retro-bg);color:var(--retro-emerald);letter-spacing:.22em;text-transform:uppercase;padding:0 8px;font-size:10px;font-weight:700;position:absolute;top:-11px;left:14px}.S48bLa_hero:before,.S48bLa_hero:after,.S48bLa_heroGlow:before,.S48bLa_heroGlow:after{border:2px solid var(--retro-emerald);content:\"\";pointer-events:none;width:10px;height:10px;position:absolute}.S48bLa_hero:before{border-bottom:0;border-right:0;top:-2px;left:-2px}.S48bLa_hero:after{border-bottom:0;border-left:0;top:-2px;right:-2px}.S48bLa_heroGlow:before{border-top:0;border-right:0;bottom:-2px;left:-2px}.S48bLa_heroGlow:after{border-top:0;border-left:0;bottom:-2px;right:-2px}.S48bLa_heroGlow{pointer-events:none;position:absolute;inset:0}.S48bLa_heroTop{align-items:center;gap:16px;display:flex}.S48bLa_heroIcon{border:1px solid var(--retro-line-strong);width:52px;height:52px;color:var(--retro-emerald-dim);background:#064e3b40;flex:none;justify-content:center;align-items:center;font-size:22px;font-weight:700;display:inline-flex;box-shadow:inset 0 0 12px #10b9811f}.S48bLa_heroCopy{flex:1;min-width:0}.S48bLa_kicker{color:var(--retro-emerald);letter-spacing:.22em;text-transform:uppercase;font-size:9px;font-weight:700}.S48bLa_heroTitle{color:var(--retro-text);letter-spacing:.02em;margin:4px 0;font-family:ui-monospace,monospace;font-size:21px;font-weight:700;line-height:1.2}.S48bLa_heroTitle:before{content:\"> \";color:var(--retro-emerald)}.S48bLa_heroSubtitle{color:var(--retro-faint);margin:0;font-size:11px;line-height:1.5}.S48bLa_heroPct{flex-direction:column;flex:none;align-items:flex-end;gap:2px;display:flex}.S48bLa_heroPct strong{color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;font-size:22px}.S48bLa_heroPct span{color:var(--retro-faint);letter-spacing:.1em;text-transform:uppercase;font-size:8px}.S48bLa_stats{border:1px solid var(--retro-line);background:var(--retro-panel);grid-template-columns:repeat(3,1fr);gap:0;display:grid}.S48bLa_stat{background:0 0;flex-direction:column;gap:2px;padding:9px 12px;display:flex}.S48bLa_stat+.S48bLa_stat{border-left:1px solid var(--retro-line)}.S48bLa_stat strong{color:var(--retro-text);font-variant-numeric:tabular-nums;font-size:16px;line-height:20px}.S48bLa_stat strong:before{content:\"› \";color:var(--retro-emerald)}.S48bLa_stat span{color:var(--retro-faint);letter-spacing:.14em;text-transform:uppercase;font-size:8px}.S48bLa_statBar{border:1px solid var(--retro-line-strong);background:#020403;height:12px;position:relative;overflow:hidden}.S48bLa_statBar:after,.S48bLa_heroBar:after,.S48bLa_groupProgress:after,.S48bLa_bar:after{content:\"\";pointer-events:none;background-image:repeating-linear-gradient(90deg,#0000 0 calc(10% - 1px),#10b98140 calc(10% - 1px) 10%);position:absolute;inset:0}.S48bLa_statBarFill{background:var(--retro-emerald);height:100%;transition:width .35s;box-shadow:0 0 8px #10b98180}.S48bLa_heroBar,.S48bLa_groupProgress,.S48bLa_bar{border:1px solid var(--retro-line);background:#020403;position:relative;overflow:hidden}.S48bLa_heroBar{height:8px}.S48bLa_heroBarFill,.S48bLa_groupProgress div,.S48bLa_barFill{background:var(--retro-emerald);height:100%;transition:width .35s;box-shadow:0 0 8px #10b98180}.S48bLa_groupProgress,.S48bLa_bar{height:6px}.S48bLa_groupProgress{width:100%;margin-bottom:13px}.S48bLa_toolbar{border:1px solid var(--retro-line);background:var(--retro-panel);justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;display:flex}.S48bLa_toolbarCopy{align-items:baseline;gap:8px;min-width:0;display:flex}.S48bLa_toolbarLabel{color:var(--retro-emerald);letter-spacing:.12em;text-transform:uppercase;font-size:11px;font-weight:700}.S48bLa_toolbarCount{color:var(--retro-faint);font-size:10px}.S48bLa_controls{flex-wrap:wrap;justify-content:flex-end;gap:6px;display:flex}.S48bLa_segmented{border:1px solid var(--retro-line);background:#000;gap:2px;padding:2px;display:inline-flex}.S48bLa_sortBtn,.S48bLa_filterBtn{color:var(--retro-faint);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;background:0 0;border:0;padding:2px 9px;font-family:inherit;font-size:10px;line-height:20px;transition:background .14s,color .14s}.S48bLa_sortBtn:hover,.S48bLa_filterBtn:hover{color:var(--retro-emerald-dim)}.S48bLa_sortBtn:focus-visible,.S48bLa_filterBtn:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_sortActive,.S48bLa_filterActive{color:#020403;background:var(--retro-emerald)}.S48bLa_deepBtn{border:1px solid var(--retro-line-strong);min-height:26px;color:var(--retro-faint);cursor:pointer;letter-spacing:.05em;white-space:nowrap;text-transform:uppercase;background:0 0;padding:2px 10px;font-family:inherit;font-size:9px;transition:background .14s,color .14s,border-color .14s}.S48bLa_deepBtn:hover{color:var(--retro-emerald-dim);border-color:var(--retro-emerald)}.S48bLa_deepBtn:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_deepActive{color:var(--retro-amber);border-color:var(--retro-amber);background:#fbbf2414}.S48bLa_archive{border:1px solid var(--retro-emerald-deep);background:var(--retro-panel);min-height:430px;box-shadow:var(--retro-glow);grid-template-columns:210px minmax(0,1fr);display:grid}.S48bLa_rail{border-right:1px solid var(--retro-line);background:#020403;min-width:0;padding:12px 10px}.S48bLa_railHeader{border-bottom:1px solid var(--retro-line);justify-content:space-between;align-items:center;gap:8px;padding:2px 7px 10px;display:flex}.S48bLa_railTitle{color:var(--retro-emerald);letter-spacing:.16em;text-transform:uppercase;font-size:9px;font-weight:700}.S48bLa_railCount{border:1px solid var(--retro-line-strong);min-width:20px;height:18px;color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;justify-content:center;align-items:center;padding:0 5px;font-size:9px;display:inline-flex}.S48bLa_railList{flex-direction:column;gap:4px;padding-top:8px;display:flex}.S48bLa_railItem{width:100%;color:var(--retro-faint);cursor:pointer;text-align:left;background:0 0;border:1px solid #0000;grid-template-columns:18px minmax(0,1fr);align-items:center;gap:2px 6px;padding:9px 8px 8px;font-family:inherit;transition:background .14s,border-color .14s,color .14s;display:grid;position:relative}.S48bLa_railItem:before{content:\">\";color:#0000;font-size:11px;transition:color .14s}.S48bLa_railItem:hover{border-color:var(--retro-line);color:var(--retro-text);background:#10b9810f}.S48bLa_railItem:hover:before{color:var(--retro-emerald)}.S48bLa_railItem:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_railItemActive{border-color:var(--retro-line-strong);color:var(--retro-text);background:#064e3b4d}.S48bLa_railItemActive:before{color:var(--retro-emerald)}.S48bLa_railIcon{display:none}.S48bLa_railCopy{justify-content:space-between;align-items:baseline;gap:5px;min-width:0;display:flex}.S48bLa_railCopy strong{text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:700;overflow:hidden}.S48bLa_railCopy strong:before{content:\"[\";color:var(--retro-emerald)}.S48bLa_railCopy strong:after{content:\"]\";color:var(--retro-emerald)}.S48bLa_railCopy small{color:var(--retro-faint);font-variant-numeric:tabular-nums;flex:none;font-size:9px}.S48bLa_railMeter{border:1px solid var(--retro-line);background:#000;grid-column:2;height:4px;overflow:hidden}.S48bLa_railMeter span{background:var(--retro-emerald);height:100%;display:block}.S48bLa_ledger{background:var(--retro-panel);min-width:0;padding:15px 16px 17px}.S48bLa_ledgerHeader{justify-content:space-between;align-items:center;gap:12px;min-height:42px;padding-bottom:10px;display:flex}.S48bLa_groupHeading{align-items:center;gap:9px;min-width:0;display:flex}.S48bLa_groupIcon{display:none}.S48bLa_groupTitle{color:var(--retro-text);letter-spacing:.08em;text-transform:uppercase;margin:0;font-size:13px;font-weight:700;line-height:16px;position:relative}.S48bLa_groupTitle:before{content:\"[\";color:var(--retro-emerald)}.S48bLa_groupTitle:after{content:\"]\";color:var(--retro-emerald)}.S48bLa_groupMeta{color:var(--retro-faint);font-size:9px;line-height:14px}.S48bLa_ledgerCompletion{flex-direction:column;flex:none;align-items:flex-end;display:flex}.S48bLa_ledgerCompletion strong{color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;font-size:15px}.S48bLa_ledgerCompletion span{color:var(--retro-faint);letter-spacing:.1em;text-transform:uppercase;font-size:8px}.S48bLa_rows{flex-direction:column;gap:8px;display:flex}.S48bLa_row{--rarity-color:var(--retro-emerald);border:1px solid var(--retro-line);background:var(--retro-card);align-items:flex-start;gap:13px;padding:12px 13px;transition:background .16s,border-color .16s,transform .16s;display:flex;position:relative;box-shadow:0 0 10px #10b9810d}.S48bLa_row:before,.S48bLa_row:after{border:1.5px solid var(--rarity-color);content:\"\";pointer-events:none;width:6px;height:6px;transition:border-color .16s;position:absolute}.S48bLa_row:before{border-bottom:0;border-right:0;top:-1px;left:-1px}.S48bLa_row:after{border-top:0;border-left:0;bottom:-1px;right:-1px}.S48bLa_row:hover{border-color:var(--retro-line-strong);background:#10b9810d;transform:translateY(-1px)}.S48bLa_row:hover .S48bLa_main:after{opacity:1}.S48bLa_row .S48bLa_main:after{opacity:0;content:\"\";pointer-events:none;background-image:repeating-linear-gradient(0deg,#0000 0 2px,#10b9810a 2px 3px);transition:opacity .16s;position:absolute;inset:0}.S48bLa_rarity-common{--rarity-color:var(--retro-emerald)}.S48bLa_rarity-rare{--rarity-color:#2dd4bf}.S48bLa_rarity-epic{--rarity-color:#a78bfa}.S48bLa_rarity-legendary{--rarity-color:var(--retro-amber)}.S48bLa_done{background:#064e3b40;border-color:#10b98199}.S48bLa_locked{opacity:.72}.S48bLa_icon{border:1px solid var(--rarity-color);width:42px;height:44px;color:var(--rarity-color);background:#000;flex:none;justify-content:center;align-items:center;font-size:19px;display:inline-flex;position:relative;box-shadow:inset 0 0 10px #10b98114}.S48bLa_icon[data-unlocked=true]{border-color:var(--retro-emerald);background:#064e3b4d}.S48bLa_iconImage{object-fit:contain;width:23px;height:23px}.S48bLa_iconCheck{border:2px solid var(--retro-panel);background:var(--retro-emerald);color:#020403;border-radius:50%;justify-content:center;align-items:center;width:16px;height:16px;font-size:10px;font-weight:800;display:inline-flex;position:absolute;bottom:-5px;right:-5px}.S48bLa_main{flex:1;min-width:0;position:relative}.S48bLa_rowTop,.S48bLa_nameLine{align-items:center;gap:8px;display:flex}.S48bLa_rowTop{justify-content:space-between}.S48bLa_nameLine{flex-wrap:wrap;min-width:0}.S48bLa_name{color:var(--retro-text);letter-spacing:.02em;font-size:12px;font-weight:700;line-height:20px}.S48bLa_name:before{content:\"› \";color:var(--rarity-color)}.S48bLa_desc{color:var(--retro-faint);margin-top:3px;font-size:10px;line-height:1.45}.S48bLa_badge{border:1px solid var(--badge-color,var(--retro-line-strong));letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;background:#000;align-items:center;min-height:18px;padding:1px 7px;font-size:8px;font-weight:650;line-height:14px;display:inline-flex}.S48bLa_badge-common{--badge-color:var(--retro-line-strong);color:var(--retro-emerald-dim)}.S48bLa_badge-rare{--badge-color:#2dd4bf99;color:#5eead4}.S48bLa_badge-epic{--badge-color:#a78bfa99;color:#c4b5fd}.S48bLa_badge-legendary{--badge-color:#fbbf2499;color:var(--retro-amber)}.S48bLa_badge-done{--badge-color:#10b98199;color:var(--retro-emerald-dim);background:#064e3b4d}.S48bLa_badge-locked{--badge-color:var(--retro-line);color:var(--retro-faint)}.S48bLa_barWrap{margin-top:9px}.S48bLa_barFill{background:var(--rarity-color)}.S48bLa_barLabel{color:var(--retro-faint);font-variant-numeric:tabular-nums;justify-content:space-between;margin-top:4px;font-size:9px;display:flex}.S48bLa_unlockedLine{color:var(--retro-emerald-dim);margin-top:5px;font-size:9px;font-weight:600}.S48bLa_empty{border:1px dashed var(--retro-line-strong);background:var(--retro-panel);color:var(--retro-faint);text-align:center;padding:24px;font-size:11px}@keyframes S48bLa_spin{to{transform:rotate(360deg)}}@media (width<=760px){.S48bLa_archive{flex-direction:column;min-height:0;display:flex}.S48bLa_rail{border-right:0;border-bottom:1px solid var(--retro-line);padding:10px}.S48bLa_railHeader{padding-bottom:8px}.S48bLa_railList{flex-direction:row;gap:6px;padding:8px 0 1px;overflow-x:auto}.S48bLa_railItem{flex:none;width:170px}.S48bLa_ledger{padding:14px}}@media (width<=620px){.S48bLa_hero{padding:24px 16px 16px}.S48bLa_heroIcon{width:44px;height:44px;font-size:19px}.S48bLa_heroPct strong{font-size:18px}.S48bLa_toolbar{flex-direction:column;align-items:flex-start}.S48bLa_controls{justify-content:flex-start}.S48bLa_segmented{max-width:100%}.S48bLa_row{padding:10px 11px}}@media (prefers-reduced-motion:reduce){.S48bLa_loadingSpinner,.S48bLa_row,.S48bLa_statBarFill,.S48bLa_heroBarFill,.S48bLa_groupProgress div,.S48bLa_barFill{transition:none;animation:none}}";
+		const css$4 = "@import \"https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap\";.S48bLa_section{--retro-bg:#050807;--retro-panel:#000;--retro-card:#060b09;--retro-line:#10b98159;--retro-line-strong:#10b981a6;--retro-emerald:#10b981;--retro-emerald-dim:#34d399;--retro-emerald-deep:#064e3b;--retro-text:#f4f7f5;--retro-muted:#c5cfca;--retro-faint:#829089;--retro-amber:#fbbf24;--retro-glow:0 0 15px #10b9811a;width:100%;max-width:896px;color:var(--retro-text);flex-direction:column;gap:24px;font-family:Share Tech Mono,NSimSun,SimSun,monospace;display:flex}.S48bLa_loading{min-height:140px;color:var(--retro-muted);justify-content:center;align-items:center;gap:10px;font-size:12px;display:flex}.S48bLa_loadingSpinner{border:2px solid var(--retro-emerald-deep);border-top-color:var(--retro-emerald);border-radius:50%;width:15px;height:15px;animation:.8s linear infinite S48bLa_spin}.S48bLa_loadFailure{min-height:132px;color:var(--retro-text);background:var(--retro-panel);border:1px solid var(--retro-line-strong);box-shadow:var(--retro-glow);grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:24px;display:grid}.S48bLa_loadFailureIcon{width:34px;height:34px;color:var(--retro-amber);border:1px solid var(--retro-amber);place-items:center;font:700 18px/1 ui-monospace,monospace;display:grid}.S48bLa_loadFailure strong{color:var(--retro-text);font:600 15px/1.3 ui-monospace,monospace}.S48bLa_loadFailure p{color:var(--retro-faint);margin:5px 0 0;font-size:12px;line-height:1.5}.S48bLa_loadFailure button{color:var(--retro-emerald);border:1px solid var(--retro-line-strong);cursor:pointer;background:0 0;padding:8px 12px;font-family:inherit}.S48bLa_loadFailure button:hover{color:#0b0f0d;background:var(--retro-emerald)}.S48bLa_hero{box-shadow:none;background:0 0;border:0;flex-direction:column;gap:18px;padding:0 0 18px;display:flex;position:relative}.S48bLa_heroBadge{display:none}.S48bLa_hero:before,.S48bLa_hero:after,.S48bLa_heroGlow:before,.S48bLa_heroGlow:after{content:none}.S48bLa_hero:before{border-bottom:0;border-right:0;top:-2px;left:-2px}.S48bLa_hero:after{border-bottom:0;border-left:0;top:-2px;right:-2px}.S48bLa_heroGlow:before{border-top:0;border-right:0;bottom:-2px;left:-2px}.S48bLa_heroGlow:after{border-top:0;border-left:0;bottom:-2px;right:-2px}.S48bLa_heroGlow{display:none}.S48bLa_heroTop{align-items:flex-start;gap:24px;display:flex}.S48bLa_heroIcon{display:none}.S48bLa_heroCopy{flex:1;grid-template-columns:auto minmax(0,1fr);align-items:baseline;column-gap:10px;min-width:0;display:grid}.S48bLa_kicker{color:var(--retro-emerald-deep);letter-spacing:.12em;text-transform:uppercase;grid-column:1;font-size:14px;font-weight:400}.S48bLa_kicker:after{content:\" //\"}.S48bLa_heroTitle{color:var(--retro-emerald);letter-spacing:-.04em;text-shadow:0 0 6px #10b98159;grid-area:1/1/auto/-1;margin:0 0 2px;font-family:inherit;font-size:48px;font-weight:700;line-height:1.05}.S48bLa_heroTitle:before{content:none}.S48bLa_heroSubtitle{color:var(--retro-emerald-deep);letter-spacing:.1em;grid-column:2;margin:0;font-size:14px;line-height:1.5}.S48bLa_heroPct{flex-direction:column;flex:none;align-items:flex-end;gap:0;min-width:112px;padding-top:4px;display:flex}.S48bLa_heroPct strong{color:var(--retro-amber);font-variant-numeric:tabular-nums;font-size:36px;line-height:1}.S48bLa_heroPct span{color:#78350f;letter-spacing:.1em;text-transform:uppercase;margin-top:6px;font-size:12px}.S48bLa_stats{border:1px solid var(--retro-line);background:var(--retro-panel);grid-template-columns:repeat(3,1fr);gap:0;display:grid}.S48bLa_stat{background:0 0;flex-direction:column;gap:2px;padding:12px 14px;display:flex}.S48bLa_stat+.S48bLa_stat{border-left:1px solid var(--retro-line)}.S48bLa_stat strong{color:var(--retro-text);font-variant-numeric:tabular-nums;font-size:18px;line-height:22px}.S48bLa_stat strong:before{content:\"› \";color:var(--retro-emerald)}.S48bLa_stat span{color:var(--retro-faint);letter-spacing:.14em;text-transform:uppercase;font-size:11px}.S48bLa_statBar{border:1px solid var(--retro-line-strong);background:#020403;height:8px;position:relative;overflow:hidden}.S48bLa_statBar:after,.S48bLa_groupProgress:after,.S48bLa_bar:after{content:none}.S48bLa_statBarFill{background:var(--retro-emerald);height:100%;transition:width .35s;box-shadow:0 0 8px #10b98180}.S48bLa_groupProgress,.S48bLa_bar{border:1px solid var(--retro-line);background:#020403;position:relative;overflow:hidden}.S48bLa_barFill{background:var(--retro-emerald);height:100%;transition:width .35s;box-shadow:0 0 8px #10b98180}.S48bLa_groupProgress div{background:var(--group-color,var(--retro-emerald));height:100%;box-shadow:0 0 8px color-mix(in srgb, var(--group-color,var(--retro-emerald)) 50%, transparent);transition:width .35s}.S48bLa_groupProgress,.S48bLa_bar{height:6px}.S48bLa_groupProgress{width:100%;margin-bottom:13px}.S48bLa_toolbar{border:1px solid var(--retro-line);background:var(--retro-panel);justify-content:space-between;align-items:center;gap:12px;padding:10px 12px;display:flex}.S48bLa_toolbarCopy{align-items:baseline;gap:8px;min-width:0;display:flex}.S48bLa_toolbarLabel{color:var(--retro-emerald);letter-spacing:.12em;text-transform:uppercase;font-size:12px;font-weight:700}.S48bLa_toolbarCount{color:var(--retro-faint);font-size:12px}.S48bLa_controls{flex-wrap:wrap;justify-content:flex-end;gap:6px;display:flex}.S48bLa_segmented{border:1px solid var(--retro-line);background:#000;gap:2px;padding:2px;display:inline-flex}.S48bLa_sortBtn,.S48bLa_filterBtn{color:var(--retro-faint);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;background:0 0;border:0;padding:2px 9px;font-family:inherit;font-size:12px;line-height:20px;transition:background .14s,color .14s}.S48bLa_sortBtn:hover,.S48bLa_filterBtn:hover{color:var(--retro-emerald-dim)}.S48bLa_sortBtn:focus-visible,.S48bLa_filterBtn:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_sortActive,.S48bLa_filterActive{color:#020403;background:var(--retro-emerald)}.S48bLa_deepBtn{color:#f87171;cursor:pointer;letter-spacing:.05em;white-space:nowrap;text-transform:uppercase;background:0 0;border:1px solid #ef44449e;min-height:26px;padding:2px 10px;font-family:inherit;font-size:12px;transition:background .14s,color .14s,border-color .14s}.S48bLa_deepBtn:hover{color:#fff;background:#7f1d1d52;border-color:#ef4444}.S48bLa_deepBtn:focus-visible{outline-offset:1px;outline:1px solid #ef4444}.S48bLa_deepActive{color:#fff;background:#991b1b7a;border-color:#ef4444}.S48bLa_archive{min-height:430px;box-shadow:none;background:0 0;border:0;grid-template-columns:minmax(240px,1fr) minmax(0,2fr);gap:24px;display:grid}.S48bLa_rail{border:2px solid var(--retro-emerald-deep);background:#000000e6;min-width:0;padding:22px 16px 16px;position:relative}.S48bLa_railHeader{border-bottom:0;justify-content:space-between;align-items:center;gap:8px;padding:0 0 10px;display:flex}.S48bLa_railTitle{background:var(--retro-bg);color:var(--retro-emerald);letter-spacing:.16em;text-transform:uppercase;padding:0 8px;font-size:12px;font-weight:700;position:absolute;top:-11px;left:16px}.S48bLa_railCount{border:1px solid var(--retro-line-strong);min-width:20px;height:18px;color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;justify-content:center;align-items:center;margin-left:auto;padding:0 5px;font-size:11px;display:inline-flex}.S48bLa_railList{flex-direction:column;gap:8px;padding-top:4px;display:flex}.S48bLa_railItem{--group-color:var(--retro-emerald);width:100%;color:var(--retro-faint);cursor:pointer;text-align:left;background:0 0;border:1px solid #0000;grid-template-columns:18px minmax(0,1fr);align-items:center;gap:2px 6px;padding:10px 8px 9px;font-family:inherit;transition:background .14s,border-color .14s,color .14s;display:grid;position:relative}.S48bLa_railItem:before{content:\">\";color:#0000;font-size:11px;transition:color .14s}.S48bLa_railItem:hover{border-color:var(--group-color);color:var(--retro-text);background:#10b9810f}.S48bLa_railItem:hover:before{color:var(--group-color)}.S48bLa_railItem:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_railItemActive{border-color:var(--group-color);color:var(--retro-text);background:#064e3b4d}.S48bLa_railItemActive:before,.S48bLa_railItemActive .S48bLa_railCopy strong{color:var(--group-color)}.S48bLa_railItem[data-group=common],.S48bLa_ledger[data-group=common]{--group-color:#10b981}.S48bLa_railItem[data-group=rare],.S48bLa_ledger[data-group=rare]{--group-color:#2dd4bf}.S48bLa_railItem[data-group=epic],.S48bLa_ledger[data-group=epic]{--group-color:#a78bfa}.S48bLa_railItem[data-group=legendary],.S48bLa_ledger[data-group=legendary]{--group-color:#fbbf24}.S48bLa_railIcon{display:none}.S48bLa_railCopy{justify-content:space-between;align-items:baseline;gap:5px;min-width:0;display:flex}.S48bLa_railCopy strong{text-overflow:ellipsis;white-space:nowrap;font-size:12px;font-weight:700;overflow:hidden}.S48bLa_railCopy strong:before{content:\"[\";color:var(--group-color)}.S48bLa_railCopy strong:after{content:\"]\";color:var(--group-color)}.S48bLa_railCopy small{color:var(--retro-faint);font-variant-numeric:tabular-nums;flex:none;font-size:11px}.S48bLa_railMeter{border:1px solid var(--retro-line);background:#000;grid-column:2;height:8px;overflow:hidden}.S48bLa_railMeter span{background:var(--group-color);height:100%;display:block}.S48bLa_ledger{--group-color:var(--retro-emerald);border:2px solid var(--retro-emerald-deep);background:#000000e6;min-width:0;padding:24px 16px 16px;position:relative}.S48bLa_ledgerHeader{justify-content:space-between;align-items:center;gap:12px;min-height:44px;padding-bottom:12px;display:flex}.S48bLa_groupHeading{align-items:center;gap:9px;min-width:0;display:flex}.S48bLa_groupIcon{display:none}.S48bLa_groupTitle{background:var(--retro-bg);color:var(--group-color);letter-spacing:.08em;text-transform:uppercase;text-shadow:0 0 5px color-mix(in srgb, var(--group-color) 42%, transparent);margin:0;padding:0 8px;font-size:12px;font-weight:700;line-height:16px;position:absolute;top:-11px;left:16px}.S48bLa_groupTitle:before{content:\"[\";color:var(--group-color)}.S48bLa_groupTitle:after{content:\"]\";color:var(--group-color)}.S48bLa_groupMeta{color:var(--retro-faint);font-size:12px;line-height:14px}.S48bLa_ledgerCompletion{flex-direction:column;flex:none;align-items:flex-end;display:flex}.S48bLa_ledgerCompletion strong{color:var(--group-color);font-variant-numeric:tabular-nums;font-size:24px}.S48bLa_ledgerCompletion span{color:var(--retro-faint);letter-spacing:.1em;text-transform:uppercase;font-size:11px}.S48bLa_rows{flex-direction:column;gap:16px;padding-top:8px;display:flex}.S48bLa_row{--rarity-color:var(--retro-emerald);box-sizing:border-box;border:1px solid color-mix(in srgb, var(--rarity-color) 34%, transparent);background:#030706;align-items:flex-start;gap:14px;min-height:106px;padding:18px 14px 10px;transition:background .16s,border-color .16s;display:flex;position:relative}.S48bLa_row:before,.S48bLa_row:after{border:1.5px solid var(--rarity-color);content:\"\";pointer-events:none;width:6px;height:6px;transition:border-color .16s;position:absolute}.S48bLa_row:before{border-bottom:0;border-right:0;top:-1px;left:-1px}.S48bLa_row:after{border-top:0;border-left:0;bottom:-1px;right:-1px}.S48bLa_rowFrame:before,.S48bLa_rowFrame:after{border:1.5px solid var(--rarity-color);content:\"\";pointer-events:none;width:6px;height:6px;position:absolute}.S48bLa_rowFrame:before{border-bottom:0;border-left:0;top:-1px;right:-1px}.S48bLa_rowFrame:after{border-top:0;border-right:0;bottom:-1px;left:-1px}.S48bLa_recordCode{max-width:calc(100% - 30px);color:var(--rarity-color);background:var(--retro-panel);letter-spacing:.13em;text-overflow:ellipsis;text-transform:uppercase;white-space:nowrap;padding:0 7px;font-size:12px;font-weight:700;line-height:16px;position:absolute;top:-8px;left:15px;overflow:hidden}.S48bLa_row:hover{border-color:var(--retro-line-strong);background:#06100c}.S48bLa_rarity-common{--rarity-color:var(--retro-emerald)}.S48bLa_rarity-rare{--rarity-color:#2dd4bf}.S48bLa_rarity-epic{--rarity-color:#a78bfa}.S48bLa_rarity-legendary{--rarity-color:var(--retro-amber)}.S48bLa_done{border-color:color-mix(in srgb, var(--rarity-color) 58%, transparent);background:#04100c}.S48bLa_locked{opacity:.86}.S48bLa_icon{border:1px solid var(--rarity-color);width:56px;height:58px;color:var(--rarity-color);background:#000;flex:none;justify-content:center;align-self:flex-start;align-items:center;font-size:24px;display:inline-flex;position:relative;transform:none}.S48bLa_icon[data-unlocked=true]{border-color:var(--rarity-color);background:#064e3b4d}.S48bLa_iconImage{object-fit:contain;width:26px;height:26px}.S48bLa_iconCheck{border:2px solid var(--retro-panel);background:var(--retro-emerald);color:#020403;border-radius:50%;justify-content:center;align-items:center;width:16px;height:16px;font-size:10px;font-weight:800;display:inline-flex;position:absolute;bottom:-5px;right:-5px}.S48bLa_main{flex:1;min-width:0;position:relative}.S48bLa_rowTop,.S48bLa_nameLine{align-items:center;gap:8px;display:flex}.S48bLa_rowTop{justify-content:space-between;align-items:flex-start;gap:14px}.S48bLa_nameLine{flex-wrap:wrap;min-width:0}.S48bLa_titleBlock{border-left:4px solid var(--rarity-color);min-width:0;padding-left:14px}.S48bLa_name{color:#fff;letter-spacing:.08em;text-shadow:0 0 4px #ffffff29;font-family:inherit;font-size:24px;font-weight:700;line-height:30px}.S48bLa_desc{color:#c5cfca;margin-top:3px;font-family:inherit;font-size:16px;line-height:25px}.S48bLa_badge{border:1px solid var(--badge-color,var(--retro-line-strong));letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;background:#000;align-items:center;min-height:22px;padding:1px 8px;font-size:12px;font-weight:650;line-height:14px;display:inline-flex}.S48bLa_badge-common{--badge-color:var(--retro-line-strong);color:var(--retro-emerald-dim)}.S48bLa_badge-rare{--badge-color:#2dd4bf99;color:#5eead4}.S48bLa_badge-epic{--badge-color:#a78bfa99;color:#c4b5fd}.S48bLa_badge-legendary{--badge-color:#fbbf2499;color:var(--retro-amber)}.S48bLa_badge-done{--badge-color:#10b98199;color:var(--retro-emerald-dim);background:#064e3b4d}.S48bLa_badge-locked{--badge-color:var(--retro-line);color:var(--retro-faint)}.S48bLa_barWrap{margin:8px 0 0 15px}.S48bLa_barFill{background:var(--rarity-color);box-shadow:none}.S48bLa_barTicks{pointer-events:none;justify-content:space-evenly;display:flex;position:absolute;inset:0}.S48bLa_barTicks i{background:#0000008c;width:1px;height:100%}.S48bLa_barLabel{color:var(--retro-faint);font-variant-numeric:tabular-nums;justify-content:space-between;margin-top:4px;font-size:12px;display:flex}.S48bLa_unlockedLine{color:var(--retro-emerald-dim);letter-spacing:.08em;text-transform:uppercase;border-top:1px solid #10b98129;margin:6px 0 0 15px;padding-top:5px;font-size:12px;font-weight:600}.S48bLa_empty{border:1px dashed var(--retro-line-strong);background:var(--retro-panel);color:var(--retro-faint);text-align:center;padding:24px;font-size:11px}.S48bLa_charts{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;display:grid}.S48bLa_chart{border:1px solid var(--retro-line);background:var(--retro-panel);min-width:0;padding:20px 14px 14px;position:relative}.S48bLa_chart:before,.S48bLa_chart:after{border:1.5px solid var(--retro-emerald);content:\"\";pointer-events:none;width:7px;height:7px;position:absolute}.S48bLa_chart:before{border-bottom:0;border-right:0;top:-1px;left:-1px}.S48bLa_chart:after{border-top:0;border-left:0;bottom:-1px;right:-1px}.S48bLa_chartBadge{background:var(--retro-panel);color:var(--retro-emerald);letter-spacing:.18em;text-transform:uppercase;margin:0;padding:0 7px;font-size:9px;font-weight:700;position:absolute;top:-9px;left:10px}.S48bLa_chartBars{flex-direction:column;gap:7px;display:flex}.S48bLa_hbarRow{grid-template-columns:84px minmax(0,1fr) 40px;align-items:center;gap:8px;display:grid}.S48bLa_hbarLabel{color:var(--retro-faint);text-overflow:ellipsis;white-space:nowrap;font-size:10px;overflow:hidden}.S48bLa_hbarTrack{border:1px solid var(--retro-line);background:#020403;height:9px;position:relative;overflow:hidden}.S48bLa_hbarFill{height:100%;transition:width .3s;box-shadow:0 0 6px #10b98166}.S48bLa_hbarValue{color:var(--retro-muted);font-variant-numeric:tabular-nums;text-align:right;font-size:10px}.S48bLa_donutWrap{place-items:center;min-height:118px;display:grid;position:relative}.S48bLa_donut{width:118px;height:118px;transform:rotate(-90deg)}.S48bLa_donutTrack{fill:none;stroke:#10b98124;stroke-width:4px}.S48bLa_donutSlice{fill:none;stroke-width:4px}.S48bLa_donutCenter{pointer-events:none;flex-direction:column;justify-content:center;align-items:center;display:flex;position:absolute;inset:0}.S48bLa_donutCenter strong{color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;font-size:18px}.S48bLa_donutCenter span{color:var(--retro-faint);letter-spacing:.1em;text-transform:uppercase;font-size:8px}.S48bLa_donutEmpty,.S48bLa_chartEmpty{min-height:118px;color:var(--retro-faint);text-align:center;place-items:center;font-size:10px;display:grid}@keyframes S48bLa_spin{to{transform:rotate(360deg)}}@media (width<=760px){.S48bLa_charts{grid-template-columns:1fr}.S48bLa_archive{flex-direction:column;gap:24px;min-height:0;display:flex}.S48bLa_rail{border:2px solid var(--retro-emerald-deep);padding:22px 16px 16px}.S48bLa_railHeader{padding-bottom:8px}.S48bLa_railList{flex-direction:row;gap:6px;padding:8px 0 1px;overflow-x:auto}.S48bLa_railItem{flex:none;width:170px}.S48bLa_ledger{padding:24px 16px 16px}}@media (width<=620px){.S48bLa_hero{padding:0 0 14px}.S48bLa_heroTop{gap:12px}.S48bLa_heroTitle{font-size:30px}.S48bLa_kicker,.S48bLa_heroSubtitle{font-size:12px}.S48bLa_heroPct{min-width:72px}.S48bLa_heroPct strong{font-size:24px}.S48bLa_heroPct span{font-size:10px}.S48bLa_toolbar{flex-direction:column;align-items:flex-start}.S48bLa_controls{justify-content:flex-start}.S48bLa_segmented{max-width:100%}.S48bLa_row{align-items:flex-start;min-height:98px;padding:16px 11px 8px}.S48bLa_rowTop{flex-direction:column;gap:8px}.S48bLa_titleBlock{padding-left:12px}.S48bLa_icon{width:54px;height:56px;transform:translateY(0)}.S48bLa_name{font-size:20px;line-height:26px}.S48bLa_desc{font-size:14px;line-height:22px}.S48bLa_badge,.S48bLa_barLabel,.S48bLa_unlockedLine{font-size:11px}}@media (prefers-reduced-motion:reduce){.S48bLa_loadingSpinner,.S48bLa_row,.S48bLa_statBarFill,.S48bLa_groupProgress div,.S48bLa_barFill{transition:none;animation:none}}";
 		const tagId$4 = "@deepseek-ai/dsh-client-ui-achievements/AchievementsSection.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$4) + "]") === null) {
 			const tag = document.createElement("style");
@@ -29,88 +29,106 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var AchievementsSection_module_css_default = {
-			"groupHeading": "S48bLa_groupHeading",
-			"heroIcon": "S48bLa_heroIcon",
-			"name": "S48bLa_name",
-			"statBar": "S48bLa_statBar",
-			"badge-done": "S48bLa_badge-done",
-			"badge-legendary": "S48bLa_badge-legendary",
-			"barLabel": "S48bLa_barLabel",
-			"railCopy": "S48bLa_railCopy",
-			"railIcon": "S48bLa_railIcon",
-			"rowTop": "S48bLa_rowTop",
-			"heroGlow": "S48bLa_heroGlow",
-			"kicker": "S48bLa_kicker",
-			"controls": "S48bLa_controls",
-			"row": "S48bLa_row",
-			"done": "S48bLa_done",
-			"heroPct": "S48bLa_heroPct",
-			"railMeter": "S48bLa_railMeter",
-			"groupMeta": "S48bLa_groupMeta",
-			"section": "S48bLa_section",
-			"unlockedLine": "S48bLa_unlockedLine",
-			"toolbar": "S48bLa_toolbar",
-			"heroBadge": "S48bLa_heroBadge",
-			"railCount": "S48bLa_railCount",
-			"heroTop": "S48bLa_heroTop",
-			"barFill": "S48bLa_barFill",
-			"rail": "S48bLa_rail",
-			"rarity-epic": "S48bLa_rarity-epic",
 			"groupProgress": "S48bLa_groupProgress",
-			"heroBar": "S48bLa_heroBar",
-			"hero": "S48bLa_hero",
-			"archive": "S48bLa_archive",
-			"badge-locked": "S48bLa_badge-locked",
-			"deepBtn": "S48bLa_deepBtn",
-			"heroBarFill": "S48bLa_heroBarFill",
-			"empty": "S48bLa_empty",
-			"barWrap": "S48bLa_barWrap",
-			"nameLine": "S48bLa_nameLine",
-			"icon": "S48bLa_icon",
-			"badge-rare": "S48bLa_badge-rare",
-			"spin": "S48bLa_spin",
-			"rows": "S48bLa_rows",
-			"main": "S48bLa_main",
-			"sortBtn": "S48bLa_sortBtn",
-			"filterBtn": "S48bLa_filterBtn",
-			"iconCheck": "S48bLa_iconCheck",
-			"railList": "S48bLa_railList",
-			"deepActive": "S48bLa_deepActive",
-			"railItem": "S48bLa_railItem",
-			"loadFailure": "S48bLa_loadFailure",
-			"heroSubtitle": "S48bLa_heroSubtitle",
-			"toolbarLabel": "S48bLa_toolbarLabel",
-			"toolbarCount": "S48bLa_toolbarCount",
 			"heroTitle": "S48bLa_heroTitle",
-			"railItemActive": "S48bLa_railItemActive",
-			"ledgerHeader": "S48bLa_ledgerHeader",
-			"groupIcon": "S48bLa_groupIcon",
-			"railTitle": "S48bLa_railTitle",
-			"segmented": "S48bLa_segmented",
-			"groupTitle": "S48bLa_groupTitle",
-			"loadingSpinner": "S48bLa_loadingSpinner",
-			"badge": "S48bLa_badge",
-			"toolbarCopy": "S48bLa_toolbarCopy",
-			"desc": "S48bLa_desc",
-			"badge-common": "S48bLa_badge-common",
-			"bar": "S48bLa_bar",
-			"filterActive": "S48bLa_filterActive",
-			"ledger": "S48bLa_ledger",
-			"rarity-rare": "S48bLa_rarity-rare",
-			"heroCopy": "S48bLa_heroCopy",
-			"loading": "S48bLa_loading",
-			"stat": "S48bLa_stat",
+			"donutWrap": "S48bLa_donutWrap",
+			"groupHeading": "S48bLa_groupHeading",
+			"statBar": "S48bLa_statBar",
 			"rarity-common": "S48bLa_rarity-common",
-			"loadFailureIcon": "S48bLa_loadFailureIcon",
-			"iconImage": "S48bLa_iconImage",
-			"badge-epic": "S48bLa_badge-epic",
-			"rarity-legendary": "S48bLa_rarity-legendary",
-			"sortActive": "S48bLa_sortActive",
-			"stats": "S48bLa_stats",
-			"railHeader": "S48bLa_railHeader",
+			"ledgerHeader": "S48bLa_ledgerHeader",
+			"loadFailure": "S48bLa_loadFailure",
+			"charts": "S48bLa_charts",
+			"loading": "S48bLa_loading",
+			"section": "S48bLa_section",
+			"rail": "S48bLa_rail",
+			"recordCode": "S48bLa_recordCode",
+			"nameLine": "S48bLa_nameLine",
 			"locked": "S48bLa_locked",
+			"heroGlow": "S48bLa_heroGlow",
+			"badge": "S48bLa_badge",
+			"chartBars": "S48bLa_chartBars",
+			"railTitle": "S48bLa_railTitle",
+			"empty": "S48bLa_empty",
+			"bar": "S48bLa_bar",
+			"archive": "S48bLa_archive",
+			"controls": "S48bLa_controls",
+			"badge-common": "S48bLa_badge-common",
+			"badge-rare": "S48bLa_badge-rare",
+			"unlockedLine": "S48bLa_unlockedLine",
+			"barTicks": "S48bLa_barTicks",
+			"rowFrame": "S48bLa_rowFrame",
+			"hbarRow": "S48bLa_hbarRow",
+			"loadingSpinner": "S48bLa_loadingSpinner",
+			"chartEmpty": "S48bLa_chartEmpty",
+			"rarity-epic": "S48bLa_rarity-epic",
+			"rarity-legendary": "S48bLa_rarity-legendary",
+			"railIcon": "S48bLa_railIcon",
+			"badge-epic": "S48bLa_badge-epic",
+			"main": "S48bLa_main",
 			"ledgerCompletion": "S48bLa_ledgerCompletion",
-			"statBarFill": "S48bLa_statBarFill"
+			"railCopy": "S48bLa_railCopy",
+			"done": "S48bLa_done",
+			"loadFailureIcon": "S48bLa_loadFailureIcon",
+			"sortBtn": "S48bLa_sortBtn",
+			"badge-locked": "S48bLa_badge-locked",
+			"chartBadge": "S48bLa_chartBadge",
+			"toolbarCount": "S48bLa_toolbarCount",
+			"sortActive": "S48bLa_sortActive",
+			"rowTop": "S48bLa_rowTop",
+			"railHeader": "S48bLa_railHeader",
+			"heroPct": "S48bLa_heroPct",
+			"groupTitle": "S48bLa_groupTitle",
+			"toolbar": "S48bLa_toolbar",
+			"name": "S48bLa_name",
+			"heroCopy": "S48bLa_heroCopy",
+			"donutEmpty": "S48bLa_donutEmpty",
+			"deepBtn": "S48bLa_deepBtn",
+			"railItemActive": "S48bLa_railItemActive",
+			"iconImage": "S48bLa_iconImage",
+			"donutCenter": "S48bLa_donutCenter",
+			"barFill": "S48bLa_barFill",
+			"heroIcon": "S48bLa_heroIcon",
+			"groupIcon": "S48bLa_groupIcon",
+			"railMeter": "S48bLa_railMeter",
+			"segmented": "S48bLa_segmented",
+			"row": "S48bLa_row",
+			"titleBlock": "S48bLa_titleBlock",
+			"badge-legendary": "S48bLa_badge-legendary",
+			"hbarValue": "S48bLa_hbarValue",
+			"heroSubtitle": "S48bLa_heroSubtitle",
+			"donutTrack": "S48bLa_donutTrack",
+			"railCount": "S48bLa_railCount",
+			"railItem": "S48bLa_railItem",
+			"hbarTrack": "S48bLa_hbarTrack",
+			"toolbarCopy": "S48bLa_toolbarCopy",
+			"ledger": "S48bLa_ledger",
+			"rows": "S48bLa_rows",
+			"badge-done": "S48bLa_badge-done",
+			"barLabel": "S48bLa_barLabel",
+			"railList": "S48bLa_railList",
+			"kicker": "S48bLa_kicker",
+			"iconCheck": "S48bLa_iconCheck",
+			"heroBadge": "S48bLa_heroBadge",
+			"statBarFill": "S48bLa_statBarFill",
+			"spin": "S48bLa_spin",
+			"barWrap": "S48bLa_barWrap",
+			"hbarFill": "S48bLa_hbarFill",
+			"stat": "S48bLa_stat",
+			"rarity-rare": "S48bLa_rarity-rare",
+			"toolbarLabel": "S48bLa_toolbarLabel",
+			"donut": "S48bLa_donut",
+			"filterBtn": "S48bLa_filterBtn",
+			"groupMeta": "S48bLa_groupMeta",
+			"donutSlice": "S48bLa_donutSlice",
+			"filterActive": "S48bLa_filterActive",
+			"deepActive": "S48bLa_deepActive",
+			"desc": "S48bLa_desc",
+			"stats": "S48bLa_stats",
+			"hbarLabel": "S48bLa_hbarLabel",
+			"chart": "S48bLa_chart",
+			"icon": "S48bLa_icon",
+			"heroTop": "S48bLa_heroTop",
+			"hero": "S48bLa_hero"
 		};
 		//#endregion
 		//#region src/client/AchievementsSection.tsx
@@ -156,6 +174,7 @@ window.__ModuleLoader__.load({
 			epic: "✦",
 			legendary: "♛"
 		};
+		const PROGRESS_TICKS = Array.from({ length: 9 }, (_, index) => index);
 		/** Emoji icon via Twemoji CDN with a text fallback on load failure. */
 		function Icon({ icon }) {
 			const [failed, setFailed] = (0, react.useState)(false);
@@ -207,13 +226,16 @@ window.__ModuleLoader__.load({
 			});
 			const bar = !hiddenLocked && !deepLocked && a.progress.target > 1 && !a.unlocked ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: AchievementsSection_module_css_default.barWrap,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: AchievementsSection_module_css_default.bar,
 					"aria-hidden": "true",
-					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						className: AchievementsSection_module_css_default.barFill,
 						style: { width: `${progress}%` }
-					})
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: AchievementsSection_module_css_default.barTicks,
+						children: PROGRESS_TICKS.map((tick) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("i", {}, tick))
+					})]
 				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: AchievementsSection_module_css_default.barLabel,
 					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("progress") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
@@ -227,46 +249,136 @@ window.__ModuleLoader__.load({
 				className: rowClass,
 				"data-rarity": a.rarity,
 				"data-unlocked": a.unlocked,
-				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					className: AchievementsSection_module_css_default.icon,
-					"data-unlocked": a.unlocked,
-					children: [hiddenLocked ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "?" }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Icon, { icon: a.icon }), a.unlocked && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-						className: AchievementsSection_module_css_default.iconCheck,
-						"aria-hidden": "true",
-						children: "✓"
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: AchievementsSection_module_css_default.rowFrame,
+						"aria-hidden": "true"
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
+						className: AchievementsSection_module_css_default.recordCode,
+						children: [
+							"[ ACHV::",
+							a.id.toUpperCase(),
+							" ]"
+						]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: AchievementsSection_module_css_default.icon,
+						"data-unlocked": a.unlocked,
+						children: [hiddenLocked ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "?" }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Icon, { icon: a.icon }), a.unlocked && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: AchievementsSection_module_css_default.iconCheck,
+							"aria-hidden": "true",
+							children: "✓"
+						})]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: AchievementsSection_module_css_default.main,
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								className: AchievementsSection_module_css_default.rowTop,
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+									className: AchievementsSection_module_css_default.titleBlock,
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+										className: AchievementsSection_module_css_default.nameLine,
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											className: AchievementsSection_module_css_default.name,
+											children: name
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+											className: `${AchievementsSection_module_css_default.badge} ${badgeClass}`,
+											children: hiddenLocked ? t("hiddenDesc") : t(`rarity.${a.rarity}`)
+										})]
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+										className: AchievementsSection_module_css_default.desc,
+										children: desc
+									})]
+								}), statusBadge]
+							}),
+							bar,
+							a.unlocked && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+								className: AchievementsSection_module_css_default.unlockedLine,
+								children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: ["✓ ", t("unlockedHint")] })
+							})
+						]
+					})
+				]
+			});
+		}
+		/** Hollow donut chart (SVG) with a center total. */
+		function Donut({ slices, center, t }) {
+			const total = slices.reduce((sum, slice) => sum + slice.value, 0);
+			if (total <= 0) return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+				className: AchievementsSection_module_css_default.donutEmpty,
+				role: "img",
+				"aria-label": t("chart.empty"),
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("chart.empty") })
+			});
+			const radius = 15.9;
+			const circumference = 2 * Math.PI * radius;
+			let offset = 0;
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: AchievementsSection_module_css_default.donutWrap,
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("svg", {
+					className: AchievementsSection_module_css_default.donut,
+					viewBox: "0 0 42 42",
+					"aria-hidden": "true",
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
+						className: AchievementsSection_module_css_default.donutTrack,
+						cx: "21",
+						cy: "21",
+						r: radius
+					}), slices.map((slice) => {
+						const dash = slice.value / total * circumference;
+						const el = /* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
+							className: AchievementsSection_module_css_default.donutSlice,
+							cx: "21",
+							cy: "21",
+							r: radius,
+							stroke: slice.color,
+							strokeDasharray: `${dash} ${circumference - dash}`,
+							strokeDashoffset: -offset
+						}, slice.label);
+						offset += dash;
+						return el;
 					})]
 				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-					className: AchievementsSection_module_css_default.main,
-					children: [
-						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: AchievementsSection_module_css_default.rowTop,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-								className: AchievementsSection_module_css_default.nameLine,
-								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									className: AchievementsSection_module_css_default.name,
-									children: name
-								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-									className: `${AchievementsSection_module_css_default.badge} ${badgeClass}`,
-									children: hiddenLocked ? t("hiddenDesc") : t(`rarity.${a.rarity}`)
-								})]
-							}), statusBadge]
-						}),
-						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: AchievementsSection_module_css_default.desc,
-							children: desc
-						}),
-						bar,
-						a.unlocked && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-							className: AchievementsSection_module_css_default.unlockedLine,
-							children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: ["✓ ", t("unlockedHint")] })
-						})
-					]
+					className: AchievementsSection_module_css_default.donutCenter,
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: center }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("chart.total") })]
 				})]
 			});
 		}
+		/** Horizontal terminal bar row (label + filled bar + value). */
+		function HBar({ label, value, max, color }) {
+			const width = max > 0 ? Math.round(value / max * 100) : 0;
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+				className: AchievementsSection_module_css_default.hbarRow,
+				children: [
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: AchievementsSection_module_css_default.hbarLabel,
+						title: label,
+						children: label
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+						className: AchievementsSection_module_css_default.hbarTrack,
+						"aria-hidden": "true",
+						children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+							className: AchievementsSection_module_css_default.hbarFill,
+							style: {
+								width: `${width}%`,
+								background: color
+							}
+						})
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: AchievementsSection_module_css_default.hbarValue,
+						children: value
+					})
+				]
+			});
+		}
 		/** Full settings-section gallery over the achievements Remote namespace. */
-		function AchievementsSection({ list, deepState, setDeepInsights, t }) {
+		function AchievementsSection({ list, deepState, setDeepInsights, stats, t }) {
 			const [snapshot, setSnapshot] = (0, react.useState)(null);
+			const [statsData, setStatsData] = (0, react.useState)(null);
 			const [mode, setMode] = (0, react.useState)("category");
 			const [status, setStatus] = (0, react.useState)("all");
 			const [deepEnabled, setDeepEnabled] = (0, react.useState)(false);
@@ -288,12 +400,18 @@ window.__ModuleLoader__.load({
 				}).catch(() => {
 					if (alive) setDeepEnabled(false);
 				});
+				if (stats !== void 0) Promise.resolve().then(stats).then((result) => {
+					if (alive && result.ok) setStatsData(result.value);
+				}).catch(() => {
+					if (alive) setStatsData(null);
+				});
 				return () => {
 					alive = false;
 				};
 			}, [
 				list,
 				deepState,
+				stats,
 				reloadToken,
 				t
 			]);
@@ -357,6 +475,58 @@ window.__ModuleLoader__.load({
 				};
 			}).filter((group) => group.items.length > 0);
 			const activeGroup = visibleGroups.find((group) => group.id === activeGroupId) ?? visibleGroups[0];
+			const rarityColors = {
+				common: "#10b981",
+				rare: "#2dd4bf",
+				epic: "#a78bfa",
+				legendary: "#fbbf24"
+			};
+			const raritySlices = RARITY_ORDER.map((rarity) => ({
+				label: t(`rarity.${rarity}`),
+				value: snapshot.achievements.filter((a) => a.rarity === rarity && a.unlocked).length,
+				color: rarityColors[rarity]
+			}));
+			const catColors = {
+				"getting-started": "#10b981",
+				toolsmith: "#34d399",
+				filecraft: "#2dd4bf",
+				orchestration: "#5eead4",
+				goals: "#a7f3d0",
+				skill: "#6ee7b7",
+				model: "#a78bfa",
+				behavior: "#c4b5fd",
+				crossover: "#fbbf24",
+				hidden: "#94a3b8"
+			};
+			const catSlices = CATEGORY_ORDER.filter((cat) => cat !== "hidden").map((cat) => ({
+				label: t(`cat.${cat}`),
+				value: snapshot.achievements.filter((a) => a.category === cat && a.unlocked).length,
+				color: catColors[cat]
+			}));
+			const tokenBuckets = statsData?.tokens ? [
+				{
+					label: t("chart.tokens.output"),
+					value: statsData.tokens.output,
+					color: "#10b981"
+				},
+				{
+					label: t("chart.tokens.cache"),
+					value: statsData.tokens.cacheRead,
+					color: "#2dd4bf"
+				},
+				{
+					label: t("chart.tokens.uncached"),
+					value: statsData.tokens.uncached,
+					color: "#a78bfa"
+				},
+				{
+					label: t("chart.tokens.reasoning"),
+					value: statsData.tokens.reasoning,
+					color: "#fbbf24"
+				}
+			] : [];
+			const toolMax = statsData?.tools[0]?.count ?? 0;
+			const toolBars = statsData?.tools ?? [];
 			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: AchievementsSection_module_css_default.section,
 				children: [
@@ -434,14 +604,95 @@ window.__ModuleLoader__.load({
 									className: AchievementsSection_module_css_default.statBarFill,
 									style: { width: `${completion}%` }
 								})
+							})
+						]
+					}),
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+						className: AchievementsSection_module_css_default.charts,
+						role: "group",
+						"aria-label": t("chart.title"),
+						children: [
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+								className: AchievementsSection_module_css_default.chart,
+								"aria-labelledby": "chart-rarity-title",
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("h4", {
+									className: AchievementsSection_module_css_default.chartBadge,
+									id: "chart-rarity-title",
+									children: [
+										"[",
+										t("chart.rarity"),
+										"]"
+									]
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: AchievementsSection_module_css_default.chartBars,
+									children: raritySlices.map((slice) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(HBar, {
+										label: slice.label,
+										value: slice.value,
+										max: snapshot.total,
+										color: slice.color
+									}, slice.label))
+								})]
 							}),
-							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-								className: AchievementsSection_module_css_default.heroBar,
-								"aria-hidden": "true",
-								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
-									className: AchievementsSection_module_css_default.heroBarFill,
-									style: { width: `${completion}%` }
-								})
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+								className: AchievementsSection_module_css_default.chart,
+								"aria-labelledby": "chart-category-title",
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("h4", {
+									className: AchievementsSection_module_css_default.chartBadge,
+									id: "chart-category-title",
+									children: [
+										"[",
+										t("chart.category"),
+										"]"
+									]
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Donut, {
+									slices: catSlices,
+									center: String(unlocked),
+									t
+								})]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+								className: AchievementsSection_module_css_default.chart,
+								"aria-labelledby": "chart-tokens-title",
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("h4", {
+									className: AchievementsSection_module_css_default.chartBadge,
+									id: "chart-tokens-title",
+									children: [
+										"[",
+										t("chart.tokens"),
+										"]"
+									]
+								}), tokenBuckets.length > 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Donut, {
+									slices: tokenBuckets,
+									center: String(Math.round(tokenBuckets.reduce((s, x) => s + x.value, 0))),
+									t
+								}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: AchievementsSection_module_css_default.chartEmpty,
+									children: t("chart.empty")
+								})]
+							}),
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
+								className: AchievementsSection_module_css_default.chart,
+								"aria-labelledby": "chart-tools-title",
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("h4", {
+									className: AchievementsSection_module_css_default.chartBadge,
+									id: "chart-tools-title",
+									children: [
+										"[",
+										t("chart.tools"),
+										"]"
+									]
+								}), toolBars.length > 0 ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: AchievementsSection_module_css_default.chartBars,
+									children: toolBars.map((tool) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(HBar, {
+										label: tool.name,
+										value: tool.count,
+										max: toolMax,
+										color: "#10b981"
+									}, tool.name))
+								}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
+									className: AchievementsSection_module_css_default.chartEmpty,
+									children: t("chart.empty")
+								})]
 							})
 						]
 					}),
@@ -537,6 +788,7 @@ window.__ModuleLoader__.load({
 									return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 										type: "button",
 										className: `${AchievementsSection_module_css_default.railItem} ${active ? AchievementsSection_module_css_default.railItemActive : ""}`,
+										"data-group": group.id,
 										"aria-current": active ? "page" : void 0,
 										onClick: () => {
 											setActiveGroupId(group.id);
@@ -566,6 +818,7 @@ window.__ModuleLoader__.load({
 							})]
 						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 							className: AchievementsSection_module_css_default.ledger,
+							"data-group": activeGroup.id,
 							"aria-labelledby": `achievement-group-${activeGroup.id}`,
 							children: [
 								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
@@ -630,10 +883,10 @@ window.__ModuleLoader__.load({
 		}
 		var dock_module_css_default = {
 			"icon": "ySutMG_icon",
-			"next": "ySutMG_next",
 			"combo": "ySutMG_combo",
-			"dock": "ySutMG_dock",
-			"summary": "ySutMG_summary"
+			"next": "ySutMG_next",
+			"summary": "ySutMG_summary",
+			"dock": "ySutMG_dock"
 		};
 		//#endregion
 		//#region src/client/dock.tsx
@@ -676,7 +929,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:D:\deepseek\deepseek-harness-master\packages\extensions\ui-achievements\src\client\gallery.module.css.mjs
-		const css$2 = ".Odo5Oq_backdrop{z-index:60;pointer-events:auto;backdrop-filter:blur(6px);background:#020403d1;justify-content:center;align-items:center;padding:24px;display:flex;position:fixed;inset:0}.Odo5Oq_panel{color:#d1fae5;pointer-events:auto;--dsh-scrollbar-thumb:#10b98159;--dsh-scrollbar-thumb-hover:#10b98199;background:#000000f0;border:1px solid #064e3b;flex-direction:column;width:min(980px,100%);max-height:min(88vh,900px);padding:22px 21px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;animation:.18s ease-out Odo5Oq_rise;display:flex;position:relative;overflow:auto;box-shadow:0 0 30px #10b9811f}.Odo5Oq_panel:before,.Odo5Oq_panel:after,.Odo5Oq_panel .Odo5Oq_head:before,.Odo5Oq_panel .Odo5Oq_head:after{content:\"\";pointer-events:none;border:2px solid #10b981;width:12px;height:12px;position:absolute}.Odo5Oq_panel:before{border-bottom:0;border-right:0;top:-2px;left:-2px}.Odo5Oq_panel:after{border-bottom:0;border-left:0;top:-2px;right:-2px}.Odo5Oq_panel .Odo5Oq_head:before{border-top:0;border-right:0;bottom:-2px;left:-2px}.Odo5Oq_panel .Odo5Oq_head:after{border-top:0;border-left:0;bottom:-2px;right:-2px}.Odo5Oq_head{justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px;display:flex;position:relative}.Odo5Oq_heading{align-items:center;gap:11px;min-width:0;display:flex}.Odo5Oq_headingIcon{color:#34d399;background:#064e3b40;border:1px solid #10b981a6;flex:none;justify-content:center;align-items:center;width:40px;height:40px;font-size:20px;display:inline-flex;box-shadow:inset 0 0 10px #10b9811a}.Odo5Oq_heading>div{flex-direction:column;gap:1px;display:flex}.Odo5Oq_kicker{color:#10b981;letter-spacing:.22em;text-transform:uppercase;font-size:9px;font-weight:700}.Odo5Oq_title{color:#d1fae5;letter-spacing:.02em;font-size:17px;font-weight:700;line-height:22px}.Odo5Oq_title:before{content:\"[\";color:#10b981}.Odo5Oq_title:after{content:\"]\";color:#10b981}.Odo5Oq_close{color:#4b8f76;cursor:pointer;background:0 0;border:1px solid #0000;flex:none;justify-content:center;align-items:center;width:31px;height:31px;font-family:inherit;font-size:18px;line-height:1;transition:background .14s,border-color .14s,color .14s;display:inline-flex}.Odo5Oq_close:hover{color:#34d399;background:#10b98114;border-color:#10b98180}.Odo5Oq_close:focus-visible{outline-offset:2px;outline:1px solid #10b981}@keyframes Odo5Oq_rise{0%{opacity:0;transform:translateY(8px)scale(.985)}to{opacity:1;transform:none}}@media (width<=620px){.Odo5Oq_backdrop{align-items:flex-end;padding:10px}.Odo5Oq_panel{max-height:92vh;padding:18px 16px}}@media (prefers-reduced-motion:reduce){.Odo5Oq_panel,.Odo5Oq_close{transition:none;animation:none}}";
+		const css$2 = ".Odo5Oq_backdrop{z-index:60;pointer-events:auto;backdrop-filter:blur(6px);background:#020403d1;justify-content:center;align-items:center;padding:24px;display:flex;position:fixed;inset:0}.Odo5Oq_panel{box-sizing:border-box;color:#f4f7f5;pointer-events:auto;--dsh-scrollbar-thumb:#10b98159;--dsh-scrollbar-thumb-hover:#10b98199;background:#000000f0;border:1px solid #064e3b;flex-direction:column;width:min(940px,100%);max-height:min(88vh,900px);padding:22px 21px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;animation:.18s ease-out Odo5Oq_rise;display:flex;position:relative;overflow:auto;box-shadow:0 0 30px #10b9811f}.Odo5Oq_scanlines{z-index:4;pointer-events:none;background-image:repeating-linear-gradient(#0000 0 2px,#0003 2px 3px),repeating-linear-gradient(90deg,#ff000006 0 1px,#00ff8003 1px 2px,#0050ff06 2px 3px);position:absolute;inset:0;overflow:hidden}.Odo5Oq_scanlines:after{content:\"\";background:linear-gradient(#0000,#10b9810e,#0000);height:72px;animation:9s linear infinite Odo5Oq_scan;position:absolute;left:0;right:0}.Odo5Oq_panel:before,.Odo5Oq_panel:after,.Odo5Oq_panel .Odo5Oq_head:before,.Odo5Oq_panel .Odo5Oq_head:after{content:\"\";pointer-events:none;border:2px solid #10b981;width:12px;height:12px;position:absolute}.Odo5Oq_panel:before{border-bottom:0;border-right:0;top:-2px;left:-2px}.Odo5Oq_panel:after{border-bottom:0;border-left:0;top:-2px;right:-2px}.Odo5Oq_panel .Odo5Oq_head:before{border-top:0;border-right:0;bottom:-2px;left:-2px}.Odo5Oq_panel .Odo5Oq_head:after{border-top:0;border-left:0;bottom:-2px;right:-2px}.Odo5Oq_head{justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px;display:flex;position:relative}.Odo5Oq_heading{align-items:center;gap:11px;min-width:0;display:flex}.Odo5Oq_headingIcon{color:#34d399;background:#064e3b40;border:1px solid #10b981a6;flex:none;justify-content:center;align-items:center;width:40px;height:40px;font-size:20px;display:inline-flex;box-shadow:inset 0 0 10px #10b9811a}.Odo5Oq_heading>div{flex-direction:column;gap:1px;display:flex}.Odo5Oq_kicker{color:#10b981;letter-spacing:.22em;text-transform:uppercase;font-size:9px;font-weight:700}.Odo5Oq_title{color:#f4f7f5;letter-spacing:.02em;text-shadow:0 0 5px #fff3;font-size:17px;font-weight:700;line-height:22px}.Odo5Oq_title:before{content:\"[\";color:#10b981}.Odo5Oq_title:after{content:\"]\";color:#10b981}.Odo5Oq_close{color:#4b8f76;cursor:pointer;background:0 0;border:1px solid #0000;flex:none;justify-content:center;align-items:center;width:31px;height:31px;font-family:inherit;font-size:18px;line-height:1;transition:background .14s,border-color .14s,color .14s;display:inline-flex}.Odo5Oq_close:hover{color:#34d399;background:#10b98114;border-color:#10b98180}.Odo5Oq_close:focus-visible{outline-offset:2px;outline:1px solid #10b981}@keyframes Odo5Oq_rise{0%{opacity:0;transform:translateY(8px)scale(.985)}to{opacity:1;transform:none}}@keyframes Odo5Oq_scan{0%{transform:translateY(-90px)}to{transform:translateY(900px)}}@media (width<=620px){.Odo5Oq_backdrop{align-items:flex-end;padding:10px}.Odo5Oq_panel{max-height:92vh;padding:18px 16px}}@media (prefers-reduced-motion:reduce){.Odo5Oq_scanlines:after,.Odo5Oq_panel,.Odo5Oq_close{transition:none;animation:none}}";
 		const tagId$2 = "@deepseek-ai/dsh-client-ui-achievements/gallery.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$2) + "]") === null) {
 			const tag = document.createElement("style");
@@ -686,15 +939,17 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var gallery_module_css_default = {
-			"kicker": "Odo5Oq_kicker",
-			"rise": "Odo5Oq_rise",
-			"headingIcon": "Odo5Oq_headingIcon",
+			"backdrop": "Odo5Oq_backdrop",
+			"scanlines": "Odo5Oq_scanlines",
 			"title": "Odo5Oq_title",
 			"heading": "Odo5Oq_heading",
-			"close": "Odo5Oq_close",
+			"headingIcon": "Odo5Oq_headingIcon",
+			"scan": "Odo5Oq_scan",
 			"panel": "Odo5Oq_panel",
+			"close": "Odo5Oq_close",
 			"head": "Odo5Oq_head",
-			"backdrop": "Odo5Oq_backdrop"
+			"kicker": "Odo5Oq_kicker",
+			"rise": "Odo5Oq_rise"
 		};
 		//#endregion
 		//#region src/client/gallery.tsx
@@ -704,7 +959,7 @@ window.__ModuleLoader__.load({
 		* opts back into pointer events to trap the click-away.
 		*/
 		/** The trophy-toggled gallery overlay (renders nothing while closed). */
-		function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, t }) {
+		function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, stats, t }) {
 			const open = useSnapshot((s) => s.galleryOpen);
 			(0, react.useEffect)(() => {
 				if (!open) return;
@@ -728,35 +983,43 @@ window.__ModuleLoader__.load({
 					onClick: (e) => {
 						e.stopPropagation();
 					},
-					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-						className: gallery_module_css_default.head,
-						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
-							className: gallery_module_css_default.heading,
-							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: gallery_module_css_default.headingIcon,
-								"aria-hidden": "true",
-								children: "🏆"
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: gallery_module_css_default.kicker,
-								children: t("kicker")
-							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
-								className: gallery_module_css_default.title,
-								id: "achievements-gallery-title",
-								children: t("title")
-							})] })]
-						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
-							type: "button",
-							className: gallery_module_css_default.close,
-							onClick: close,
-							"aria-label": t("gallery.close"),
-							children: "×"
-						})]
-					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(AchievementsSection, {
-						list,
-						...deepState !== void 0 ? { deepState } : {},
-						...setDeepInsights !== void 0 ? { setDeepInsights } : {},
-						t
-					})]
+					children: [
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: gallery_module_css_default.scanlines,
+							"aria-hidden": "true"
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+							className: gallery_module_css_default.head,
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+								className: gallery_module_css_default.heading,
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									className: gallery_module_css_default.headingIcon,
+									"aria-hidden": "true",
+									children: "🏆"
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									className: gallery_module_css_default.kicker,
+									children: t("kicker")
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+									className: gallery_module_css_default.title,
+									id: "achievements-gallery-title",
+									children: t("title")
+								})] })]
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: gallery_module_css_default.close,
+								onClick: close,
+								"aria-label": t("gallery.close"),
+								children: "×"
+							})]
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)(AchievementsSection, {
+							list,
+							...deepState !== void 0 ? { deepState } : {},
+							...setDeepInsights !== void 0 ? { setDeepInsights } : {},
+							...stats !== void 0 ? { stats } : {},
+							t
+						})
+					]
 				})
 			});
 		}
@@ -772,22 +1035,22 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var toast_module_css_default = {
-			"copy": "_4q_60W_copy",
+			"stack": "_4q_60W_stack",
+			"confetti": "_4q_60W_confetti",
 			"rarity-common": "_4q_60W_rarity-common",
 			"toast": "_4q_60W_toast",
 			"rarity-rare": "_4q_60W_rarity-rare",
+			"pop": "_4q_60W_pop",
+			"icon": "_4q_60W_icon",
+			"close": "_4q_60W_close",
 			"rarity-legendary": "_4q_60W_rarity-legendary",
+			"title": "_4q_60W_title",
+			"eyebrow": "_4q_60W_eyebrow",
+			"sub": "_4q_60W_sub",
 			"piece": "_4q_60W_piece",
 			"fall": "_4q_60W_fall",
-			"sub": "_4q_60W_sub",
-			"pop": "_4q_60W_pop",
-			"close": "_4q_60W_close",
-			"stack": "_4q_60W_stack",
 			"rarity-epic": "_4q_60W_rarity-epic",
-			"icon": "_4q_60W_icon",
-			"eyebrow": "_4q_60W_eyebrow",
-			"title": "_4q_60W_title",
-			"confetti": "_4q_60W_confetti"
+			"copy": "_4q_60W_copy"
 		};
 		//#endregion
 		//#region src/client/toast.tsx
@@ -889,11 +1152,11 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var trophy_module_css_default = {
-			"badgeIn": "AnwqOW_badgeIn",
-			"trophy": "AnwqOW_trophy",
 			"icon": "AnwqOW_icon",
+			"label": "AnwqOW_label",
 			"badge": "AnwqOW_badge",
-			"label": "AnwqOW_label"
+			"badgeIn": "AnwqOW_badgeIn",
+			"trophy": "AnwqOW_trophy"
 		};
 		//#endregion
 		//#region src/client/trophy.tsx
@@ -998,6 +1261,17 @@ window.__ModuleLoader__.load({
 			"visibleCount": "共 {count} 项",
 			"unlockedHint": "已收入收藏",
 			"empty": "没有符合当前筛选条件的成就",
+			"chart.title": "数据仪表盘",
+			"chart.rarity": "稀有度分布",
+			"chart.category": "分类进度",
+			"chart.tokens": "Token 分桶",
+			"chart.tools": "工具排行",
+			"chart.total": "总计",
+			"chart.empty": "暂无数据",
+			"chart.tokens.output": "输出",
+			"chart.tokens.cache": "缓存命中",
+			"chart.tokens.uncached": "未缓存输入",
+			"chart.tokens.reasoning": "推理",
 			"stats.unlocked": "已解锁",
 			"stats.total": "成就总数",
 			"stats.remaining": "待解锁",
@@ -1055,6 +1329,17 @@ window.__ModuleLoader__.load({
 			"visibleCount": "{count} achievements",
 			"unlockedHint": "Added to your collection",
 			"empty": "No achievements match the current filter",
+			"chart.title": "Telemetry Dashboard",
+			"chart.rarity": "Rarity spread",
+			"chart.category": "Category progress",
+			"chart.tokens": "Token buckets",
+			"chart.tools": "Top tools",
+			"chart.total": "total",
+			"chart.empty": "No data yet",
+			"chart.tokens.output": "Output",
+			"chart.tokens.cache": "Cache read",
+			"chart.tokens.uncached": "Uncached input",
+			"chart.tokens.reasoning": "Reasoning",
 			"stats.unlocked": "Unlocked",
 			"stats.total": "Total",
 			"stats.remaining": "Remaining",
@@ -1131,6 +1416,7 @@ window.__ModuleLoader__.load({
 			const deepRemote = ctx.remote.achievements;
 			const deepState = deepRemote.deepState;
 			const setDeepInsights = deepRemote.setDeepInsights;
+			const stats = deepRemote.stats;
 			const poll = async () => {
 				const recent = await ctx.remote.achievements.recent();
 				const dock = await ctx.remote.achievements.dock();
@@ -1145,7 +1431,8 @@ window.__ModuleLoader__.load({
 			const injected = () => ({
 				list,
 				...deepState !== void 0 ? { deepState } : {},
-				...setDeepInsights !== void 0 ? { setDeepInsights } : {}
+				...setDeepInsights !== void 0 ? { setDeepInsights } : {},
+				...stats !== void 0 ? { stats } : {}
 			});
 			ctx.slots.inject("settings.section", () => ctx.slots.register({
 				name: "settings.section",
@@ -1179,7 +1466,8 @@ window.__ModuleLoader__.load({
 					},
 					list,
 					...deepState !== void 0 ? { deepState } : {},
-					...setDeepInsights !== void 0 ? { setDeepInsights } : {}
+					...setDeepInsights !== void 0 ? { setDeepInsights } : {},
+					...stats !== void 0 ? { stats } : {}
 				})
 			}, GalleryOverlay));
 			ctx.slots.inject("sidebar.footer.action", () => ctx.slots.register({

@@ -3,7 +3,7 @@ import type {
   RemoteResult,
   TypertRemoteContribution,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { AchievementsDock, AchievementsSnapshot, RecentUnlock } from '@wjnct55555/dsh-achievements/types'
+import type { AchievementsDock, AchievementsSnapshot, AchievementsStats, RecentUnlock } from '@deepseek-ai/dsh-achievements/types'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$616368696576656d656e7473 {
@@ -12,6 +12,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     list: () => Promise<RemoteResult<AchievementsSnapshot>>
     recent: () => Promise<RemoteResult<{ unlocks: RecentUnlock[]; }>>
     setDeepInsights: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean; }>>
+    stats: () => Promise<RemoteResult<AchievementsStats>>
   }
   interface TypertRemoteMap {
     'achievements/deepState': () => Promise<RemoteResult<{ enabled: boolean; }>>
@@ -19,6 +20,7 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     'achievements/list': () => Promise<RemoteResult<AchievementsSnapshot>>
     'achievements/recent': () => Promise<RemoteResult<{ unlocks: RecentUnlock[]; }>>
     'achievements/setDeepInsights': (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean; }>>
+    'achievements/stats': () => Promise<RemoteResult<AchievementsStats>>
   }
   interface TypertRemoteNamespaceMap {
     'achievements': TypertRemoteNamespace$616368696576656d656e7473

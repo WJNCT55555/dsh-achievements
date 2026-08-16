@@ -4,7 +4,7 @@
  * snapshots. Free of host-side imports (cordis events, dsh-agent, the service)
  * so the `./types` subpath serves client aggregates without dragging the host
  * Context merge into a browser program.
- * @module @wjnct55555/dsh-achievements/types
+ * @module @deepseek-ai/dsh-achievements/types
  */
 export {};
 //# sourceMappingURL=types.js.map

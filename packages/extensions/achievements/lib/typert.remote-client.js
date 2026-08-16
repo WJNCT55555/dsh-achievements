@@ -49,12 +49,24 @@ const _deepseek_ai_dsh_achievements_achievements_setDeepInsights_parameter_0$sch
 const _deepseek_ai_dsh_achievements_achievements_setDeepInsights_result$schema = z.object({
   'enabled': z.boolean(),
 })
+const _deepseek_ai_dsh_achievements_achievements_stats_result$schema = z.object({
+  'tools': z.array(z.object({
+  'name': z.string().readonly(),
+  'count': z.number().readonly(),
+})).readonly(),
+  'tokens': z.object({
+  'output': z.number().readonly(),
+  'cacheRead': z.number().readonly(),
+  'uncached': z.number().readonly(),
+  'reasoning': z.number().readonly(),
+}).readonly(),
+})
 
 export const TYPERT_REMOTE = {
-  package: '@wjnct55555/dsh-achievements',
+  package: '@deepseek-ai/dsh-achievements',
   descriptors: [
     {
-      id: '@wjnct55555/dsh-achievements#achievements/deepState',
+      id: '@deepseek-ai/dsh-achievements#achievements/deepState',
       service: 'achievements',
       namespace: 'achievements',
       method: 'deepState',
@@ -63,13 +75,13 @@ export const TYPERT_REMOTE = {
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@wjnct55555/dsh-achievements#achievements/deepState:result',
+        typeSymbol: '@deepseek-ai/dsh-achievements#achievements/deepState:result',
         schema: _deepseek_ai_dsh_achievements_achievements_deepState_result$schema,
       },
       sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":304,"column":3},
     },
     {
-      id: '@wjnct55555/dsh-achievements#achievements/dock',
+      id: '@deepseek-ai/dsh-achievements#achievements/dock',
       service: 'achievements',
       namespace: 'achievements',
       method: 'dock',
@@ -78,13 +90,13 @@ export const TYPERT_REMOTE = {
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@wjnct55555/dsh-achievements/types#AchievementsDock',
+        typeSymbol: '@deepseek-ai/dsh-achievements/types#AchievementsDock',
         schema: _deepseek_ai_dsh_achievements_achievements_dock_result$schema,
       },
-      sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":392,"column":3},
+      sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":412,"column":3},
     },
     {
-      id: '@wjnct55555/dsh-achievements#achievements/list',
+      id: '@deepseek-ai/dsh-achievements#achievements/list',
       service: 'achievements',
       namespace: 'achievements',
       method: 'list',
@@ -93,13 +105,13 @@ export const TYPERT_REMOTE = {
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@wjnct55555/dsh-achievements/types#AchievementsSnapshot',
+        typeSymbol: '@deepseek-ai/dsh-achievements/types#AchievementsSnapshot',
         schema: _deepseek_ai_dsh_achievements_achievements_list_result$schema,
       },
-      sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":376,"column":3},
+      sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":396,"column":3},
     },
     {
-      id: '@wjnct55555/dsh-achievements#achievements/recent',
+      id: '@deepseek-ai/dsh-achievements#achievements/recent',
       service: 'achievements',
       namespace: 'achievements',
       method: 'recent',
@@ -108,13 +120,13 @@ export const TYPERT_REMOTE = {
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@wjnct55555/dsh-achievements#achievements/recent:result',
+        typeSymbol: '@deepseek-ai/dsh-achievements#achievements/recent:result',
         schema: _deepseek_ai_dsh_achievements_achievements_recent_result$schema,
       },
-      sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":386,"column":3},
+      sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":406,"column":3},
     },
     {
-      id: '@wjnct55555/dsh-achievements#achievements/setDeepInsights',
+      id: '@deepseek-ai/dsh-achievements#achievements/setDeepInsights',
       service: 'achievements',
       namespace: 'achievements',
       method: 'setDeepInsights',
@@ -126,17 +138,32 @@ export const TYPERT_REMOTE = {
           source: 'json',
           codec: {
             mode: 'strict',
-            typeSymbol: '@wjnct55555/dsh-achievements#achievements/setDeepInsights:enabled',
+            typeSymbol: '@deepseek-ai/dsh-achievements#achievements/setDeepInsights:enabled',
             schema: _deepseek_ai_dsh_achievements_achievements_setDeepInsights_parameter_0$schema,
           },
         },
       ],
       result: {
         mode: 'strict',
-        typeSymbol: '@wjnct55555/dsh-achievements#achievements/setDeepInsights:result',
+        typeSymbol: '@deepseek-ai/dsh-achievements#achievements/setDeepInsights:result',
         schema: _deepseek_ai_dsh_achievements_achievements_setDeepInsights_result$schema,
       },
       sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":310,"column":3},
+    },
+    {
+      id: '@deepseek-ai/dsh-achievements#achievements/stats',
+      service: 'achievements',
+      namespace: 'achievements',
+      method: 'stats',
+      invocation: { kind: 'direct' },
+      parameters: [
+      ],
+      result: {
+        mode: 'strict',
+        typeSymbol: '@deepseek-ai/dsh-achievements/types#AchievementsStats',
+        schema: _deepseek_ai_dsh_achievements_achievements_stats_result$schema,
+      },
+      sourceLocation: {"file":"packages/extensions/achievements/src/index.ts","line":324,"column":3},
     },
   ],
 }

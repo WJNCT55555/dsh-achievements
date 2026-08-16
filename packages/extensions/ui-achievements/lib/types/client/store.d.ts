@@ -5,7 +5,7 @@
  * feeds this store, components read through the bound selector hook.
  */
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client';
-import type { AchievementsDock, RecentUnlock } from '@wjnct55555/dsh-achievements/types';
+import type { AchievementsDock, RecentUnlock } from '@deepseek-ai/dsh-achievements/types';
 /** One client-side toast: the host unlock plus its local arrival time. */
 export interface AchievementToast extends RecentUnlock {
     readonly clientAt: number;

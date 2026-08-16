@@ -30,11 +30,12 @@ export function apply(ctx) {
     const useSnapshot = bindSnapshotSelector(store.store);
     const t = ctx.locale.bind(NS);
     const list = () => ctx.remote.achievements.list();
-    // The deep-insights Remote methods may be absent on hosts that predate them;
-    // keep the plugin applyable so the gallery still opens there.
+    // The deep-insights / stats Remote methods may be absent on hosts that predate
+    // them; keep the plugin applyable so the gallery still opens there.
     const deepRemote = ctx.remote.achievements;
     const deepState = deepRemote.deepState;
     const setDeepInsights = deepRemote.setDeepInsights;
+    const stats = deepRemote.stats;
     const poll = async () => {
         const recent = await ctx.remote.achievements.recent();
         const dock = await ctx.remote.achievements.dock();
@@ -53,6 +54,7 @@ export function apply(ctx) {
         list,
         ...deepState !== undefined ? { deepState } : {},
         ...setDeepInsights !== undefined ? { setDeepInsights } : {},
+        ...stats !== undefined ? { stats } : {},
     });
     ctx.slots.inject('settings.section', () => ctx.slots.register({
         name: 'settings.section',
@@ -80,6 +82,7 @@ export function apply(ctx) {
             list,
             ...deepState !== undefined ? { deepState } : {},
             ...setDeepInsights !== undefined ? { setDeepInsights } : {},
+            ...stats !== undefined ? { stats } : {},
         }),
     }, GalleryOverlay));
     ctx.slots.inject('sidebar.footer.action', () => ctx.slots.register({

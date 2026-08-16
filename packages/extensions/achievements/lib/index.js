@@ -101,7 +101,7 @@ var AchievementStateStore = class {
 *   user-questions UI) enables message-body regex matching and session-log
 *   history scanning for dedicated achievements. Deep tier matches bodies at
 *   runtime and persists only which achievement unlocked — never body text.
-* @module @wjnct55555/dsh-achievements
+* @module @deepseek-ai/dsh-achievements
 */
 var __runInitializers = function(thisArg, initializers, value) {
 	var useValue = arguments.length > 2;
@@ -949,6 +949,7 @@ let AchievementsService = (() => {
 	let _instanceExtraInitializers = [];
 	let _deepState_decorators;
 	let _setDeepInsights_decorators;
+	let _stats_decorators;
 	let _list_decorators;
 	let _recent_decorators;
 	let _dock_decorators;
@@ -957,6 +958,7 @@ let AchievementsService = (() => {
 			const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(_classSuper[Symbol.metadata] ?? null) : void 0;
 			_deepState_decorators = [Remote("deepState")];
 			_setDeepInsights_decorators = [Remote("setDeepInsights")];
+			_stats_decorators = [Remote("stats")];
 			_list_decorators = [Remote("list")];
 			_recent_decorators = [Remote("recent")];
 			_dock_decorators = [Remote("dock")];
@@ -979,6 +981,17 @@ let AchievementsService = (() => {
 				access: {
 					has: (obj) => "setDeepInsights" in obj,
 					get: (obj) => obj.setDeepInsights
+				},
+				metadata: _metadata
+			}, null, _instanceExtraInitializers);
+			__esDecorate(this, null, _stats_decorators, {
+				kind: "method",
+				name: "stats",
+				static: false,
+				private: false,
+				access: {
+					has: (obj) => "stats" in obj,
+					get: (obj) => obj.stats
 				},
 				metadata: _metadata
 			}, null, _instanceExtraInitializers);
@@ -1092,6 +1105,27 @@ let AchievementsService = (() => {
 				this.scheduleSave();
 			}
 			return { enabled: this.deepInsights };
+		}
+		/** Remote surface: dashboard aggregates (top tools + token buckets). */
+		stats() {
+			const tools = [];
+			for (const [key, value] of this.counters) {
+				if (!key.startsWith("tool:")) continue;
+				tools.push({
+					name: key.slice(5),
+					count: value
+				});
+			}
+			tools.sort((a, b) => b.count - a.count);
+			return {
+				tools: tools.slice(0, 8),
+				tokens: {
+					output: this.counters.get("outTokens") ?? 0,
+					cacheRead: this.counters.get("cacheRead") ?? 0,
+					uncached: this.counters.get("uncachedInput") ?? 0,
+					reasoning: this.counters.get("reasoningTokens") ?? 0
+				}
+			};
 		}
 		/** The context this service was constructed with (retained for runtime wiring). */
 		ownCtx;
@@ -1303,6 +1337,7 @@ let AchievementsService = (() => {
 				const name = exec.name;
 				this.bump("tools");
 				this.addDistinct("toolsUsed", name);
+				this.bump(`tool:${name}`);
 				if (name === "write") this.bump("writes");
 				if (name === "edit") this.bump("edits");
 				if (!result.isError) this.bump("streak");

@@ -1,8 +1,8 @@
 /**
- * Package-owned invariant companion for `@wjnct55555/dsh-achievements`.
- * @module @wjnct55555/dsh-achievements/invariant
+ * Package-owned invariant companion for `@deepseek-ai/dsh-achievements`.
+ * @module @deepseek-ai/dsh-achievements/invariant
  */
-const PACKAGE_NAME = '@wjnct55555/dsh-achievements';
+const PACKAGE_NAME = '@deepseek-ai/dsh-achievements';
 /** Cordis companion plugin name. */
 export const name = 'achievements-invariant';
 /** Service required before the companion can reserve package ownership. */

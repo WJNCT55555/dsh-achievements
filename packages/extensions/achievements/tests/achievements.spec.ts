@@ -301,4 +301,31 @@ describe('AchievementsService', () => {
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
     expect(service.list().achievements.find(a => a.id === 'cache-perfect')?.unlocked).toBe(false)
   })
+
+  it('tracks per-tool counts and exposes top tools via stats', () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    emit(ctx, 'tools/result', exec('read', 'a'), ok())
+    emit(ctx, 'tools/result', exec('read', 'a'), ok())
+    emit(ctx, 'tools/result', exec('grep', 'a'), ok())
+    emit(ctx, 'tools/result', exec('read', 'b'), ok())
+    const service = ctx.get('achievements') as unknown as { stats: () => { tools: Array<{ name: string; count: number }> } }
+    const stats = service.stats()
+    expect(stats.tools.find(t => t.name === 'read')?.count).toBe(3)
+    expect(stats.tools.find(t => t.name === 'grep')?.count).toBe(1)
+    expect(stats.tools[0]?.name).toBe('read')
+  })
+
+  it('exposes token buckets through stats', () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'assistant/message', data: { turn: 1, step: 1, message: {}, usage: { outputTokens: 100, cacheReadTokens: 200, inputTokens: 50 } } })
+    const service = ctx.get('achievements') as unknown as { stats: () => { tokens: { output: number; cacheRead: number; uncached: number } } }
+    const tokens = service.stats().tokens
+    expect(tokens.output).toBe(100)
+    expect(tokens.cacheRead).toBe(200)
+    expect(tokens.uncached).toBe(50)
+  })
 })

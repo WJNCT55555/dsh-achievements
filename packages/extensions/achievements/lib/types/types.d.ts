@@ -4,7 +4,7 @@
  * snapshots. Free of host-side imports (cordis events, dsh-agent, the service)
  * so the `./types` subpath serves client aggregates without dragging the host
  * Context merge into a browser program.
- * @module @wjnct55555/dsh-achievements/types
+ * @module @deepseek-ai/dsh-achievements/types
  */
 /** Stable rarity tier, mapped to a visual treatment by the client. */
 export type AchievementRarity = 'common' | 'rare' | 'epic' | 'legendary';
@@ -42,6 +42,21 @@ export interface AchievementsSnapshot {
     readonly total: number;
     readonly unlocked: number;
     readonly achievements: readonly AchievementView[];
+}
+/** Dashboard aggregates served by the `stats` Remote. */
+export interface AchievementsStats {
+    /** Most-used tools, descending, capped at 8. */
+    readonly tools: ReadonlyArray<{
+        readonly name: string;
+        readonly count: number;
+    }>;
+    /** Token usage buckets (leaf counts). */
+    readonly tokens: {
+        readonly output: number;
+        readonly cacheRead: number;
+        readonly uncached: number;
+        readonly reasoning: number;
+    };
 }
 /** One freshly unlocked achievement drained from the recent queue. */
 export interface RecentUnlock {

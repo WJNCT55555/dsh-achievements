@@ -19,7 +19,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
 import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type { AchievementsSnapshot } from '@wjnct55555/dsh-achievements/types'
+import type { AchievementsSnapshot, AchievementsStats } from '@deepseek-ai/dsh-achievements/types'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
 import { AchievementsSection, type AchievementsSectionInjected } from './AchievementsSection.tsx'
@@ -61,14 +61,16 @@ export function apply(ctx: ClientContext): void {
   const useSnapshot = bindSnapshotSelector(store.store)
   const t = ctx.locale.bind(NS)
   const list = (): Promise<RemoteResult<AchievementsSnapshot>> => ctx.remote.achievements.list()
-  // The deep-insights Remote methods may be absent on hosts that predate them;
-  // keep the plugin applyable so the gallery still opens there.
+  // The deep-insights / stats Remote methods may be absent on hosts that predate
+  // them; keep the plugin applyable so the gallery still opens there.
   const deepRemote = (ctx.remote.achievements as unknown as {
     deepState?: () => Promise<RemoteResult<{ enabled: boolean }>>
     setDeepInsights?: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
+    stats?: () => Promise<RemoteResult<AchievementsStats>>
   })
   const deepState = deepRemote.deepState
   const setDeepInsights = deepRemote.setDeepInsights
+  const stats = deepRemote.stats
 
   const poll = async (): Promise<void> => {
     const recent = await ctx.remote.achievements.recent()
@@ -89,6 +91,7 @@ export function apply(ctx: ClientContext): void {
     list,
     ...deepState !== undefined ? { deepState } : {},
     ...setDeepInsights !== undefined ? { setDeepInsights } : {},
+    ...stats !== undefined ? { stats } : {},
   })
 
   ctx.slots.inject('settings.section', () => ctx.slots.register({
@@ -119,6 +122,7 @@ export function apply(ctx: ClientContext): void {
       list,
       ...deepState !== undefined ? { deepState } : {},
       ...setDeepInsights !== undefined ? { setDeepInsights } : {},
+      ...stats !== undefined ? { stats } : {},
     }),
   }, GalleryOverlay))
 

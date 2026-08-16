@@ -12,7 +12,7 @@
  *   user-questions UI) enables message-body regex matching and session-log
  *   history scanning for dedicated achievements. Deep tier matches bodies at
  *   runtime and persists only which achievement unlocked — never body text.
- * @module @wjnct55555/dsh-achievements
+ * @module @deepseek-ai/dsh-achievements
  */
 var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
     var useValue = arguments.length > 2;
@@ -208,6 +208,7 @@ let AchievementsService = (() => {
     let _instanceExtraInitializers = [];
     let _deepState_decorators;
     let _setDeepInsights_decorators;
+    let _stats_decorators;
     let _list_decorators;
     let _recent_decorators;
     let _dock_decorators;
@@ -216,11 +217,13 @@ let AchievementsService = (() => {
             const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(_classSuper[Symbol.metadata] ?? null) : void 0;
             _deepState_decorators = [Remote('deepState')];
             _setDeepInsights_decorators = [Remote('setDeepInsights')];
+            _stats_decorators = [Remote('stats')];
             _list_decorators = [Remote('list')];
             _recent_decorators = [Remote('recent')];
             _dock_decorators = [Remote('dock')];
             __esDecorate(this, null, _deepState_decorators, { kind: "method", name: "deepState", static: false, private: false, access: { has: obj => "deepState" in obj, get: obj => obj.deepState }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _setDeepInsights_decorators, { kind: "method", name: "setDeepInsights", static: false, private: false, access: { has: obj => "setDeepInsights" in obj, get: obj => obj.setDeepInsights }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _stats_decorators, { kind: "method", name: "stats", static: false, private: false, access: { has: obj => "stats" in obj, get: obj => obj.stats }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _list_decorators, { kind: "method", name: "list", static: false, private: false, access: { has: obj => "list" in obj, get: obj => obj.list }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _recent_decorators, { kind: "method", name: "recent", static: false, private: false, access: { has: obj => "recent" in obj, get: obj => obj.recent }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _dock_decorators, { kind: "method", name: "dock", static: false, private: false, access: { has: obj => "dock" in obj, get: obj => obj.dock }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -308,6 +311,25 @@ let AchievementsService = (() => {
                 this.scheduleSave();
             }
             return { enabled: this.deepInsights };
+        }
+        /** Remote surface: dashboard aggregates (top tools + token buckets). */
+        stats() {
+            const tools = [];
+            for (const [key, value] of this.counters) {
+                if (!key.startsWith('tool:'))
+                    continue;
+                tools.push({ name: key.slice('tool:'.length), count: value });
+            }
+            tools.sort((a, b) => b.count - a.count);
+            return {
+                tools: tools.slice(0, 8),
+                tokens: {
+                    output: this.counters.get('outTokens') ?? 0,
+                    cacheRead: this.counters.get('cacheRead') ?? 0,
+                    uncached: this.counters.get('uncachedInput') ?? 0,
+                    reasoning: this.counters.get('reasoningTokens') ?? 0,
+                },
+            };
         }
         /** The context this service was constructed with (retained for runtime wiring). */
         ownCtx;
@@ -523,6 +545,8 @@ let AchievementsService = (() => {
                 const name = exec.name;
                 this.bump('tools');
                 this.addDistinct('toolsUsed', name);
+                // Per-tool counts power the dashboard top-tools chart (leaf scalar).
+                this.bump(`tool:${name}`);
                 if (name === 'write')
                     this.bump('writes');
                 if (name === 'edit')

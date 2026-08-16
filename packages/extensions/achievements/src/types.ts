@@ -59,6 +59,19 @@ export interface AchievementsSnapshot {
   readonly achievements: readonly AchievementView[]
 }
 
+/** Dashboard aggregates served by the `stats` Remote. */
+export interface AchievementsStats {
+  /** Most-used tools, descending, capped at 8. */
+  readonly tools: ReadonlyArray<{ readonly name: string; readonly count: number }>
+  /** Token usage buckets (leaf counts). */
+  readonly tokens: {
+    readonly output: number
+    readonly cacheRead: number
+    readonly uncached: number
+    readonly reasoning: number
+  }
+}
+
 /** One freshly unlocked achievement drained from the recent queue. */
 export interface RecentUnlock {
   readonly id: string

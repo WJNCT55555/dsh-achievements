@@ -19,7 +19,7 @@ export interface GalleryOverlayInjected extends AchievementsSectionInjected {
 }
 
 /** The trophy-toggled gallery overlay (renders nothing while closed). */
-export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, t }: GalleryOverlayInjected & PropsLocale<'achievements'>) {
+export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, stats, t }: GalleryOverlayInjected & PropsLocale<'achievements'>) {
   const open = useSnapshot(s => s.galleryOpen)
   useEffect(() => {
     if (!open) return
@@ -33,6 +33,7 @@ export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepIns
   return (
     <div className={styles.backdrop} onClick={close}>
       <div className={styles.panel} role="dialog" aria-modal="true" aria-labelledby="achievements-gallery-title" onClick={(e) => { e.stopPropagation() }}>
+        <span className={styles.scanlines} aria-hidden="true" />
         <div className={styles.head}>
           <div className={styles.heading}>
             <span className={styles.headingIcon} aria-hidden="true">🏆</span>
@@ -44,6 +45,7 @@ export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepIns
           list={list}
           {...deepState !== undefined ? { deepState } : {}}
           {...setDeepInsights !== undefined ? { setDeepInsights } : {}}
+          {...stats !== undefined ? { stats } : {}}
           t={t}
         />
       </div>

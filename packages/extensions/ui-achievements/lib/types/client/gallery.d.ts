@@ -13,5 +13,5 @@ export interface GalleryOverlayInjected extends AchievementsSectionInjected {
     close: () => void;
 }
 /** The trophy-toggled gallery overlay (renders nothing while closed). */
-export declare function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, t }: GalleryOverlayInjected & PropsLocale<'achievements'>): import("react").JSX.Element | null;
+export declare function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, stats, t }: GalleryOverlayInjected & PropsLocale<'achievements'>): import("react").JSX.Element | null;
 //# sourceMappingURL=gallery.d.ts.map

@@ -40,7 +40,7 @@ import { z } from 'zod'
 import { AchievementStateStore, type PersistedState } from './state.ts'
 import type {
   AchievementCategory, AchievementProgress, AchievementRarity, AchievementView,
-  AchievementsDock, AchievementsSnapshot, RecentUnlock,
+  AchievementsDock, AchievementsSnapshot, AchievementsStats, RecentUnlock,
 } from './types.ts'
 
 export type * from './types.ts'
@@ -319,6 +319,26 @@ export class AchievementsService extends TypertRemoteService {
     return { enabled: this.deepInsights }
   }
 
+  /** Remote surface: dashboard aggregates (top tools + token buckets). */
+  @Remote('stats')
+  stats(): AchievementsStats {
+    const tools: Array<{ name: string; count: number }> = []
+    for (const [key, value] of this.counters) {
+      if (!key.startsWith('tool:')) continue
+      tools.push({ name: key.slice('tool:'.length), count: value })
+    }
+    tools.sort((a, b) => b.count - a.count)
+    return {
+      tools: tools.slice(0, 8),
+      tokens: {
+        output: this.counters.get('outTokens') ?? 0,
+        cacheRead: this.counters.get('cacheRead') ?? 0,
+        uncached: this.counters.get('uncachedInput') ?? 0,
+        reasoning: this.counters.get('reasoningTokens') ?? 0,
+      },
+    }
+  }
+
   /** The context this service was constructed with (retained for runtime wiring). */
   private ownCtx: Context | undefined
 
@@ -525,6 +545,8 @@ export class AchievementsService extends TypertRemoteService {
       const name = exec.name
       this.bump('tools')
       this.addDistinct('toolsUsed', name)
+      // Per-tool counts power the dashboard top-tools chart (leaf scalar).
+      this.bump(`tool:${name}`)
       if (name === 'write') this.bump('writes')
       if (name === 'edit') this.bump('edits')
       if (!result.isError) this.bump('streak')

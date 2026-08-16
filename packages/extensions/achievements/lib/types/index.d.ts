@@ -12,12 +12,12 @@
  *   user-questions UI) enables message-body regex matching and session-log
  *   history scanning for dedicated achievements. Deep tier matches bodies at
  *   runtime and persists only which achievement unlocked — never body text.
- * @module @wjnct55555/dsh-achievements
+ * @module @deepseek-ai/dsh-achievements
  */
 import type { Context } from '@deepseek-ai/cordis';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
 import { z } from 'zod';
-import type { AchievementsDock, AchievementsSnapshot, RecentUnlock } from './types.ts';
+import type { AchievementsDock, AchievementsSnapshot, AchievementsStats, RecentUnlock } from './types.ts';
 export type * from './types.ts';
 /** Config: the deep-insights opt-in and the state-file location. */
 export declare const Config: z.ZodObject<{
@@ -50,6 +50,8 @@ export declare class AchievementsService extends TypertRemoteService {
     setDeepInsights(enabled: boolean): {
         enabled: boolean;
     };
+    /** Remote surface: dashboard aggregates (top tools + token buckets). */
+    stats(): AchievementsStats;
     /** The context this service was constructed with (retained for runtime wiring). */
     private ownCtx;
     /** Fold persisted state back into the in-memory containers. */

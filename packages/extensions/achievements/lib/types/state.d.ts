@@ -9,7 +9,7 @@
  * Writes are debounced so hot event paths never touch the disk; a final flush
  * happens on disposal. The file format carries a schema version and is
  * forward-tolerant: unknown keys are ignored on load.
- * @module @wjnct55555/dsh-achievements/state
+ * @module @deepseek-ai/dsh-achievements/state
  */
 /** Current on-disk format version. */
 export declare const STATE_SCHEMA_VERSION = 1;

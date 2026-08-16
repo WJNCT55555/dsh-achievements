@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import type { AchievementsSnapshot, AchievementView } from '@deepseek-ai/dsh-achievements/types'
+import type { AchievementsSnapshot, AchievementsStats, AchievementView } from '@deepseek-ai/dsh-achievements/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { twemojiPath, TWEMOJI_BASE } from './twemoji.ts'
@@ -43,6 +43,8 @@ const RARITY_ICONS: Record<AchievementView['rarity'], string> = {
   legendary: '♛',
 }
 
+const PROGRESS_TICKS = Array.from({ length: 9 }, (_, index) => index)
+
 /** Injected dependencies of {@link AchievementsSection} (slot `inject`). */
 export interface AchievementsSectionInjected {
   /** Remote-backed snapshot loader. */
@@ -51,6 +53,8 @@ export interface AchievementsSectionInjected {
   deepState?: () => Promise<RemoteResult<{ enabled: boolean }>>
   /** Toggle the deep-insights opt-in; absent when the host predates it. */
   setDeepInsights?: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
+  /** Dashboard aggregates (tools + tokens); absent when the host predates it. */
+  stats?: () => Promise<RemoteResult<AchievementsStats>>
 }
 
 /** Emoji icon via Twemoji CDN with a text fallback on load failure. */
@@ -94,6 +98,7 @@ function Row({ a, t }: { a: AchievementView; t: (key: AchievementsKey) => string
       <div className={styles.barWrap}>
         <div className={styles.bar} aria-hidden="true">
           <div className={styles.barFill} style={{ width: `${progress}%` }} />
+          <span className={styles.barTicks}>{PROGRESS_TICKS.map(tick => <i key={tick} />)}</span>
         </div>
         <div className={styles.barLabel}><span>{t('progress')}</span><span>{a.progress.current} / {a.progress.target}</span></div>
       </div>
@@ -101,21 +106,25 @@ function Row({ a, t }: { a: AchievementView; t: (key: AchievementsKey) => string
     : null
   return (
     <article className={rowClass} data-rarity={a.rarity} data-unlocked={a.unlocked}>
+      <span className={styles.rowFrame} aria-hidden="true" />
+      <span className={styles.recordCode}>[ ACHV::{a.id.toUpperCase()} ]</span>
       <div className={styles.icon} data-unlocked={a.unlocked}>
         {hiddenLocked ? <span>?</span> : <Icon icon={a.icon} />}
         {a.unlocked && <span className={styles.iconCheck} aria-hidden="true">✓</span>}
       </div>
       <div className={styles.main}>
         <div className={styles.rowTop}>
-          <div className={styles.nameLine}>
-            <span className={styles.name}>{name}</span>
-            <span className={`${styles.badge} ${badgeClass}`}>
-              {hiddenLocked ? t('hiddenDesc') : t(`rarity.${a.rarity}`)}
-            </span>
+          <div className={styles.titleBlock}>
+            <div className={styles.nameLine}>
+              <span className={styles.name}>{name}</span>
+              <span className={`${styles.badge} ${badgeClass}`}>
+                {hiddenLocked ? t('hiddenDesc') : t(`rarity.${a.rarity}`)}
+              </span>
+            </div>
+            <div className={styles.desc}>{desc}</div>
           </div>
           {statusBadge}
         </div>
-        <div className={styles.desc}>{desc}</div>
         {bar}
         {a.unlocked && <div className={styles.unlockedLine}><span>✓ {t('unlockedHint')}</span></div>}
       </div>
@@ -123,9 +132,72 @@ function Row({ a, t }: { a: AchievementView; t: (key: AchievementsKey) => string
   )
 }
 
+/** One ring segment of a donut chart: value + color. */
+interface DonutSlice {
+  label: string
+  value: number
+  color: string
+}
+
+/** Hollow donut chart (SVG) with a center total. */
+function Donut({ slices, center, t }: { slices: readonly DonutSlice[]; center: string; t: (key: AchievementsKey) => string }) {
+  const total = slices.reduce((sum, slice) => sum + slice.value, 0)
+  if (total <= 0) {
+    return (
+      <div className={styles.donutEmpty} role="img" aria-label={t('chart.empty')}>
+        <span>{t('chart.empty')}</span>
+      </div>
+    )
+  }
+  const radius = 15.9
+  const circumference = 2 * Math.PI * radius
+  let offset = 0
+  return (
+    <div className={styles.donutWrap}>
+      <svg className={styles.donut} viewBox="0 0 42 42" aria-hidden="true">
+        <circle className={styles.donutTrack} cx="21" cy="21" r={radius} />
+        {slices.map((slice) => {
+          const fraction = slice.value / total
+          const dash = fraction * circumference
+          const el = (
+            <circle
+              key={slice.label}
+              className={styles.donutSlice}
+              cx="21"
+              cy="21"
+              r={radius}
+              stroke={slice.color}
+              strokeDasharray={`${dash} ${circumference - dash}`}
+              strokeDashoffset={-offset}
+            />
+          )
+          offset += dash
+          return el
+        })}
+      </svg>
+      <div className={styles.donutCenter}><strong>{center}</strong><span>{t('chart.total')}</span></div>
+    </div>
+  )
+}
+
+/** Horizontal terminal bar row (label + filled bar + value). */
+function HBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
+  const width = max > 0 ? Math.round((value / max) * 100) : 0
+  return (
+    <div className={styles.hbarRow}>
+      <span className={styles.hbarLabel} title={label}>{label}</span>
+      <div className={styles.hbarTrack} aria-hidden="true">
+        <div className={styles.hbarFill} style={{ width: `${width}%`, background: color }} />
+      </div>
+      <span className={styles.hbarValue}>{value}</span>
+    </div>
+  )
+}
+
 /** Full settings-section gallery over the achievements Remote namespace. */
-export function AchievementsSection({ list, deepState, setDeepInsights, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
+export function AchievementsSection({ list, deepState, setDeepInsights, stats, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
   const [snapshot, setSnapshot] = useState<AchievementsSnapshot | null>(null)
+  const [statsData, setStatsData] = useState<AchievementsStats | null>(null)
   const [mode, setMode] = useState<SortMode>('category')
   const [status, setStatus] = useState<StatusFilter>('all')
   const [deepEnabled, setDeepEnabled] = useState(false)
@@ -150,10 +222,18 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
         if (alive) setDeepEnabled(false)
       })
     }
+    // stats is optional: hosts predating the dashboard aggregates lack it.
+    if (stats !== undefined) {
+      void Promise.resolve().then(stats).then((result) => {
+        if (alive && result.ok) setStatsData(result.value)
+      }).catch(() => {
+        if (alive) setStatsData(null)
+      })
+    }
     return () => {
       alive = false
     }
-  }, [list, deepState, reloadToken, t])
+  }, [list, deepState, stats, reloadToken, t])
   if (snapshot === null) {
     if (loadError !== null) {
       return (
@@ -208,6 +288,48 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
   }).filter(group => group.items.length > 0)
   const activeGroup = visibleGroups.find(group => group.id === activeGroupId) ?? visibleGroups[0]
 
+  // ── dashboard charts data ───────────────────────────────────────
+  const rarityColors: Record<AchievementView['rarity'], string> = {
+    common: '#10b981',
+    rare: '#2dd4bf',
+    epic: '#a78bfa',
+    legendary: '#fbbf24',
+  }
+  const raritySlices: DonutSlice[] = (RARITY_ORDER as readonly AchievementView['rarity'][]).map(rarity => ({
+    label: t(`rarity.${rarity}`),
+    value: snapshot.achievements.filter(a => a.rarity === rarity && a.unlocked).length,
+    color: rarityColors[rarity],
+  }))
+  const catColors: Record<AchievementView['category'], string> = {
+    'getting-started': '#10b981',
+    toolsmith: '#34d399',
+    filecraft: '#2dd4bf',
+    orchestration: '#5eead4',
+    goals: '#a7f3d0',
+    skill: '#6ee7b7',
+    model: '#a78bfa',
+    behavior: '#c4b5fd',
+    crossover: '#fbbf24',
+    hidden: '#94a3b8',
+  }
+  const catSlices: DonutSlice[] = CATEGORY_ORDER
+    .filter(cat => cat !== 'hidden')
+    .map(cat => ({
+      label: t(`cat.${cat}`),
+      value: snapshot.achievements.filter(a => a.category === cat && a.unlocked).length,
+      color: catColors[cat],
+    }))
+  const tokenBuckets: DonutSlice[] = (statsData?.tokens
+    ? [
+      { label: t('chart.tokens.output'), value: statsData.tokens.output, color: '#10b981' },
+      { label: t('chart.tokens.cache'), value: statsData.tokens.cacheRead, color: '#2dd4bf' },
+      { label: t('chart.tokens.uncached'), value: statsData.tokens.uncached, color: '#a78bfa' },
+      { label: t('chart.tokens.reasoning'), value: statsData.tokens.reasoning, color: '#fbbf24' },
+    ]
+    : [])
+  const toolMax = (statsData?.tools[0]?.count ?? 0)
+  const toolBars = statsData?.tools ?? []
+
   return (
     <div className={styles.section}>
       <section className={styles.hero} aria-labelledby="achievements-overview-title">
@@ -233,8 +355,39 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
         <div className={styles.statBar} aria-hidden="true">
           <div className={styles.statBarFill} style={{ width: `${completion}%` }} />
         </div>
-        <div className={styles.heroBar} aria-hidden="true"><div className={styles.heroBarFill} style={{ width: `${completion}%` }} /></div>
       </section>
+
+      <div className={styles.charts} role="group" aria-label={t('chart.title')}>
+        <section className={styles.chart} aria-labelledby="chart-rarity-title">
+          <h4 className={styles.chartBadge} id="chart-rarity-title">[{t('chart.rarity')}]</h4>
+          <div className={styles.chartBars}>
+            {raritySlices.map(slice => (
+              <HBar key={slice.label} label={slice.label} value={slice.value} max={snapshot.total} color={slice.color} />
+            ))}
+          </div>
+        </section>
+
+        <section className={styles.chart} aria-labelledby="chart-category-title">
+          <h4 className={styles.chartBadge} id="chart-category-title">[{t('chart.category')}]</h4>
+          <Donut slices={catSlices} center={String(unlocked)} t={t} />
+        </section>
+
+        <section className={styles.chart} aria-labelledby="chart-tokens-title">
+          <h4 className={styles.chartBadge} id="chart-tokens-title">[{t('chart.tokens')}]</h4>
+          {tokenBuckets.length > 0
+            ? <Donut slices={tokenBuckets} center={String(Math.round(tokenBuckets.reduce((s, x) => s + x.value, 0)))} t={t} />
+            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>}
+        </section>
+
+        <section className={styles.chart} aria-labelledby="chart-tools-title">
+          <h4 className={styles.chartBadge} id="chart-tools-title">[{t('chart.tools')}]</h4>
+          {toolBars.length > 0
+            ? <div className={styles.chartBars}>{toolBars.map(tool => (
+              <HBar key={tool.name} label={tool.name} value={tool.count} max={toolMax} color="#10b981" />
+            ))}</div>
+            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>}
+        </section>
+      </div>
 
       <div className={styles.toolbar}>
         <div className={styles.toolbarCopy}>
@@ -278,6 +431,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
                     key={group.id}
                     type="button"
                     className={`${styles.railItem} ${active ? styles.railItemActive : ''}`}
+                    data-group={group.id}
                     aria-current={active ? 'page' : undefined}
                     onClick={() => { setActiveGroupId(group.id) }}
                   >
@@ -293,7 +447,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
             </div>
           </nav>
 
-          <section className={styles.ledger} aria-labelledby={`achievement-group-${activeGroup.id}`}>
+          <section className={styles.ledger} data-group={activeGroup.id} aria-labelledby={`achievement-group-${activeGroup.id}`}>
             <div className={styles.ledgerHeader}>
               <div className={styles.groupHeading}>
                 <span className={styles.groupIcon} aria-hidden="true">{activeGroup.icon}</span>
