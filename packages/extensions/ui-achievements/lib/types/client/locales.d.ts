@@ -16,6 +16,9 @@ export declare const zh: {
     'chart.heatmap': string;
     'chart.total': string;
     'chart.empty': string;
+    'chart.loading': string;
+    'chart.unavailable': string;
+    'chart.error': string;
     'stats.unlocked': string;
     'stats.total': string;
     'stats.remaining': string;
@@ -94,6 +97,9 @@ export declare const en: {
     'chart.heatmap': string;
     'chart.total': string;
     'chart.empty': string;
+    'chart.loading': string;
+    'chart.unavailable': string;
+    'chart.error': string;
     'stats.unlocked': string;
     'stats.total': string;
     'stats.remaining': string;

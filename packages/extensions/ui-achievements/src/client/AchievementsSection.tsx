@@ -198,7 +198,24 @@ function Donut({ slices, center, t }: { slices: readonly DonutSlice[]; center: s
 }
 
 /** Current-month activity heatmap: a Monday-first calendar grid tinted by daily count. */
-function Heatmap({ data, t }: { data: AchievementsHeatmap; t: (key: AchievementsKey) => string }) {
+function emptyCurrentMonthHeatmap(): AchievementsHeatmap {
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = now.getMonth() + 1
+  const daysInMonth = new Date(year, month, 0).getDate()
+  return {
+    year,
+    month,
+    days: Array.from({ length: daysInMonth }, (_, index) => ({
+      date: `${year}-${String(month).padStart(2, '0')}-${String(index + 1).padStart(2, '0')}`,
+      count: 0,
+    })),
+  }
+}
+
+type HeatmapStatus = 'loading' | 'ready' | 'missing' | 'error'
+
+function Heatmap({ data, status, t }: { data: AchievementsHeatmap; status: HeatmapStatus; t: (key: AchievementsKey) => string }) {
   const { year, month, days } = data
   const countByDate = new Map(days.map(d => [d.date, d.count]))
   const first = new Date(year, month - 1, 1)
@@ -243,6 +260,7 @@ function Heatmap({ data, t }: { data: AchievementsHeatmap; t: (key: Achievements
         </span>
         <span>{t('chart.total')}</span>
       </div>
+      {status !== 'ready' && <div className={styles.heatmapStatus} role="status">{t(status === 'loading' ? 'chart.loading' : status === 'missing' ? 'chart.unavailable' : 'chart.error')}</div>}
     </div>
   )
 }
@@ -251,7 +269,8 @@ function Heatmap({ data, t }: { data: AchievementsHeatmap; t: (key: Achievements
 export function AchievementsSection({ list, deepState, setDeepInsights, rates, telemetryState, setTelemetry, clear, heatmap, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
   const [snapshot, setSnapshot] = useState<AchievementsSnapshot | null>(null)
   const [ratesData, setRatesData] = useState<AchievementsRates | null>(null)
-  const [heatmapData, setHeatmapData] = useState<AchievementsHeatmap | null>(null)
+  const [heatmapData, setHeatmapData] = useState<AchievementsHeatmap>(() => emptyCurrentMonthHeatmap())
+  const [heatmapStatus, setHeatmapStatus] = useState<HeatmapStatus>('loading')
   const [telemetryEnabled, setTelemetryEnabled] = useState(false)
   const [confirmClear, setConfirmClear] = useState(false)
   const [mode, setMode] = useState<SortMode>('category')
@@ -294,12 +313,21 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
         if (alive) setRatesData(null)
       })
     }
-    // heatmap is optional: hosts predating it degrade to an empty chart.
-    if (heatmap !== undefined) {
+    // Keep the calendar visible when a running host has not loaded the optional
+    // Remote method yet; the empty cells make the missing data state explicit.
+    if (heatmap === undefined) {
+      setHeatmapStatus('missing')
+    } else {
       void Promise.resolve().then(heatmap).then((result) => {
-        if (alive && result.ok) setHeatmapData(result.value)
+        if (!alive) return
+        if (result.ok) {
+          setHeatmapData(result.value)
+          setHeatmapStatus('ready')
+        } else {
+          setHeatmapStatus('error')
+        }
       }).catch(() => {
-        if (alive) setHeatmapData(null)
+        if (alive) setHeatmapStatus('error')
       })
     }
     return () => {
@@ -458,15 +486,13 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
           {!collapsed['category'] && <Donut slices={catSlices} center={String(unlocked)} t={t} />}
         </section>
 
-        {heatmapData !== null && heatmap !== undefined && (
-          <section className={styles.chart} aria-labelledby="chart-heatmap-title">
-            <button type="button" className={styles.chartHead} aria-expanded={!collapsed['heatmap']} onClick={() => { setCollapsed(prev => ({ ...prev, heatmap: !prev['heatmap'] })) }}>
-              <h4 className={styles.chartBadge} id="chart-heatmap-title">[{t('chart.heatmap')}]</h4>
-              <span className={styles.chartFold} aria-hidden="true">{collapsed['heatmap'] ? '[+]' : '[−]'}</span>
-            </button>
-            {!collapsed['heatmap'] && <Heatmap data={heatmapData} t={t} />}
-          </section>
-        )}
+        <section className={styles.chart} aria-labelledby="chart-heatmap-title">
+          <button type="button" className={styles.chartHead} aria-expanded={!collapsed['heatmap']} onClick={() => { setCollapsed(prev => ({ ...prev, heatmap: !prev['heatmap'] })) }}>
+            <h4 className={styles.chartBadge} id="chart-heatmap-title">[{t('chart.heatmap')}]</h4>
+            <span className={styles.chartFold} aria-hidden="true">{collapsed['heatmap'] ? '[+]' : '[−]'}</span>
+          </button>
+          {!collapsed['heatmap'] && <Heatmap data={heatmapData} status={heatmapStatus} t={t} />}
+        </section>
       </div>
 
       <div className={styles.toolbar}>

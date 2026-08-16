@@ -1065,7 +1065,7 @@
 
 .charts {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 10px;
 }
 
@@ -1249,7 +1249,7 @@
 .heatmapWrap {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 6px;
 }
 
 .heatmapHeader {
@@ -1270,13 +1270,13 @@
 .heatmapGrid {
   display: grid;
   grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 3px;
+  gap: 2px;
 }
 
 .heatmapWeekday {
   color: var(--retro-faint);
-  font-size: 9px;
-  letter-spacing: .1em;
+  font-size: 8px;
+  letter-spacing: .08em;
   text-align: center;
   text-transform: uppercase;
 }
@@ -1284,11 +1284,11 @@
 .heatmapCell {
   display: grid;
   place-items: center;
-  aspect-ratio: 1;
+  height: 17px;
   border: 1px solid rgba(16, 185, 129, .12);
   background: #020403;
   color: var(--retro-faint);
-  font-size: 9px;
+  font-size: 8px;
   font-variant-numeric: tabular-nums;
   transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
@@ -1351,6 +1351,13 @@
 .heatmapLegendScale i[data-level='2'] { background: rgba(16, 185, 129, .34); }
 .heatmapLegendScale i[data-level='3'] { background: rgba(16, 185, 129, .58); }
 .heatmapLegendScale i[data-level='4'] { background: #10b981; }
+
+.heatmapStatus {
+  color: var(--retro-faint);
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-align: right;
+}
 
 @keyframes spin {
   to { transform: rotate(360deg); }
