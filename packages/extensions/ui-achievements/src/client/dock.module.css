@@ -1,5 +1,59 @@
-/* Achievements dock readout: ambient composer progress strip. */
+/*
+ * Achievements dock readout — retro terminal style: black ribbon,
+ * emerald border, monospace counters.
+ */
+
 .dock {
-  font-size: 11px;
-  opacity: 0.6;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  max-width: min(100%, 420px);
+  min-height: 26px;
+  padding: 3px 10px 3px 5px;
+  overflow: hidden;
+  border: 1px solid rgba(16, 185, 129, .5);
+  background: rgba(0, 0, 0, .9);
+  color: #4b8f76;
+  font-family: ui-monospace, 'Cascadia Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  font-size: 10px;
+  line-height: 18px;
+  box-shadow: 0 0 12px rgba(16, 185, 129, .08);
+}
+
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border: 1px solid rgba(16, 185, 129, .65);
+  background: rgba(6, 78, 59, .25);
+  color: #34d399;
+  font-size: 10px;
+}
+
+.summary {
+  flex: none;
+  color: #6ee7b7;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.combo {
+  flex: none;
+  padding: 0 6px;
+  border: 1px solid rgba(251, 191, 36, .5);
+  background: rgba(251, 191, 36, .06);
+  color: #fbbf24;
+  font-size: 9px;
+  font-weight: 700;
+}
+
+.next {
+  min-width: 0;
+  overflow: hidden;
+  color: #4b8f76;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

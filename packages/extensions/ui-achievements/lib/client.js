@@ -5,10 +5,10 @@ window.__ModuleLoader__.load({
 		var exports = module.exports;
 		Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 		let _deepseek_ai_dsh_client_web_react = require("@deepseek-ai/dsh-client-web-react");
-		let react_jsx_runtime = require("react/jsx-runtime");
 		let react = require("react");
+		let react_jsx_runtime = require("react/jsx-runtime");
 		let _deepseek_ai_dsh_client_runtime_client = require("@deepseek-ai/dsh-client-runtime/client");
-		//#region lib/types/client/twemoji.js
+		//#region src/client/twemoji.ts
 		/** Twemoji CDN base: consistent, flat, CC BY 4.0-licensed emoji SVGs. */
 		const TWEMOJI_BASE = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg/";
 		/** Map an emoji to its Twemoji SVG filename (UTF-16 code units, '-' joined). */
@@ -19,7 +19,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:D:\deepseek\deepseek-harness-master\packages\extensions\ui-achievements\src\client\AchievementsSection.module.css.mjs
-		const css$4 = ".S48bLa_section{--achievement-bg:#10171e;--achievement-panel:#17212b;--achievement-card:#1c2832;--achievement-raised:#22313d;--achievement-line:#314351;--achievement-line-strong:#465b69;--achievement-text:#e5e9ec;--achievement-muted:#96a4af;--achievement-brass:#b89a61;--achievement-brass-dark:#3b3427;--achievement-steel:#8998a6;--achievement-blue:#6f9fc4;--achievement-violet:#917aa8;--achievement-green:#6f9b7b;max-width:920px;color:var(--achievement-text);flex-direction:column;gap:18px;display:flex}.S48bLa_loading{min-height:140px;color:var(--achievement-muted);justify-content:center;align-items:center;gap:8px;font-size:13px;display:flex}.S48bLa_loadingSpinner{border:2px solid var(--achievement-line);border-top-color:var(--achievement-brass);border-radius:50%;width:15px;height:15px;animation:.8s linear infinite S48bLa_spin}.S48bLa_loadFailure{color:#d7dbe0;background:#171c22;border:1px solid #4d3d34;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;min-height:132px;padding:24px;display:grid;box-shadow:inset 3px 0 #9a5a49}.S48bLa_loadFailureIcon{color:#f0d8cf;border:1px solid #9a5a49;place-items:center;width:34px;height:34px;font:700 18px/1 Georgia,serif;display:grid}.S48bLa_loadFailure strong{color:#f0d8cf;font:600 15px/1.3 Georgia,serif}.S48bLa_loadFailure p{color:#9fa8b2;margin:5px 0 0;font-size:12px;line-height:1.5}.S48bLa_loadFailure button{color:#d9c7a0;cursor:pointer;background:#222a33;border:1px solid #6e6048;padding:8px 12px}.S48bLa_loadFailure button:hover{color:#f0dfb7;background:#29333e}.S48bLa_hero{background:var(--achievement-panel);border:1px solid #4b4435;border-radius:12px;flex-direction:column;gap:14px;padding:19px 20px 17px;display:flex;position:relative;overflow:hidden;box-shadow:0 10px 24px #050a0f38}.S48bLa_hero:before{background:var(--achievement-brass);content:\"\";width:3px;position:absolute;inset:18px auto 18px 0}.S48bLa_hero:after{content:\"\";background:#655b46;height:1px;position:absolute;top:0;left:22px;right:22px}.S48bLa_heroGlow{display:none}.S48bLa_heroTop{align-items:center;gap:15px;display:flex}.S48bLa_heroIcon{border:1px solid var(--achievement-brass);background:var(--achievement-brass-dark);color:#d8c28f;border-radius:12px;flex:none;justify-content:center;align-items:center;width:56px;height:56px;font-size:27px;display:inline-flex}.S48bLa_heroCopy{flex:1;min-width:0}.S48bLa_kicker{color:var(--achievement-brass);letter-spacing:.18em;text-transform:uppercase;font-size:9px;font-weight:700}.S48bLa_heroTitle{color:#f0ece2;letter-spacing:-.01em;margin:3px 0;font-family:Georgia,Times New Roman,serif;font-size:22px;font-weight:700;line-height:1.25}.S48bLa_heroSubtitle{color:#a9b3bb;margin:0;font-size:12px;line-height:1.5}.S48bLa_ring{flex:none;place-items:center;width:78px;height:78px;display:grid;position:relative}.S48bLa_ringGraphic{width:100%;height:100%;position:absolute;inset:0;transform:rotate(-90deg)}.S48bLa_ringTrack,.S48bLa_ringValue{fill:none;stroke-width:3px}.S48bLa_ringTrack{stroke:var(--achievement-line)}.S48bLa_ringValue{stroke:var(--achievement-brass);stroke-linecap:round;transition:stroke-dasharray .35s}.S48bLa_ringInner{background:var(--achievement-bg);border:1px solid #2c3a45;border-radius:50%;flex-direction:column;justify-content:center;align-items:center;width:59px;height:59px;display:flex}.S48bLa_ringInner strong{color:#d8c28f;font-variant-numeric:tabular-nums;font-family:Georgia,Times New Roman,serif;font-size:17px;line-height:20px}.S48bLa_ringInner span{color:var(--achievement-muted);font-size:9px}.S48bLa_stats{border:1px solid var(--achievement-line);background:var(--achievement-card);border-radius:8px;grid-template-columns:repeat(3,1fr);gap:0;display:grid;overflow:hidden}.S48bLa_stat{background:0 0;border:0;flex-direction:column;gap:2px;padding:9px 12px;display:flex}.S48bLa_stat+.S48bLa_stat{border-left:1px solid var(--achievement-line)}.S48bLa_stat strong{color:#ddd4bf;font-variant-numeric:tabular-nums;font-family:Georgia,Times New Roman,serif;font-size:17px;line-height:21px}.S48bLa_stat span{color:var(--achievement-muted);letter-spacing:.06em;text-transform:uppercase;font-size:9px}.S48bLa_heroBar,.S48bLa_groupProgress,.S48bLa_bar{background:#0c1319;border-radius:999px;overflow:hidden}.S48bLa_heroBar{height:6px}.S48bLa_heroBarFill,.S48bLa_groupProgress div,.S48bLa_barFill{border-radius:inherit;background:var(--achievement-brass);height:100%;transition:width .35s}.S48bLa_toolbar{border:1px solid var(--achievement-line);background:#131b22;border-radius:8px;justify-content:space-between;align-items:center;gap:12px;padding:8px 10px;display:flex}.S48bLa_toolbarCopy{align-items:baseline;gap:8px;min-width:0;display:flex}.S48bLa_toolbarLabel{color:var(--achievement-text);font-family:Georgia,Times New Roman,serif;font-size:13px;font-weight:700}.S48bLa_toolbarCount{color:var(--achievement-muted);font-size:11px}.S48bLa_controls{flex-wrap:wrap;justify-content:flex-end;gap:6px;display:flex}.S48bLa_segmented{border:1px solid var(--achievement-line);background:var(--achievement-bg);border-radius:9px;gap:2px;padding:3px;display:inline-flex}.S48bLa_sortBtn,.S48bLa_filterBtn{color:var(--achievement-muted);cursor:pointer;font:inherit;background:0 0;border:0;border-radius:6px;padding:2px 8px;font-size:11px;line-height:20px;transition:background .14s,color .14s}.S48bLa_sortBtn:hover,.S48bLa_filterBtn:hover{background:var(--achievement-card);color:var(--achievement-text)}.S48bLa_sortBtn:focus-visible,.S48bLa_filterBtn:focus-visible{outline:2px solid var(--achievement-brass);outline-offset:1px}.S48bLa_sortActive,.S48bLa_filterActive{color:#f0ece2;background:#353c41}.S48bLa_deepBtn{color:#8fa0ac;cursor:pointer;min-height:28px;font:inherit;white-space:nowrap;background:#17212b;border:1px solid #3b4b57;border-radius:7px;padding:3px 9px;font-size:10px}.S48bLa_deepBtn:hover{color:#cbd2d7;border-color:#526674}.S48bLa_deepActive{color:#c6ae78;background:#302b22;border-color:#655b46}.S48bLa_deepBtn{border:1px solid var(--achievement-line);color:var(--achievement-muted);cursor:pointer;font:inherit;background:0 0;border-radius:8px;padding:2px 10px;font-size:11px;line-height:20px;transition:background .14s,color .14s,border-color .14s}.S48bLa_deepBtn:hover{background:var(--achievement-card);color:var(--achievement-text)}.S48bLa_deepBtn:focus-visible{outline:2px solid var(--achievement-brass);outline-offset:1px}.S48bLa_deepActive{border-color:var(--achievement-green);color:#cfe6d4;background:#6f9b7b24}.S48bLa_archive{border:1px solid var(--achievement-line);background:var(--achievement-panel);border-radius:12px;grid-template-columns:190px minmax(0,1fr);min-height:430px;display:grid;overflow:hidden;box-shadow:0 10px 24px #050a0f33}.S48bLa_rail{border-right:1px solid var(--achievement-line);background:#111920;min-width:0;padding:12px 10px}.S48bLa_railHeader{border-bottom:1px solid #293943;justify-content:space-between;align-items:center;gap:8px;padding:2px 7px 10px;display:flex}.S48bLa_railTitle{color:#c4ccd2;letter-spacing:.12em;text-transform:uppercase;font-size:9px;font-weight:700}.S48bLa_railCount{color:#c6ae78;font-variant-numeric:tabular-nums;border:1px solid #4b4435;border-radius:4px;justify-content:center;align-items:center;min-width:20px;height:18px;padding:0 5px;font-size:9px;display:inline-flex}.S48bLa_railList{flex-direction:column;gap:4px;padding-top:8px;display:flex}.S48bLa_railItem{width:100%;color:var(--achievement-muted);cursor:pointer;font:inherit;text-align:left;background:0 0;border:1px solid #0000;border-radius:7px;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:2px 8px;padding:8px 8px 7px;transition:background .14s,border-color .14s,color .14s;display:grid}.S48bLa_railItem:hover{color:var(--achievement-text);background:#18232c;border-color:#2f414d}.S48bLa_railItem:focus-visible{outline:2px solid var(--achievement-brass);outline-offset:1px}.S48bLa_railItemActive{color:#eee8dc;background:#2d2b25;border-color:#655b46}.S48bLa_railIcon{width:28px;height:30px;color:var(--achievement-brass);background:#0d141a;border:1px solid #3b4b57;border-radius:6px;grid-row:1/span 2;justify-content:center;align-items:center;font-size:13px;display:inline-flex}.S48bLa_railItemActive .S48bLa_railIcon{background:var(--achievement-brass-dark);color:#d8c28f;border-color:#756744}.S48bLa_railCopy{justify-content:space-between;align-items:baseline;gap:5px;min-width:0;display:flex}.S48bLa_railCopy strong{text-overflow:ellipsis;white-space:nowrap;font-family:Georgia,Times New Roman,serif;font-size:11px;font-weight:700;overflow:hidden}.S48bLa_railCopy small{color:#71818d;font-variant-numeric:tabular-nums;flex:none;font-size:9px}.S48bLa_railMeter{background:#090e12;border-radius:999px;grid-column:2;height:3px;overflow:hidden}.S48bLa_railMeter span{border-radius:inherit;background:#7c6b49;height:100%;display:block}.S48bLa_ledger{background:var(--achievement-panel);min-width:0;padding:15px 16px 17px}.S48bLa_ledgerHeader{justify-content:space-between;align-items:center;gap:12px;min-height:42px;padding-bottom:10px;display:flex}.S48bLa_groupHeading{align-items:center;gap:9px;min-width:0;display:flex}.S48bLa_groupIcon{background:var(--achievement-brass-dark);color:#d8c28f;border:1px solid #655b46;border-radius:7px;flex:none;justify-content:center;align-items:center;width:34px;height:34px;font-size:15px;display:inline-flex}.S48bLa_groupTitle{color:var(--achievement-text);margin:0;font-family:Georgia,Times New Roman,serif;font-size:15px;font-weight:700;line-height:16px}.S48bLa_groupMeta{color:var(--achievement-muted);font-size:10px;line-height:14px}.S48bLa_ledgerCompletion{flex-direction:column;flex:none;align-items:flex-end;display:flex}.S48bLa_ledgerCompletion strong{color:#ddd4bf;font-variant-numeric:tabular-nums;font-family:Georgia,Times New Roman,serif;font-size:16px}.S48bLa_ledgerCompletion span{color:var(--achievement-muted);letter-spacing:.08em;text-transform:uppercase;font-size:8px}.S48bLa_groupProgress{width:100%;height:4px;margin-bottom:13px}.S48bLa_rows{flex-direction:column;gap:8px;display:flex}.S48bLa_row{--rarity-color:var(--achievement-steel);border:1px solid var(--achievement-line);border-left:3px solid var(--rarity-color);background:var(--achievement-card);border-radius:11px;align-items:flex-start;gap:13px;padding:13px;transition:background .16s,border-color .16s,transform .16s;display:flex;position:relative;box-shadow:0 5px 14px #050a0f24}.S48bLa_row:hover{border-color:var(--achievement-line-strong);background:var(--achievement-raised);transform:translateY(-1px)}.S48bLa_rarity-common{--rarity-color:var(--achievement-steel)}.S48bLa_rarity-rare{--rarity-color:var(--achievement-blue)}.S48bLa_rarity-epic{--rarity-color:var(--achievement-violet)}.S48bLa_rarity-legendary{--rarity-color:var(--achievement-brass)}.S48bLa_done{background:#1c2b29}.S48bLa_locked{opacity:.78}.S48bLa_icon{border:1px solid var(--rarity-color);background:var(--achievement-bg);width:44px;height:46px;color:var(--rarity-color);border-radius:9px;flex:none;justify-content:center;align-items:center;font-size:21px;display:inline-flex;position:relative}.S48bLa_icon[data-unlocked=true]{border-color:var(--achievement-brass);background:var(--achievement-brass-dark)}.S48bLa_iconImage{object-fit:contain;width:25px;height:25px}.S48bLa_iconCheck{border:2px solid var(--achievement-card);background:var(--achievement-green);color:#f3f5f2;border-radius:50%;justify-content:center;align-items:center;width:17px;height:17px;font-size:10px;font-weight:800;display:inline-flex;position:absolute;bottom:-5px;right:-5px}.S48bLa_main{flex:1;min-width:0}.S48bLa_rowTop,.S48bLa_nameLine{align-items:center;gap:8px;display:flex}.S48bLa_rowTop{justify-content:space-between}.S48bLa_nameLine{flex-wrap:wrap;min-width:0}.S48bLa_name{color:var(--achievement-text);font-family:Georgia,Times New Roman,serif;font-size:13px;font-weight:700;line-height:20px}.S48bLa_desc{color:#a8b3bc;margin-top:3px;font-size:11px;line-height:1.45}.S48bLa_badge{border:1px solid var(--badge-color,var(--achievement-steel));letter-spacing:.06em;text-transform:uppercase;white-space:nowrap;background:#151e26;border-radius:4px;align-items:center;min-height:19px;padding:1px 7px;font-size:9px;font-weight:650;line-height:15px;display:inline-flex}.S48bLa_badge-common{--badge-color:#596b79;color:#aab4bd}.S48bLa_badge-rare{--badge-color:#426d8f;color:#8fb7d5}.S48bLa_badge-epic{--badge-color:#66547a;color:#ad9abe}.S48bLa_badge-legendary{--badge-color:#75623d;color:#d1b777}.S48bLa_badge-done{--badge-color:#496b54;color:#8db398;background:#18251f}.S48bLa_badge-locked{--badge-color:#3d4c57;color:#83919c;background:#151e26}.S48bLa_barWrap{margin-top:9px}.S48bLa_bar{height:5px}.S48bLa_barFill{background:var(--rarity-color)}.S48bLa_barLabel{color:var(--achievement-muted);font-variant-numeric:tabular-nums;justify-content:space-between;margin-top:4px;font-size:10px;display:flex}.S48bLa_unlockedLine{color:#8db398;margin-top:5px;font-size:10px;font-weight:600}.S48bLa_empty{border:1px dashed var(--achievement-line-strong);background:var(--achievement-panel);color:var(--achievement-muted);text-align:center;border-radius:10px;padding:24px;font-size:12px}@keyframes S48bLa_spin{to{transform:rotate(360deg)}}@media (width<=760px){.S48bLa_archive{flex-direction:column;min-height:0;display:flex}.S48bLa_rail{border-right:0;border-bottom:1px solid var(--achievement-line);padding:10px}.S48bLa_railHeader{padding-bottom:8px}.S48bLa_railList{flex-direction:row;gap:6px;padding:8px 0 1px;overflow-x:auto}.S48bLa_railItem{flex:none;width:164px}.S48bLa_ledger{padding:14px}}@media (width<=620px){.S48bLa_hero{border-radius:13px;padding:17px}.S48bLa_heroIcon{width:46px;height:46px;font-size:23px}.S48bLa_ring{width:64px;height:64px}.S48bLa_ringInner{width:48px;height:48px}.S48bLa_ringInner strong{font-size:14px}.S48bLa_toolbar{flex-direction:column;align-items:flex-start}.S48bLa_controls{justify-content:flex-start}.S48bLa_segmented{max-width:100%}.S48bLa_row{padding:11px}}@media (prefers-reduced-motion:reduce){.S48bLa_loadingSpinner,.S48bLa_row,.S48bLa_ringValue,.S48bLa_heroBarFill,.S48bLa_groupProgress div,.S48bLa_barFill{transition:none;animation:none}}";
+		const css$4 = ".S48bLa_section{--retro-bg:#050807;--retro-panel:#000;--retro-card:#060b09;--retro-line:#10b98159;--retro-line-strong:#10b981a6;--retro-emerald:#10b981;--retro-emerald-dim:#34d399;--retro-emerald-deep:#064e3b;--retro-text:#d1fae5;--retro-muted:#6ee7b7;--retro-faint:#4b8f76;--retro-amber:#fbbf24;--retro-amber-deep:#92400e;--retro-glow:0 0 15px #10b9811a;max-width:920px;color:var(--retro-text);flex-direction:column;gap:16px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;display:flex}.S48bLa_loading{min-height:140px;color:var(--retro-muted);justify-content:center;align-items:center;gap:10px;font-size:12px;display:flex}.S48bLa_loadingSpinner{border:2px solid var(--retro-emerald-deep);border-top-color:var(--retro-emerald);border-radius:50%;width:15px;height:15px;animation:.8s linear infinite S48bLa_spin}.S48bLa_loadFailure{min-height:132px;color:var(--retro-text);background:var(--retro-panel);border:1px solid var(--retro-line-strong);box-shadow:var(--retro-glow);grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:14px;padding:24px;display:grid}.S48bLa_loadFailureIcon{width:34px;height:34px;color:var(--retro-amber);border:1px solid var(--retro-amber);place-items:center;font:700 18px/1 ui-monospace,monospace;display:grid}.S48bLa_loadFailure strong{color:var(--retro-text);font:600 15px/1.3 ui-monospace,monospace}.S48bLa_loadFailure p{color:var(--retro-faint);margin:5px 0 0;font-size:12px;line-height:1.5}.S48bLa_loadFailure button{color:var(--retro-emerald);border:1px solid var(--retro-line-strong);cursor:pointer;background:0 0;padding:8px 12px;font-family:inherit}.S48bLa_loadFailure button:hover{color:#0b0f0d;background:var(--retro-emerald)}.S48bLa_hero{border:1px solid var(--retro-emerald-deep);box-shadow:var(--retro-glow);background:#000000e6;flex-direction:column;gap:14px;padding:22px 20px 18px;display:flex;position:relative}.S48bLa_hero:before,.S48bLa_hero:after,.S48bLa_heroGlow:before,.S48bLa_heroGlow:after{border:2px solid var(--retro-emerald);content:\"\";pointer-events:none;width:10px;height:10px;position:absolute}.S48bLa_hero:before{border-bottom:0;border-right:0;top:-2px;left:-2px}.S48bLa_hero:after{border-bottom:0;border-left:0;top:-2px;right:-2px}.S48bLa_heroGlow:before{border-top:0;border-right:0;bottom:-2px;left:-2px}.S48bLa_heroGlow:after{border-top:0;border-left:0;bottom:-2px;right:-2px}.S48bLa_heroGlow{pointer-events:none;position:absolute;inset:0}.S48bLa_heroTop{align-items:center;gap:16px;display:flex}.S48bLa_heroIcon{border:1px solid var(--retro-line-strong);width:52px;height:52px;color:var(--retro-emerald-dim);background:#064e3b40;flex:none;justify-content:center;align-items:center;font-size:26px;display:inline-flex;box-shadow:inset 0 0 12px #10b9811f}.S48bLa_heroCopy{flex:1;min-width:0}.S48bLa_kicker{color:var(--retro-emerald);letter-spacing:.22em;text-transform:uppercase;font-size:9px;font-weight:700}.S48bLa_heroTitle{color:var(--retro-text);letter-spacing:.02em;margin:4px 0;font-family:ui-monospace,monospace;font-size:21px;font-weight:700;line-height:1.2}.S48bLa_heroTitle:before{content:\"> \";color:var(--retro-emerald)}.S48bLa_heroSubtitle{color:var(--retro-faint);margin:0;font-size:11px;line-height:1.5}.S48bLa_ring{flex:none;place-items:center;width:76px;height:76px;display:grid;position:relative}.S48bLa_ringGraphic{width:100%;height:100%;position:absolute;inset:0;transform:rotate(-90deg)}.S48bLa_ringTrack,.S48bLa_ringValue{fill:none;stroke-width:3px}.S48bLa_ringTrack{stroke:var(--retro-emerald-deep)}.S48bLa_ringValue{stroke:var(--retro-emerald);stroke-linecap:butt;transition:stroke-dasharray .35s}.S48bLa_ringInner{border:1px solid var(--retro-line);background:var(--retro-panel);border-radius:50%;flex-direction:column;justify-content:center;align-items:center;width:56px;height:56px;display:flex}.S48bLa_ringInner strong{color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;font-family:ui-monospace,monospace;font-size:16px;line-height:19px}.S48bLa_ringInner span{color:var(--retro-faint);letter-spacing:.1em;text-transform:uppercase;font-size:8px}.S48bLa_stats{border:1px solid var(--retro-line);background:var(--retro-panel);grid-template-columns:repeat(3,1fr);gap:0;display:grid;position:relative}.S48bLa_stat{background:0 0;flex-direction:column;gap:2px;padding:9px 12px;display:flex}.S48bLa_stat+.S48bLa_stat{border-left:1px solid var(--retro-line)}.S48bLa_stat strong{color:var(--retro-text);font-variant-numeric:tabular-nums;font-family:ui-monospace,monospace;font-size:16px;line-height:20px}.S48bLa_stat strong:before{content:\"› \";color:var(--retro-emerald)}.S48bLa_stat span{color:var(--retro-faint);letter-spacing:.14em;text-transform:uppercase;font-size:8px}.S48bLa_heroBar,.S48bLa_groupProgress,.S48bLa_bar{border:1px solid var(--retro-line);background:#020403;height:10px;position:relative;overflow:hidden}.S48bLa_heroBar:after,.S48bLa_groupProgress:after,.S48bLa_bar:after{content:\"\";pointer-events:none;background-image:repeating-linear-gradient(90deg,#0000 0 calc(10% - 1px),#10b98140 calc(10% - 1px) 10%);justify-content:space-between;padding:0 4px;display:flex;position:absolute;inset:0}.S48bLa_heroBar{height:10px}.S48bLa_heroBarFill,.S48bLa_groupProgress div,.S48bLa_barFill{background:var(--retro-emerald);height:100%;transition:width .35s;box-shadow:0 0 8px #10b98180}.S48bLa_groupProgress,.S48bLa_bar{height:7px}.S48bLa_groupProgress{width:100%;margin-bottom:13px}.S48bLa_toolbar{border:1px solid var(--retro-line);background:var(--retro-panel);justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;display:flex}.S48bLa_toolbarCopy{align-items:baseline;gap:8px;min-width:0;display:flex}.S48bLa_toolbarLabel{color:var(--retro-emerald);letter-spacing:.12em;text-transform:uppercase;font-size:11px;font-weight:700}.S48bLa_toolbarCount{color:var(--retro-faint);font-size:10px}.S48bLa_controls{flex-wrap:wrap;justify-content:flex-end;gap:6px;display:flex}.S48bLa_segmented{border:1px solid var(--retro-line);background:#000;gap:2px;padding:2px;display:inline-flex}.S48bLa_sortBtn,.S48bLa_filterBtn{color:var(--retro-faint);cursor:pointer;letter-spacing:.06em;text-transform:uppercase;background:0 0;border:0;padding:2px 9px;font-family:inherit;font-size:10px;line-height:20px;transition:background .14s,color .14s}.S48bLa_sortBtn:hover,.S48bLa_filterBtn:hover{color:var(--retro-emerald-dim)}.S48bLa_sortBtn:focus-visible,.S48bLa_filterBtn:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_sortActive,.S48bLa_filterActive{color:#020403;background:var(--retro-emerald)}.S48bLa_deepBtn{border:1px solid var(--retro-line-strong);min-height:26px;color:var(--retro-faint);cursor:pointer;letter-spacing:.05em;white-space:nowrap;text-transform:uppercase;background:0 0;padding:2px 10px;font-family:inherit;font-size:9px;transition:background .14s,color .14s,border-color .14s}.S48bLa_deepBtn:hover{color:var(--retro-emerald-dim);border-color:var(--retro-emerald)}.S48bLa_deepBtn:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_deepActive{color:var(--retro-amber);border-color:var(--retro-amber);background:#fbbf2414}.S48bLa_archive{border:1px solid var(--retro-emerald-deep);background:var(--retro-panel);min-height:430px;box-shadow:var(--retro-glow);grid-template-columns:190px minmax(0,1fr);display:grid}.S48bLa_rail{border-right:1px solid var(--retro-line);background:#020403;min-width:0;padding:12px 10px}.S48bLa_railHeader{border-bottom:1px solid var(--retro-line);justify-content:space-between;align-items:center;gap:8px;padding:2px 7px 10px;display:flex}.S48bLa_railTitle{color:var(--retro-emerald);letter-spacing:.16em;text-transform:uppercase;font-size:9px;font-weight:700}.S48bLa_railCount{border:1px solid var(--retro-line-strong);min-width:20px;height:18px;color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;justify-content:center;align-items:center;padding:0 5px;font-size:9px;display:inline-flex}.S48bLa_railList{flex-direction:column;gap:4px;padding-top:8px;display:flex}.S48bLa_railItem{width:100%;color:var(--retro-faint);cursor:pointer;text-align:left;background:0 0;border:1px solid #0000;grid-template-columns:28px minmax(0,1fr);align-items:center;gap:2px 8px;padding:8px 8px 7px;font-family:inherit;transition:background .14s,border-color .14s,color .14s;display:grid;position:relative}.S48bLa_railItem:hover{border-color:var(--retro-line);color:var(--retro-text);background:#10b9810f}.S48bLa_railItem:hover .S48bLa_railIcon:before{content:\"> \";color:var(--retro-emerald)}.S48bLa_railItem:focus-visible{outline:1px solid var(--retro-emerald);outline-offset:1px}.S48bLa_railItemActive{border-color:var(--retro-line-strong);color:var(--retro-text);background:#064e3b4d}.S48bLa_railIcon{border:1px solid var(--retro-line);width:28px;height:30px;color:var(--retro-emerald);background:#000;grid-row:1/span 2;justify-content:center;align-items:center;font-size:12px;display:inline-flex}.S48bLa_railItemActive .S48bLa_railIcon{border-color:var(--retro-emerald);color:var(--retro-emerald-dim)}.S48bLa_railCopy{justify-content:space-between;align-items:baseline;gap:5px;min-width:0;display:flex}.S48bLa_railCopy strong{text-overflow:ellipsis;white-space:nowrap;font-size:10px;font-weight:700;overflow:hidden}.S48bLa_railCopy small{color:var(--retro-faint);font-variant-numeric:tabular-nums;flex:none;font-size:9px}.S48bLa_railMeter{border:1px solid var(--retro-line);background:#000;grid-column:2;height:4px;overflow:hidden}.S48bLa_railMeter span{background:var(--retro-emerald);height:100%;display:block}.S48bLa_ledger{background:var(--retro-panel);min-width:0;padding:15px 16px 17px}.S48bLa_ledgerHeader{justify-content:space-between;align-items:center;gap:12px;min-height:42px;padding-bottom:10px;display:flex}.S48bLa_groupHeading{align-items:center;gap:9px;min-width:0;display:flex}.S48bLa_groupIcon{border:1px solid var(--retro-line-strong);width:34px;height:34px;color:var(--retro-emerald-dim);background:#064e3b40;flex:none;justify-content:center;align-items:center;font-size:14px;display:inline-flex}.S48bLa_groupTitle{color:var(--retro-text);letter-spacing:.08em;text-transform:uppercase;margin:0;font-size:13px;font-weight:700;line-height:16px;position:relative}.S48bLa_groupTitle:before{content:\"[\";color:var(--retro-emerald)}.S48bLa_groupTitle:after{content:\"]\";color:var(--retro-emerald)}.S48bLa_groupMeta{color:var(--retro-faint);font-size:9px;line-height:14px}.S48bLa_ledgerCompletion{flex-direction:column;flex:none;align-items:flex-end;display:flex}.S48bLa_ledgerCompletion strong{color:var(--retro-emerald-dim);font-variant-numeric:tabular-nums;font-size:15px}.S48bLa_ledgerCompletion span{color:var(--retro-faint);letter-spacing:.1em;text-transform:uppercase;font-size:8px}.S48bLa_rows{flex-direction:column;gap:8px;display:flex}.S48bLa_row{--rarity-color:var(--retro-emerald);border:1px solid var(--retro-line);background:var(--retro-card);align-items:flex-start;gap:13px;padding:13px;transition:background .16s,border-color .16s,transform .16s;display:flex;position:relative;box-shadow:0 0 10px #10b9810d}.S48bLa_row:before,.S48bLa_row:after{border:1.5px solid var(--rarity-color);content:\"\";pointer-events:none;width:6px;height:6px;transition:border-color .16s;position:absolute}.S48bLa_row:before{border-bottom:0;border-right:0;top:-1px;left:-1px}.S48bLa_row:after{border-top:0;border-left:0;bottom:-1px;right:-1px}.S48bLa_row:hover{border-color:var(--retro-line-strong);background:#10b9810d;transform:translateY(-1px)}.S48bLa_row:hover .S48bLa_main:after{opacity:1}.S48bLa_row .S48bLa_main:after{opacity:0;content:\"\";pointer-events:none;background-image:repeating-linear-gradient(0deg,#0000 0 2px,#10b9810a 2px 3px);transition:opacity .16s;position:absolute;inset:0}.S48bLa_rarity-common{--rarity-color:var(--retro-emerald)}.S48bLa_rarity-rare{--rarity-color:#2dd4bf}.S48bLa_rarity-epic{--rarity-color:#a78bfa}.S48bLa_rarity-legendary{--rarity-color:var(--retro-amber)}.S48bLa_done{background:#064e3b40;border-color:#10b98199}.S48bLa_locked{opacity:.72}.S48bLa_icon{border:1px solid var(--rarity-color);width:44px;height:46px;color:var(--rarity-color);background:#000;flex:none;justify-content:center;align-items:center;font-size:20px;display:inline-flex;position:relative;box-shadow:inset 0 0 10px #10b98114}.S48bLa_icon[data-unlocked=true]{border-color:var(--retro-emerald);background:#064e3b4d}.S48bLa_iconImage{object-fit:contain;width:24px;height:24px}.S48bLa_iconCheck{border:2px solid var(--retro-panel);background:var(--retro-emerald);color:#020403;border-radius:50%;justify-content:center;align-items:center;width:17px;height:17px;font-size:10px;font-weight:800;display:inline-flex;position:absolute;bottom:-5px;right:-5px}.S48bLa_main{flex:1;min-width:0;position:relative}.S48bLa_rowTop,.S48bLa_nameLine{align-items:center;gap:8px;display:flex}.S48bLa_rowTop{justify-content:space-between}.S48bLa_nameLine{flex-wrap:wrap;min-width:0}.S48bLa_name{color:var(--retro-text);letter-spacing:.02em;font-size:12px;font-weight:700;line-height:20px}.S48bLa_name:before{content:\"› \";color:var(--rarity-color)}.S48bLa_desc{color:var(--retro-faint);margin-top:3px;font-size:10px;line-height:1.45}.S48bLa_badge{border:1px solid var(--badge-color,var(--retro-line-strong));letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;background:#000;align-items:center;min-height:18px;padding:1px 7px;font-size:8px;font-weight:650;line-height:14px;display:inline-flex}.S48bLa_badge-common{--badge-color:var(--retro-line-strong);color:var(--retro-emerald-dim)}.S48bLa_badge-rare{--badge-color:#2dd4bf99;color:#5eead4}.S48bLa_badge-epic{--badge-color:#a78bfa99;color:#c4b5fd}.S48bLa_badge-legendary{--badge-color:#fbbf2499;color:var(--retro-amber)}.S48bLa_badge-done{--badge-color:#10b98199;color:var(--retro-emerald-dim);background:#064e3b4d}.S48bLa_badge-locked{--badge-color:var(--retro-line);color:var(--retro-faint)}.S48bLa_barWrap{margin-top:9px}.S48bLa_barFill{background:var(--rarity-color)}.S48bLa_barLabel{color:var(--retro-faint);font-variant-numeric:tabular-nums;justify-content:space-between;margin-top:4px;font-size:9px;display:flex}.S48bLa_unlockedLine{color:var(--retro-emerald-dim);margin-top:5px;font-size:9px;font-weight:600}.S48bLa_empty{border:1px dashed var(--retro-line-strong);background:var(--retro-panel);color:var(--retro-faint);text-align:center;padding:24px;font-size:11px}@keyframes S48bLa_spin{to{transform:rotate(360deg)}}@media (width<=760px){.S48bLa_archive{flex-direction:column;min-height:0;display:flex}.S48bLa_rail{border-right:0;border-bottom:1px solid var(--retro-line);padding:10px}.S48bLa_railHeader{padding-bottom:8px}.S48bLa_railList{flex-direction:row;gap:6px;padding:8px 0 1px;overflow-x:auto}.S48bLa_railItem{flex:none;width:164px}.S48bLa_ledger{padding:14px}}@media (width<=620px){.S48bLa_hero{padding:18px}.S48bLa_heroIcon{width:46px;height:46px;font-size:22px}.S48bLa_ring{width:62px;height:62px}.S48bLa_ringInner{width:46px;height:46px}.S48bLa_ringInner strong{font-size:14px}.S48bLa_toolbar{flex-direction:column;align-items:flex-start}.S48bLa_controls{justify-content:flex-start}.S48bLa_segmented{max-width:100%}.S48bLa_row{padding:11px}}@media (prefers-reduced-motion:reduce){.S48bLa_loadingSpinner,.S48bLa_row,.S48bLa_ringValue,.S48bLa_heroBarFill,.S48bLa_groupProgress div,.S48bLa_barFill{transition:none;animation:none}}";
 		const tagId$4 = "@deepseek-ai/dsh-client-ui-achievements/AchievementsSection.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$4) + "]") === null) {
 			const tag = document.createElement("style");
@@ -29,92 +29,92 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var AchievementsSection_module_css_default = {
-			"ringValue": "S48bLa_ringValue",
-			"toolbarCopy": "S48bLa_toolbarCopy",
-			"nameLine": "S48bLa_nameLine",
-			"badge-common": "S48bLa_badge-common",
-			"railCount": "S48bLa_railCount",
 			"stats": "S48bLa_stats",
-			"iconCheck": "S48bLa_iconCheck",
-			"rowTop": "S48bLa_rowTop",
-			"heroGlow": "S48bLa_heroGlow",
-			"iconImage": "S48bLa_iconImage",
-			"sortBtn": "S48bLa_sortBtn",
-			"railList": "S48bLa_railList",
-			"filterBtn": "S48bLa_filterBtn",
-			"loadFailure": "S48bLa_loadFailure",
-			"ringInner": "S48bLa_ringInner",
-			"groupMeta": "S48bLa_groupMeta",
-			"badge-epic": "S48bLa_badge-epic",
-			"badge-locked": "S48bLa_badge-locked",
-			"barLabel": "S48bLa_barLabel",
-			"unlockedLine": "S48bLa_unlockedLine",
-			"loading": "S48bLa_loading",
-			"badge": "S48bLa_badge",
-			"ringGraphic": "S48bLa_ringGraphic",
-			"groupProgress": "S48bLa_groupProgress",
+			"loadingSpinner": "S48bLa_loadingSpinner",
+			"stat": "S48bLa_stat",
+			"heroCopy": "S48bLa_heroCopy",
+			"controls": "S48bLa_controls",
 			"badge-rare": "S48bLa_badge-rare",
 			"heroIcon": "S48bLa_heroIcon",
-			"segmented": "S48bLa_segmented",
-			"rarity-epic": "S48bLa_rarity-epic",
-			"badge-legendary": "S48bLa_badge-legendary",
-			"loadFailureIcon": "S48bLa_loadFailureIcon",
-			"railTitle": "S48bLa_railTitle",
-			"row": "S48bLa_row",
-			"ring": "S48bLa_ring",
-			"controls": "S48bLa_controls",
+			"badge-epic": "S48bLa_badge-epic",
+			"badge-locked": "S48bLa_badge-locked",
+			"railHeader": "S48bLa_railHeader",
+			"filterActive": "S48bLa_filterActive",
 			"toolbarLabel": "S48bLa_toolbarLabel",
-			"toolbar": "S48bLa_toolbar",
-			"groupTitle": "S48bLa_groupTitle",
-			"kicker": "S48bLa_kicker",
-			"hero": "S48bLa_hero",
-			"deepBtn": "S48bLa_deepBtn",
-			"sortActive": "S48bLa_sortActive",
+			"sortBtn": "S48bLa_sortBtn",
+			"ringInner": "S48bLa_ringInner",
+			"rarity-legendary": "S48bLa_rarity-legendary",
+			"rows": "S48bLa_rows",
+			"icon": "S48bLa_icon",
+			"heroTop": "S48bLa_heroTop",
+			"iconImage": "S48bLa_iconImage",
+			"heroTitle": "S48bLa_heroTitle",
+			"badge-common": "S48bLa_badge-common",
+			"unlockedLine": "S48bLa_unlockedLine",
+			"barFill": "S48bLa_barFill",
+			"railCount": "S48bLa_railCount",
+			"railItem": "S48bLa_railItem",
 			"spin": "S48bLa_spin",
-			"stat": "S48bLa_stat",
-			"bar": "S48bLa_bar",
+			"section": "S48bLa_section",
+			"badge-done": "S48bLa_badge-done",
+			"heroGlow": "S48bLa_heroGlow",
+			"ringTrack": "S48bLa_ringTrack",
+			"ringValue": "S48bLa_ringValue",
+			"railCopy": "S48bLa_railCopy",
+			"barWrap": "S48bLa_barWrap",
+			"loadFailureIcon": "S48bLa_loadFailureIcon",
+			"heroBar": "S48bLa_heroBar",
+			"iconCheck": "S48bLa_iconCheck",
+			"desc": "S48bLa_desc",
+			"main": "S48bLa_main",
+			"heroBarFill": "S48bLa_heroBarFill",
+			"toolbar": "S48bLa_toolbar",
+			"loading": "S48bLa_loading",
+			"ledgerHeader": "S48bLa_ledgerHeader",
+			"done": "S48bLa_done",
+			"ringGraphic": "S48bLa_ringGraphic",
+			"archive": "S48bLa_archive",
+			"toolbarCount": "S48bLa_toolbarCount",
+			"kicker": "S48bLa_kicker",
+			"sortActive": "S48bLa_sortActive",
 			"name": "S48bLa_name",
 			"railIcon": "S48bLa_railIcon",
-			"barWrap": "S48bLa_barWrap",
-			"heroSubtitle": "S48bLa_heroSubtitle",
-			"rarity-common": "S48bLa_rarity-common",
-			"ringTrack": "S48bLa_ringTrack",
+			"railTitle": "S48bLa_railTitle",
+			"toolbarCopy": "S48bLa_toolbarCopy",
 			"empty": "S48bLa_empty",
-			"ledgerHeader": "S48bLa_ledgerHeader",
-			"toolbarCount": "S48bLa_toolbarCount",
-			"railHeader": "S48bLa_railHeader",
-			"groupIcon": "S48bLa_groupIcon",
-			"ledgerCompletion": "S48bLa_ledgerCompletion",
-			"desc": "S48bLa_desc",
-			"railCopy": "S48bLa_railCopy",
-			"barFill": "S48bLa_barFill",
-			"icon": "S48bLa_icon",
-			"heroTitle": "S48bLa_heroTitle",
-			"filterActive": "S48bLa_filterActive",
-			"deepActive": "S48bLa_deepActive",
-			"railItem": "S48bLa_railItem",
-			"rows": "S48bLa_rows",
-			"railMeter": "S48bLa_railMeter",
 			"locked": "S48bLa_locked",
-			"main": "S48bLa_main",
-			"loadingSpinner": "S48bLa_loadingSpinner",
-			"heroBarFill": "S48bLa_heroBarFill",
-			"archive": "S48bLa_archive",
-			"badge-done": "S48bLa_badge-done",
-			"done": "S48bLa_done",
-			"rail": "S48bLa_rail",
-			"heroTop": "S48bLa_heroTop",
-			"ledger": "S48bLa_ledger",
-			"heroCopy": "S48bLa_heroCopy",
-			"groupHeading": "S48bLa_groupHeading",
-			"heroBar": "S48bLa_heroBar",
+			"groupTitle": "S48bLa_groupTitle",
+			"deepBtn": "S48bLa_deepBtn",
+			"ring": "S48bLa_ring",
+			"rarity-epic": "S48bLa_rarity-epic",
+			"railList": "S48bLa_railList",
+			"deepActive": "S48bLa_deepActive",
 			"railItemActive": "S48bLa_railItemActive",
-			"section": "S48bLa_section",
-			"rarity-legendary": "S48bLa_rarity-legendary",
-			"rarity-rare": "S48bLa_rarity-rare"
+			"railMeter": "S48bLa_railMeter",
+			"badge-legendary": "S48bLa_badge-legendary",
+			"groupIcon": "S48bLa_groupIcon",
+			"bar": "S48bLa_bar",
+			"rarity-common": "S48bLa_rarity-common",
+			"groupProgress": "S48bLa_groupProgress",
+			"loadFailure": "S48bLa_loadFailure",
+			"filterBtn": "S48bLa_filterBtn",
+			"groupHeading": "S48bLa_groupHeading",
+			"barLabel": "S48bLa_barLabel",
+			"rarity-rare": "S48bLa_rarity-rare",
+			"badge": "S48bLa_badge",
+			"ledger": "S48bLa_ledger",
+			"heroSubtitle": "S48bLa_heroSubtitle",
+			"segmented": "S48bLa_segmented",
+			"rail": "S48bLa_rail",
+			"row": "S48bLa_row",
+			"hero": "S48bLa_hero",
+			"groupMeta": "S48bLa_groupMeta",
+			"nameLine": "S48bLa_nameLine",
+			"rowTop": "S48bLa_rowTop",
+			"ledgerCompletion": "S48bLa_ledgerCompletion"
 		};
 		//#endregion
-		//#region lib/types/client/AchievementsSection.js
+		//#region src/client/AchievementsSection.tsx
 		/**
 		* Achievements gallery: the settings-section page. Fetches the achievements
 		* snapshot on mount through the inject face's Remote-backed `list` callback,
@@ -160,8 +160,8 @@ window.__ModuleLoader__.load({
 		/** Emoji icon via Twemoji CDN with a text fallback on load failure. */
 		function Icon({ icon }) {
 			const [failed, setFailed] = (0, react.useState)(false);
-			if (failed) return (0, react_jsx_runtime.jsx)("span", { children: icon });
-			return (0, react_jsx_runtime.jsx)("img", {
+			if (failed) return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: icon });
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("img", {
 				className: AchievementsSection_module_css_default.iconImage,
 				src: `${TWEMOJI_BASE}${twemojiPath(icon)}.svg`,
 				alt: icon,
@@ -189,77 +189,77 @@ window.__ModuleLoader__.load({
 			const rowClass = `${AchievementsSection_module_css_default.row} ${rarityClass} ${a.unlocked ? AchievementsSection_module_css_default.done : ""} ${hiddenLocked || deepLocked || !a.unlocked ? AchievementsSection_module_css_default.locked : ""}`;
 			const badgeClass = hiddenLocked ? AchievementsSection_module_css_default["badge-locked"] : AchievementsSection_module_css_default[`badge-${a.rarity}`] ?? AchievementsSection_module_css_default["badge-common"];
 			const progress = completionOf(a.progress.current, a.progress.target);
-			const statusBadge = a.unlocked ? (0, react_jsx_runtime.jsx)("span", {
+			const statusBadge = a.unlocked ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 				className: `${AchievementsSection_module_css_default.badge} ${AchievementsSection_module_css_default["badge-done"]}`,
 				children: t("done")
-			}) : deepLocked ? (0, react_jsx_runtime.jsx)("span", {
+			}) : deepLocked ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 				className: `${AchievementsSection_module_css_default.badge} ${AchievementsSection_module_css_default["badge-locked"]}`,
 				children: t("deepHint")
-			}) : a.progress.target > 1 ? (0, react_jsx_runtime.jsxs)("span", {
+			}) : a.progress.target > 1 ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 				className: `${AchievementsSection_module_css_default.badge} ${AchievementsSection_module_css_default["badge-locked"]}`,
 				children: [
 					a.progress.current,
 					" / ",
 					a.progress.target
 				]
-			}) : (0, react_jsx_runtime.jsx)("span", {
+			}) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 				className: `${AchievementsSection_module_css_default.badge} ${AchievementsSection_module_css_default["badge-locked"]}`,
 				children: t("todo")
 			});
-			const bar = !hiddenLocked && !deepLocked && a.progress.target > 1 && !a.unlocked ? (0, react_jsx_runtime.jsxs)("div", {
+			const bar = !hiddenLocked && !deepLocked && a.progress.target > 1 && !a.unlocked ? /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: AchievementsSection_module_css_default.barWrap,
-				children: [(0, react_jsx_runtime.jsx)("div", {
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 					className: AchievementsSection_module_css_default.bar,
 					"aria-hidden": "true",
-					children: (0, react_jsx_runtime.jsx)("div", {
+					children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						className: AchievementsSection_module_css_default.barFill,
 						style: { width: `${progress}%` }
 					})
-				}), (0, react_jsx_runtime.jsxs)("div", {
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: AchievementsSection_module_css_default.barLabel,
-					children: [(0, react_jsx_runtime.jsx)("span", { children: t("progress") }), (0, react_jsx_runtime.jsxs)("span", { children: [
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("progress") }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: [
 						a.progress.current,
 						" / ",
 						a.progress.target
 					] })]
 				})]
 			}) : null;
-			return (0, react_jsx_runtime.jsxs)("article", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("article", {
 				className: rowClass,
 				"data-rarity": a.rarity,
 				"data-unlocked": a.unlocked,
-				children: [(0, react_jsx_runtime.jsxs)("div", {
+				children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: AchievementsSection_module_css_default.icon,
 					"data-unlocked": a.unlocked,
-					children: [hiddenLocked ? (0, react_jsx_runtime.jsx)("span", { children: "?" }) : (0, react_jsx_runtime.jsx)(Icon, { icon: a.icon }), a.unlocked && (0, react_jsx_runtime.jsx)("span", {
+					children: [hiddenLocked ? /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: "?" }) : /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Icon, { icon: a.icon }), a.unlocked && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: AchievementsSection_module_css_default.iconCheck,
 						"aria-hidden": "true",
 						children: "✓"
 					})]
-				}), (0, react_jsx_runtime.jsxs)("div", {
+				}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: AchievementsSection_module_css_default.main,
 					children: [
-						(0, react_jsx_runtime.jsxs)("div", {
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: AchievementsSection_module_css_default.rowTop,
-							children: [(0, react_jsx_runtime.jsxs)("div", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: AchievementsSection_module_css_default.nameLine,
-								children: [(0, react_jsx_runtime.jsx)("span", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: AchievementsSection_module_css_default.name,
 									children: name
-								}), (0, react_jsx_runtime.jsx)("span", {
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: `${AchievementsSection_module_css_default.badge} ${badgeClass}`,
 									children: hiddenLocked ? t("hiddenDesc") : t(`rarity.${a.rarity}`)
 								})]
 							}), statusBadge]
 						}),
-						(0, react_jsx_runtime.jsx)("div", {
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 							className: AchievementsSection_module_css_default.desc,
 							children: desc
 						}),
 						bar,
-						a.unlocked && (0, react_jsx_runtime.jsx)("div", {
+						a.unlocked && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 							className: AchievementsSection_module_css_default.unlockedLine,
-							children: (0, react_jsx_runtime.jsxs)("span", { children: ["✓ ", t("unlockedHint")] })
+							children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", { children: ["✓ ", t("unlockedHint")] })
 						})
 					]
 				})]
@@ -272,14 +272,19 @@ window.__ModuleLoader__.load({
 			const [status, setStatus] = (0, react.useState)("all");
 			const [deepEnabled, setDeepEnabled] = (0, react.useState)(false);
 			const [activeGroupId, setActiveGroupId] = (0, react.useState)(null);
+			const [loadError, setLoadError] = (0, react.useState)(null);
+			const [reloadToken, setReloadToken] = (0, react.useState)(0);
 			(0, react.useEffect)(() => {
 				let alive = true;
-				list().then((result) => {
-					if (alive && result.ok) setSnapshot(result.value);
+				setLoadError(null);
+				Promise.resolve().then(list).then((result) => {
+					if (!alive) return;
+					if (result.ok) setSnapshot(result.value);
+					else setLoadError(result.error.message);
 				}).catch(() => {
-					if (alive) setSnapshot(null);
+					if (alive) setLoadError(t("loadError"));
 				});
-				if (deepState !== void 0) deepState().then((result) => {
+				if (deepState !== void 0) Promise.resolve().then(deepState).then((result) => {
 					if (alive && result.ok) setDeepEnabled(result.value.enabled);
 				}).catch(() => {
 					if (alive) setDeepEnabled(false);
@@ -287,18 +292,44 @@ window.__ModuleLoader__.load({
 				return () => {
 					alive = false;
 				};
-			}, [list, deepState]);
-			if (snapshot === null) return (0, react_jsx_runtime.jsxs)("div", {
-				className: AchievementsSection_module_css_default.loading,
-				role: "status",
-				children: [(0, react_jsx_runtime.jsx)("span", {
-					className: AchievementsSection_module_css_default.loadingSpinner,
-					"aria-hidden": "true"
-				}), t("loading")]
-			});
+			}, [
+				list,
+				deepState,
+				reloadToken,
+				t
+			]);
+			if (snapshot === null) {
+				if (loadError !== null) return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					className: AchievementsSection_module_css_default.loadFailure,
+					role: "alert",
+					children: [
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+							className: AchievementsSection_module_css_default.loadFailureIcon,
+							"aria-hidden": "true",
+							children: "!"
+						}),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: t("loadError") }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", { children: loadError })] }),
+						/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
+							type: "button",
+							onClick: () => {
+								setReloadToken((value) => value + 1);
+							},
+							children: t("retry")
+						})
+					]
+				});
+				return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
+					className: AchievementsSection_module_css_default.loading,
+					role: "status",
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
+						className: AchievementsSection_module_css_default.loadingSpinner,
+						"aria-hidden": "true"
+					}), t("loading")]
+				});
+			}
 			const toggleDeep = () => {
 				if (setDeepInsights === void 0) return;
-				setDeepInsights(!deepEnabled).then((result) => {
+				Promise.resolve().then(() => setDeepInsights(!deepEnabled)).then((result) => {
 					if (result.ok) setDeepEnabled(result.value.enabled);
 				}).catch(() => {});
 			};
@@ -327,56 +358,56 @@ window.__ModuleLoader__.load({
 				};
 			}).filter((group) => group.items.length > 0);
 			const activeGroup = visibleGroups.find((group) => group.id === activeGroupId) ?? visibleGroups[0];
-			return (0, react_jsx_runtime.jsxs)("div", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: AchievementsSection_module_css_default.section,
 				children: [
-					(0, react_jsx_runtime.jsxs)("section", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 						className: AchievementsSection_module_css_default.hero,
 						"aria-labelledby": "achievements-overview-title",
 						children: [
-							(0, react_jsx_runtime.jsx)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								className: AchievementsSection_module_css_default.heroGlow,
 								"aria-hidden": "true"
 							}),
-							(0, react_jsx_runtime.jsxs)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: AchievementsSection_module_css_default.heroTop,
 								children: [
-									(0, react_jsx_runtime.jsx)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 										className: AchievementsSection_module_css_default.heroIcon,
 										"aria-hidden": "true",
 										children: "🏆"
 									}),
-									(0, react_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: AchievementsSection_module_css_default.heroCopy,
 										children: [
-											(0, react_jsx_runtime.jsx)("div", {
+											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 												className: AchievementsSection_module_css_default.kicker,
 												children: t("kicker")
 											}),
-											(0, react_jsx_runtime.jsx)("h2", {
+											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h2", {
 												className: AchievementsSection_module_css_default.heroTitle,
 												id: "achievements-overview-title",
 												children: t("title")
 											}),
-											(0, react_jsx_runtime.jsx)("p", {
+											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("p", {
 												className: AchievementsSection_module_css_default.heroSubtitle,
 												children: t("subtitle")
 											})
 										]
 									}),
-									(0, react_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: AchievementsSection_module_css_default.ring,
 										"aria-label": `${completion}% ${t("complete")}`,
-										children: [(0, react_jsx_runtime.jsxs)("svg", {
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("svg", {
 											className: AchievementsSection_module_css_default.ringGraphic,
 											viewBox: "0 0 44 44",
 											"aria-hidden": "true",
-											children: [(0, react_jsx_runtime.jsx)("circle", {
+											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
 												className: AchievementsSection_module_css_default.ringTrack,
 												cx: "22",
 												cy: "22",
 												r: "19"
-											}), (0, react_jsx_runtime.jsx)("circle", {
+											}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("circle", {
 												className: AchievementsSection_module_css_default.ringValue,
 												cx: "22",
 												cy: "22",
@@ -384,59 +415,59 @@ window.__ModuleLoader__.load({
 												pathLength: "100",
 												strokeDasharray: `${completion} 100`
 											})]
-										}), (0, react_jsx_runtime.jsxs)("div", {
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 											className: AchievementsSection_module_css_default.ringInner,
-											children: [(0, react_jsx_runtime.jsxs)("strong", { children: [completion, "%"] }), (0, react_jsx_runtime.jsx)("span", { children: t("complete") })]
+											children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("strong", { children: [completion, "%"] }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("complete") })]
 										})]
 									})
 								]
 							}),
-							(0, react_jsx_runtime.jsxs)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: AchievementsSection_module_css_default.stats,
 								children: [
-									(0, react_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: AchievementsSection_module_css_default.stat,
-										children: [(0, react_jsx_runtime.jsx)("strong", { children: unlocked }), (0, react_jsx_runtime.jsx)("span", { children: t("stats.unlocked") })]
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: unlocked }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("stats.unlocked") })]
 									}),
-									(0, react_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: AchievementsSection_module_css_default.stat,
-										children: [(0, react_jsx_runtime.jsx)("strong", { children: snapshot.total }), (0, react_jsx_runtime.jsx)("span", { children: t("stats.total") })]
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: snapshot.total }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("stats.total") })]
 									}),
-									(0, react_jsx_runtime.jsxs)("div", {
+									/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: AchievementsSection_module_css_default.stat,
-										children: [(0, react_jsx_runtime.jsx)("strong", { children: remaining }), (0, react_jsx_runtime.jsx)("span", { children: t("stats.remaining") })]
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: remaining }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("stats.remaining") })]
 									})
 								]
 							}),
-							(0, react_jsx_runtime.jsx)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								className: AchievementsSection_module_css_default.heroBar,
 								"aria-hidden": "true",
-								children: (0, react_jsx_runtime.jsx)("div", {
+								children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 									className: AchievementsSection_module_css_default.heroBarFill,
 									style: { width: `${completion}%` }
 								})
 							})
 						]
 					}),
-					(0, react_jsx_runtime.jsxs)("div", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: AchievementsSection_module_css_default.toolbar,
-						children: [(0, react_jsx_runtime.jsxs)("div", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: AchievementsSection_module_css_default.toolbarCopy,
-							children: [(0, react_jsx_runtime.jsx)("span", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: AchievementsSection_module_css_default.toolbarLabel,
 								children: t("browse")
-							}), (0, react_jsx_runtime.jsx)("span", {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: AchievementsSection_module_css_default.toolbarCount,
 								children: t("visibleCount", { count: visibleCount })
 							})]
-						}), (0, react_jsx_runtime.jsxs)("div", {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: AchievementsSection_module_css_default.controls,
 							children: [
-								(0, react_jsx_runtime.jsxs)("div", {
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 									className: AchievementsSection_module_css_default.segmented,
 									role: "tablist",
 									"aria-label": t("sort.label"),
-									children: [(0, react_jsx_runtime.jsx)("button", {
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
 										role: "tab",
 										"aria-selected": mode === "category",
@@ -445,7 +476,7 @@ window.__ModuleLoader__.load({
 											setMode("category");
 										},
 										children: t("sort.byCategory")
-									}), (0, react_jsx_runtime.jsx)("button", {
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
 										role: "tab",
 										"aria-selected": mode === "rarity",
@@ -456,7 +487,7 @@ window.__ModuleLoader__.load({
 										children: t("sort.byRarity")
 									})]
 								}),
-								(0, react_jsx_runtime.jsx)("div", {
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 									className: AchievementsSection_module_css_default.segmented,
 									role: "group",
 									"aria-label": t("filter.label"),
@@ -464,7 +495,7 @@ window.__ModuleLoader__.load({
 										"all",
 										"unlocked",
 										"locked"
-									].map((value) => (0, react_jsx_runtime.jsx)("button", {
+									].map((value) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
 										"aria-pressed": status === value,
 										className: `${AchievementsSection_module_css_default.filterBtn} ${status === value ? AchievementsSection_module_css_default.filterActive : ""}`,
@@ -474,7 +505,7 @@ window.__ModuleLoader__.load({
 										children: t(`filter.${value}`)
 									}, value))
 								}),
-								(0, react_jsx_runtime.jsxs)("button", {
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 									type: "button",
 									"aria-pressed": deepEnabled,
 									className: `${AchievementsSection_module_css_default.deepBtn} ${deepEnabled ? AchievementsSection_module_css_default.deepActive : ""}`,
@@ -489,25 +520,25 @@ window.__ModuleLoader__.load({
 							]
 						})]
 					}),
-					activeGroup && (0, react_jsx_runtime.jsxs)("div", {
+					activeGroup && /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: AchievementsSection_module_css_default.archive,
-						children: [(0, react_jsx_runtime.jsxs)("nav", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("nav", {
 							className: AchievementsSection_module_css_default.rail,
 							"aria-label": mode === "category" ? t("sort.byCategory") : t("sort.byRarity"),
-							children: [(0, react_jsx_runtime.jsxs)("div", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 								className: AchievementsSection_module_css_default.railHeader,
-								children: [(0, react_jsx_runtime.jsx)("span", {
+								children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: AchievementsSection_module_css_default.railTitle,
 									children: mode === "category" ? t("sort.byCategory") : t("sort.byRarity")
-								}), (0, react_jsx_runtime.jsx)("span", {
+								}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 									className: AchievementsSection_module_css_default.railCount,
 									children: visibleGroups.length
 								})]
-							}), (0, react_jsx_runtime.jsx)("div", {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								className: AchievementsSection_module_css_default.railList,
 								children: visibleGroups.map((group) => {
 									const active = group.id === activeGroup.id;
-									return (0, react_jsx_runtime.jsxs)("button", {
+									return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 										type: "button",
 										className: `${AchievementsSection_module_css_default.railItem} ${active ? AchievementsSection_module_css_default.railItemActive : ""}`,
 										"aria-current": active ? "page" : void 0,
@@ -515,45 +546,45 @@ window.__ModuleLoader__.load({
 											setActiveGroupId(group.id);
 										},
 										children: [
-											(0, react_jsx_runtime.jsx)("span", {
+											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 												className: AchievementsSection_module_css_default.railIcon,
 												"aria-hidden": "true",
 												children: group.icon
 											}),
-											(0, react_jsx_runtime.jsxs)("span", {
+											/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 												className: AchievementsSection_module_css_default.railCopy,
-												children: [(0, react_jsx_runtime.jsx)("strong", { children: group.label }), (0, react_jsx_runtime.jsxs)("small", { children: [
+												children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("strong", { children: group.label }), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("small", { children: [
 													group.groupUnlocked,
 													" / ",
 													group.all.length
 												] })]
 											}),
-											(0, react_jsx_runtime.jsx)("span", {
+											/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 												className: AchievementsSection_module_css_default.railMeter,
 												"aria-hidden": "true",
-												children: (0, react_jsx_runtime.jsx)("span", { style: { width: `${group.groupCompletion}%` } })
+												children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { style: { width: `${group.groupCompletion}%` } })
 											})
 										]
 									}, group.id);
 								})
 							})]
-						}), (0, react_jsx_runtime.jsxs)("section", {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("section", {
 							className: AchievementsSection_module_css_default.ledger,
 							"aria-labelledby": `achievement-group-${activeGroup.id}`,
 							children: [
-								(0, react_jsx_runtime.jsxs)("div", {
+								/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 									className: AchievementsSection_module_css_default.ledgerHeader,
-									children: [(0, react_jsx_runtime.jsxs)("div", {
+									children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: AchievementsSection_module_css_default.groupHeading,
-										children: [(0, react_jsx_runtime.jsx)("span", {
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 											className: AchievementsSection_module_css_default.groupIcon,
 											"aria-hidden": "true",
 											children: activeGroup.icon
-										}), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("h3", {
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("h3", {
 											className: AchievementsSection_module_css_default.groupTitle,
 											id: `achievement-group-${activeGroup.id}`,
 											children: activeGroup.label
-										}), (0, react_jsx_runtime.jsxs)("span", {
+										}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("span", {
 											className: AchievementsSection_module_css_default.groupMeta,
 											children: [
 												activeGroup.groupUnlocked,
@@ -563,19 +594,19 @@ window.__ModuleLoader__.load({
 												t("stats.unlocked")
 											]
 										})] })]
-									}), (0, react_jsx_runtime.jsxs)("div", {
+									}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 										className: AchievementsSection_module_css_default.ledgerCompletion,
-										children: [(0, react_jsx_runtime.jsxs)("strong", { children: [activeGroup.groupCompletion, "%"] }), (0, react_jsx_runtime.jsx)("span", { children: t("complete") })]
+										children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("strong", { children: [activeGroup.groupCompletion, "%"] }), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", { children: t("complete") })]
 									})]
 								}),
-								(0, react_jsx_runtime.jsx)("div", {
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 									className: AchievementsSection_module_css_default.groupProgress,
 									"aria-hidden": "true",
-									children: (0, react_jsx_runtime.jsx)("div", { style: { width: `${activeGroup.groupCompletion}%` } })
+									children: /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", { style: { width: `${activeGroup.groupCompletion}%` } })
 								}),
-								(0, react_jsx_runtime.jsx)("div", {
+								/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 									className: AchievementsSection_module_css_default.rows,
-									children: activeGroup.items.map((a) => (0, react_jsx_runtime.jsx)(Row, {
+									children: activeGroup.items.map((a) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Row, {
 										a,
 										t
 									}, a.id))
@@ -583,7 +614,7 @@ window.__ModuleLoader__.load({
 							]
 						})]
 					}),
-					visibleCount === 0 && (0, react_jsx_runtime.jsx)("div", {
+					visibleCount === 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						className: AchievementsSection_module_css_default.empty,
 						children: t("empty")
 					})
@@ -592,7 +623,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:D:\deepseek\deepseek-harness-master\packages\extensions\ui-achievements\src\client\dock.module.css.mjs
-		const css$3 = ".ySutMG_dock{color:#a8b3bc;background:#17212b;border:1px solid #3b4b57;border-radius:999px;align-items:center;gap:7px;max-width:min(100%,420px);min-height:26px;padding:3px 10px 3px 5px;font-size:11px;line-height:18px;display:inline-flex;overflow:hidden;box-shadow:0 4px 12px #050a0f2e}.ySutMG_icon{color:#d8c28f;background:#3b3427;border:1px solid #b89a61;border-radius:50%;flex:none;justify-content:center;align-items:center;width:20px;height:20px;font-size:11px;display:inline-flex}.ySutMG_summary{color:#ddd4bf;font-variant-numeric:tabular-nums;flex:none;font-family:Georgia,Times New Roman,serif;font-weight:700}.ySutMG_combo{color:#c6ae78;background:#302b22;border:1px solid #655b46;border-radius:999px;flex:none;padding:0 6px;font-size:10px;font-weight:700}.ySutMG_next{color:#8fa2b1;text-overflow:ellipsis;white-space:nowrap;min-width:0;overflow:hidden}";
+		const css$3 = ".ySutMG_dock{color:#4b8f76;background:#000000e6;border:1px solid #10b98180;align-items:center;gap:7px;max-width:min(100%,420px);min-height:26px;padding:3px 10px 3px 5px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;font-size:10px;line-height:18px;display:inline-flex;overflow:hidden;box-shadow:0 0 12px #10b98114}.ySutMG_icon{color:#34d399;background:#064e3b40;border:1px solid #10b981a6;flex:none;justify-content:center;align-items:center;width:20px;height:20px;font-size:10px;display:inline-flex}.ySutMG_summary{color:#6ee7b7;font-variant-numeric:tabular-nums;flex:none;font-weight:700}.ySutMG_combo{color:#fbbf24;background:#fbbf240f;border:1px solid #fbbf2480;flex:none;padding:0 6px;font-size:9px;font-weight:700}.ySutMG_next{color:#4b8f76;text-overflow:ellipsis;white-space:nowrap;min-width:0;overflow:hidden}";
 		const tagId$3 = "@deepseek-ai/dsh-client-ui-achievements/dock.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$3) + "]") === null) {
 			const tag = document.createElement("style");
@@ -605,11 +636,11 @@ window.__ModuleLoader__.load({
 			"dock": "ySutMG_dock",
 			"combo": "ySutMG_combo",
 			"next": "ySutMG_next",
-			"icon": "ySutMG_icon",
-			"summary": "ySutMG_summary"
+			"summary": "ySutMG_summary",
+			"icon": "ySutMG_icon"
 		};
 		//#endregion
-		//#region lib/types/client/dock.js
+		//#region src/client/dock.tsx
 		/** The composer dock entry (renders nothing until the first poll lands). */
 		function DockReadout({ useSnapshot, t }) {
 			const dock = useSnapshot((s) => s.dock);
@@ -620,26 +651,26 @@ window.__ModuleLoader__.load({
 				current: dock.next.current,
 				target: dock.next.target
 			});
-			return (0, react_jsx_runtime.jsxs)("div", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: dock_module_css_default.dock,
 				children: [
-					(0, react_jsx_runtime.jsx)("span", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: dock_module_css_default.icon,
 						"aria-hidden": "true",
 						children: "🏆"
 					}),
-					(0, react_jsx_runtime.jsx)("span", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: dock_module_css_default.summary,
 						children: t("dock.summary", {
 							unlocked: dock.unlocked,
 							total: dock.total
 						})
 					}),
-					combo && (0, react_jsx_runtime.jsx)("span", {
+					combo && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: dock_module_css_default.combo,
 						children: combo
 					}),
-					(0, react_jsx_runtime.jsx)("span", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: dock_module_css_default.next,
 						title: next,
 						children: next
@@ -649,7 +680,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:D:\deepseek\deepseek-harness-master\packages\extensions\ui-achievements\src\client\gallery.module.css.mjs
-		const css$2 = ".Odo5Oq_backdrop{z-index:60;pointer-events:auto;backdrop-filter:blur(8px);background:#060a0ec7;justify-content:center;align-items:center;padding:24px;display:flex;position:fixed;inset:0}.Odo5Oq_panel{color:#e5e9ec;pointer-events:auto;--dsh-scrollbar-thumb:#3b4b57;--dsh-scrollbar-thumb-hover:#526674;background:#111a22;border:1px solid #4b4435;border-radius:17px;flex-direction:column;width:min(980px,100%);max-height:min(88vh,900px);padding:21px;animation:.2s ease-out Odo5Oq_rise;display:flex;position:relative;overflow:auto;box-shadow:0 24px 64px #00000073}.Odo5Oq_panel:before{content:\"\";background:#655b46;height:1px;position:absolute;top:0;left:22px;right:22px}.Odo5Oq_head{justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px;display:flex}.Odo5Oq_heading{align-items:center;gap:11px;min-width:0;display:flex}.Odo5Oq_headingIcon{color:#d8c28f;background:#3b3427;border:1px solid #b89a61;border-radius:9px;flex:none;justify-content:center;align-items:center;width:40px;height:40px;font-size:20px;display:inline-flex}.Odo5Oq_heading>div{flex-direction:column;gap:1px;display:flex}.Odo5Oq_kicker{color:#b89a61;letter-spacing:.18em;text-transform:uppercase;font-size:9px;font-weight:700}.Odo5Oq_title{color:#f0ece2;font-family:Georgia,Times New Roman,serif;font-size:18px;font-weight:700;line-height:23px}.Odo5Oq_close{color:#8996a0;cursor:pointer;width:31px;height:31px;font:inherit;background:0 0;border:1px solid #0000;border-radius:7px;flex:none;justify-content:center;align-items:center;font-size:22px;line-height:1;transition:background .14s,border-color .14s,color .14s;display:inline-flex}.Odo5Oq_close:hover{color:#d8c28f;background:#252a2c;border-color:#4b4435}.Odo5Oq_close:focus-visible{outline-offset:2px;outline:2px solid #b89a61}@keyframes Odo5Oq_rise{0%{opacity:0;transform:translateY(8px)scale(.985)}to{opacity:1;transform:none}}@media (width<=620px){.Odo5Oq_backdrop{align-items:flex-end;padding:10px}.Odo5Oq_panel{border-radius:14px;max-height:92vh;padding:17px}}@media (prefers-reduced-motion:reduce){.Odo5Oq_panel,.Odo5Oq_close{transition:none;animation:none}}";
+		const css$2 = ".Odo5Oq_backdrop{z-index:60;pointer-events:auto;backdrop-filter:blur(6px);background:#020403d1;justify-content:center;align-items:center;padding:24px;display:flex;position:fixed;inset:0}.Odo5Oq_panel{color:#d1fae5;pointer-events:auto;--dsh-scrollbar-thumb:#10b98159;--dsh-scrollbar-thumb-hover:#10b98199;background:#000000f0;border:1px solid #064e3b;flex-direction:column;width:min(980px,100%);max-height:min(88vh,900px);padding:22px 21px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;animation:.18s ease-out Odo5Oq_rise;display:flex;position:relative;overflow:auto;box-shadow:0 0 30px #10b9811f}.Odo5Oq_panel:before,.Odo5Oq_panel:after,.Odo5Oq_panel .Odo5Oq_head:before,.Odo5Oq_panel .Odo5Oq_head:after{content:\"\";pointer-events:none;border:2px solid #10b981;width:12px;height:12px;position:absolute}.Odo5Oq_panel:before{border-bottom:0;border-right:0;top:-2px;left:-2px}.Odo5Oq_panel:after{border-bottom:0;border-left:0;top:-2px;right:-2px}.Odo5Oq_panel .Odo5Oq_head:before{border-top:0;border-right:0;bottom:-2px;left:-2px}.Odo5Oq_panel .Odo5Oq_head:after{border-top:0;border-left:0;bottom:-2px;right:-2px}.Odo5Oq_head{justify-content:space-between;align-items:center;gap:12px;margin-bottom:17px;display:flex;position:relative}.Odo5Oq_heading{align-items:center;gap:11px;min-width:0;display:flex}.Odo5Oq_headingIcon{color:#34d399;background:#064e3b40;border:1px solid #10b981a6;flex:none;justify-content:center;align-items:center;width:40px;height:40px;font-size:20px;display:inline-flex;box-shadow:inset 0 0 10px #10b9811a}.Odo5Oq_heading>div{flex-direction:column;gap:1px;display:flex}.Odo5Oq_kicker{color:#10b981;letter-spacing:.22em;text-transform:uppercase;font-size:9px;font-weight:700}.Odo5Oq_title{color:#d1fae5;letter-spacing:.02em;font-size:17px;font-weight:700;line-height:22px}.Odo5Oq_title:before{content:\"[\";color:#10b981}.Odo5Oq_title:after{content:\"]\";color:#10b981}.Odo5Oq_close{color:#4b8f76;cursor:pointer;background:0 0;border:1px solid #0000;flex:none;justify-content:center;align-items:center;width:31px;height:31px;font-family:inherit;font-size:18px;line-height:1;transition:background .14s,border-color .14s,color .14s;display:inline-flex}.Odo5Oq_close:hover{color:#34d399;background:#10b98114;border-color:#10b98180}.Odo5Oq_close:focus-visible{outline-offset:2px;outline:1px solid #10b981}@keyframes Odo5Oq_rise{0%{opacity:0;transform:translateY(8px)scale(.985)}to{opacity:1;transform:none}}@media (width<=620px){.Odo5Oq_backdrop{align-items:flex-end;padding:10px}.Odo5Oq_panel{max-height:92vh;padding:18px 16px}}@media (prefers-reduced-motion:reduce){.Odo5Oq_panel,.Odo5Oq_close{transition:none;animation:none}}";
 		const tagId$2 = "@deepseek-ai/dsh-client-ui-achievements/gallery.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$2) + "]") === null) {
 			const tag = document.createElement("style");
@@ -660,17 +691,17 @@ window.__ModuleLoader__.load({
 		}
 		var gallery_module_css_default = {
 			"close": "Odo5Oq_close",
-			"head": "Odo5Oq_head",
 			"rise": "Odo5Oq_rise",
-			"panel": "Odo5Oq_panel",
 			"kicker": "Odo5Oq_kicker",
+			"headingIcon": "Odo5Oq_headingIcon",
 			"title": "Odo5Oq_title",
-			"backdrop": "Odo5Oq_backdrop",
 			"heading": "Odo5Oq_heading",
-			"headingIcon": "Odo5Oq_headingIcon"
+			"head": "Odo5Oq_head",
+			"backdrop": "Odo5Oq_backdrop",
+			"panel": "Odo5Oq_panel"
 		};
 		//#endregion
-		//#region lib/types/client/gallery.js
+		//#region src/client/gallery.tsx
 		/**
 		* Achievements gallery overlay: the trophy-toggled full gallery in
 		* `shell.overlay`. Reuses the settings-section gallery component; the backdrop
@@ -690,10 +721,10 @@ window.__ModuleLoader__.load({
 				};
 			}, [close, open]);
 			if (!open) return null;
-			return (0, react_jsx_runtime.jsx)("div", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: gallery_module_css_default.backdrop,
 				onClick: close,
-				children: (0, react_jsx_runtime.jsxs)("div", {
+				children: /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 					className: gallery_module_css_default.panel,
 					role: "dialog",
 					"aria-modal": "true",
@@ -701,30 +732,30 @@ window.__ModuleLoader__.load({
 					onClick: (e) => {
 						e.stopPropagation();
 					},
-					children: [(0, react_jsx_runtime.jsxs)("div", {
+					children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: gallery_module_css_default.head,
-						children: [(0, react_jsx_runtime.jsxs)("div", {
+						children: [/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 							className: gallery_module_css_default.heading,
-							children: [(0, react_jsx_runtime.jsx)("span", {
+							children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: gallery_module_css_default.headingIcon,
 								"aria-hidden": "true",
 								children: "🏆"
-							}), (0, react_jsx_runtime.jsxs)("div", { children: [(0, react_jsx_runtime.jsx)("span", {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", { children: [/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: gallery_module_css_default.kicker,
 								children: t("kicker")
-							}), (0, react_jsx_runtime.jsx)("span", {
+							}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 								className: gallery_module_css_default.title,
 								id: "achievements-gallery-title",
 								children: t("title")
 							})] })]
-						}), (0, react_jsx_runtime.jsx)("button", {
+						}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
 							className: gallery_module_css_default.close,
 							onClick: close,
 							"aria-label": t("gallery.close"),
 							children: "×"
 						})]
-					}), (0, react_jsx_runtime.jsx)(AchievementsSection, {
+					}), /* @__PURE__ */ (0, react_jsx_runtime.jsx)(AchievementsSection, {
 						list,
 						...deepState !== void 0 ? { deepState } : {},
 						...setDeepInsights !== void 0 ? { setDeepInsights } : {},
@@ -735,7 +766,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:D:\deepseek\deepseek-harness-master\packages\extensions\ui-achievements\src\client\toast.module.css.mjs
-		const css$1 = "._4q_60W_stack{z-index:50;pointer-events:none;flex-direction:column;gap:10px;display:flex;position:fixed;bottom:18px;right:18px}._4q_60W_toast{--toast-rarity:#6f9fc4;border:1px solid #3b4b57;border-left:4px solid var(--toast-rarity);color:#e5e9ec;pointer-events:auto;background:#17212b;border-radius:12px;align-items:center;gap:12px;width:min(340px,100vw - 36px);padding:13px 40px 13px 13px;animation:.22s ease-out _4q_60W_pop;display:flex;position:relative;overflow:hidden;box-shadow:0 14px 30px #00000052}._4q_60W_rarity-common{--toast-rarity:#8998a6}._4q_60W_rarity-rare{--toast-rarity:#6f9fc4}._4q_60W_rarity-epic{--toast-rarity:#917aa8}._4q_60W_rarity-legendary{--toast-rarity:#b89a61}._4q_60W_icon{border:1px solid var(--toast-rarity);width:42px;height:44px;color:var(--toast-rarity);background:#10171e;border-radius:9px;flex:none;justify-content:center;align-items:center;font-size:22px;display:inline-flex}._4q_60W_copy{min-width:0}._4q_60W_eyebrow{color:var(--toast-rarity);letter-spacing:.14em;text-transform:uppercase;font-size:9px;font-weight:700}._4q_60W_title{color:#f0ece2;text-overflow:ellipsis;white-space:nowrap;font-family:Georgia,Times New Roman,serif;font-size:14px;font-weight:700;line-height:19px;overflow:hidden}._4q_60W_sub{color:#96a4af;font-size:10px;line-height:15px}._4q_60W_close{color:#8996a0;cursor:pointer;width:22px;height:22px;font:inherit;background:0 0;border:1px solid #0000;border-radius:6px;justify-content:center;align-items:center;font-size:17px;display:inline-flex;position:absolute;top:8px;right:8px}._4q_60W_close:hover{color:#e5e9ec;background:#22313d;border-color:#3b4b57}._4q_60W_close:focus-visible{outline:2px solid var(--toast-rarity);outline-offset:1px}._4q_60W_confetti{z-index:70;pointer-events:none;position:fixed;inset:0;overflow:hidden}._4q_60W_piece{opacity:.9;border-radius:2px;width:8px;height:14px;animation-name:_4q_60W_fall;animation-timing-function:ease-in;animation-fill-mode:forwards;position:absolute;top:-14px}@keyframes _4q_60W_fall{0%{opacity:1;transform:translateY(0)rotate(0)}to{opacity:.35;transform:translateY(105vh)rotate(720deg)}}@keyframes _4q_60W_pop{0%{opacity:0;transform:translateY(8px)scale(.98)}to{opacity:1;transform:none}}@media (width<=620px){._4q_60W_stack{bottom:10px;right:10px}}@media (prefers-reduced-motion:reduce){._4q_60W_piece,._4q_60W_toast{animation:none}}";
+		const css$1 = "._4q_60W_stack{z-index:50;pointer-events:none;flex-direction:column;gap:10px;display:flex;position:fixed;bottom:18px;right:18px}._4q_60W_toast{--toast-rarity:#2dd4bf;border:1px solid var(--toast-rarity);color:#d1fae5;pointer-events:auto;background:#000000f0;align-items:center;gap:12px;width:min(340px,100vw - 36px);padding:13px 40px 13px 13px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;animation:.22s ease-out _4q_60W_pop;display:flex;position:relative;overflow:hidden;box-shadow:0 0 16px #10b9811f}._4q_60W_toast:before,._4q_60W_toast:after{border:1.5px solid var(--toast-rarity);content:\"\";pointer-events:none;width:7px;height:7px;position:absolute}._4q_60W_toast:before{border-bottom:0;border-right:0;top:-1px;left:-1px}._4q_60W_toast:after{border-top:0;border-left:0;bottom:-1px;right:-1px}._4q_60W_rarity-common{--toast-rarity:#34d399}._4q_60W_rarity-rare{--toast-rarity:#2dd4bf}._4q_60W_rarity-epic{--toast-rarity:#a78bfa}._4q_60W_rarity-legendary{--toast-rarity:#fbbf24}._4q_60W_icon{border:1px solid var(--toast-rarity);width:42px;height:44px;color:var(--toast-rarity);background:#000;flex:none;justify-content:center;align-items:center;font-size:21px;display:inline-flex;box-shadow:inset 0 0 10px #10b98114}._4q_60W_copy{min-width:0}._4q_60W_eyebrow{color:var(--toast-rarity);letter-spacing:.18em;text-transform:uppercase;font-size:8px;font-weight:700}._4q_60W_title{color:#d1fae5;letter-spacing:.02em;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:700;line-height:18px;overflow:hidden}._4q_60W_title:before{content:\"> \";color:var(--toast-rarity)}._4q_60W_sub{color:#4b8f76;font-size:9px;line-height:14px}._4q_60W_close{color:#4b8f76;cursor:pointer;background:0 0;border:1px solid #0000;justify-content:center;align-items:center;width:22px;height:22px;font-family:inherit;font-size:15px;display:inline-flex;position:absolute;top:8px;right:8px}._4q_60W_close:hover{color:#34d399;background:#10b98114;border-color:#10b98180}._4q_60W_close:focus-visible{outline:1px solid var(--toast-rarity);outline-offset:1px}._4q_60W_confetti{z-index:70;pointer-events:none;position:fixed;inset:0;overflow:hidden}._4q_60W_piece{opacity:.9;border-radius:2px;width:8px;height:14px;animation-name:_4q_60W_fall;animation-timing-function:ease-in;animation-fill-mode:forwards;position:absolute;top:-14px}@keyframes _4q_60W_fall{0%{opacity:1;transform:translateY(0)rotate(0)}to{opacity:.35;transform:translateY(105vh)rotate(720deg)}}@keyframes _4q_60W_pop{0%{opacity:0;transform:translateY(8px)scale(.98)}to{opacity:1;transform:none}}@media (width<=620px){._4q_60W_stack{bottom:10px;right:10px}}@media (prefers-reduced-motion:reduce){._4q_60W_piece,._4q_60W_toast{animation:none}}";
 		const tagId$1 = "@deepseek-ai/dsh-client-ui-achievements/toast.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId$1) + "]") === null) {
 			const tag = document.createElement("style");
@@ -745,25 +776,25 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var toast_module_css_default = {
-			"eyebrow": "_4q_60W_eyebrow",
-			"stack": "_4q_60W_stack",
-			"pop": "_4q_60W_pop",
-			"piece": "_4q_60W_piece",
-			"close": "_4q_60W_close",
-			"sub": "_4q_60W_sub",
-			"title": "_4q_60W_title",
 			"rarity-rare": "_4q_60W_rarity-rare",
-			"rarity-legendary": "_4q_60W_rarity-legendary",
-			"toast": "_4q_60W_toast",
-			"fall": "_4q_60W_fall",
+			"confetti": "_4q_60W_confetti",
 			"rarity-common": "_4q_60W_rarity-common",
-			"copy": "_4q_60W_copy",
+			"toast": "_4q_60W_toast",
+			"title": "_4q_60W_title",
+			"sub": "_4q_60W_sub",
+			"fall": "_4q_60W_fall",
+			"piece": "_4q_60W_piece",
+			"rarity-legendary": "_4q_60W_rarity-legendary",
+			"stack": "_4q_60W_stack",
 			"icon": "_4q_60W_icon",
+			"eyebrow": "_4q_60W_eyebrow",
 			"rarity-epic": "_4q_60W_rarity-epic",
-			"confetti": "_4q_60W_confetti"
+			"close": "_4q_60W_close",
+			"pop": "_4q_60W_pop",
+			"copy": "_4q_60W_copy"
 		};
 		//#endregion
-		//#region lib/types/client/toast.js
+		//#region src/client/toast.tsx
 		const RARITY_LABEL = {
 			common: "rarity.common",
 			rare: "rarity.rare",
@@ -784,32 +815,32 @@ window.__ModuleLoader__.load({
 		/** One transient unlock card. */
 		function Toast({ toast, t, onDismiss }) {
 			const celebratory = toast.rarity === "epic" || toast.rarity === "legendary";
-			return (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [celebratory && (0, react_jsx_runtime.jsx)(Confetti, {}), (0, react_jsx_runtime.jsxs)("div", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)(react_jsx_runtime.Fragment, { children: [celebratory && /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Confetti, {}), /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 				className: `${toast_module_css_default.toast} ${toast_module_css_default[`rarity-${toast.rarity}`]}`,
 				role: "status",
 				children: [
-					(0, react_jsx_runtime.jsx)("div", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 						className: toast_module_css_default.icon,
 						children: toast.icon
 					}),
-					(0, react_jsx_runtime.jsxs)("div", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsxs)("div", {
 						className: toast_module_css_default.copy,
 						children: [
-							(0, react_jsx_runtime.jsx)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								className: toast_module_css_default.eyebrow,
 								children: t("toast.sub")
 							}),
-							(0, react_jsx_runtime.jsx)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								className: toast_module_css_default.title,
 								children: toast.name
 							}),
-							(0, react_jsx_runtime.jsx)("div", {
+							/* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 								className: toast_module_css_default.sub,
 								children: t(RARITY_LABEL[toast.rarity])
 							})
 						]
 					}),
-					(0, react_jsx_runtime.jsx)("button", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("button", {
 						type: "button",
 						className: toast_module_css_default.close,
 						onClick: onDismiss,
@@ -821,9 +852,9 @@ window.__ModuleLoader__.load({
 		}
 		/** A one-shot confetti burst (pure CSS keyframes). */
 		function Confetti() {
-			return (0, react_jsx_runtime.jsx)("div", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: toast_module_css_default.confetti,
-				children: Array.from({ length: 60 }, (_, i) => (0, react_jsx_runtime.jsx)("span", {
+				children: Array.from({ length: 60 }, (_, i) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 					className: toast_module_css_default.piece,
 					style: {
 						left: `${i * 37 % 101}%`,
@@ -839,9 +870,9 @@ window.__ModuleLoader__.load({
 		function ToastStack({ useSnapshot, dismiss, t }) {
 			const toasts = useSnapshot((s) => s.toasts);
 			if (toasts.length === 0) return null;
-			return (0, react_jsx_runtime.jsx)("div", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsx)("div", {
 				className: toast_module_css_default.stack,
-				children: toasts.map((toast) => (0, react_jsx_runtime.jsx)(Toast, {
+				children: toasts.map((toast) => /* @__PURE__ */ (0, react_jsx_runtime.jsx)(Toast, {
 					toast,
 					t,
 					onDismiss: () => {
@@ -852,7 +883,7 @@ window.__ModuleLoader__.load({
 		}
 		//#endregion
 		//#region \0dsh-css:D:\deepseek\deepseek-harness-master\packages\extensions\ui-achievements\src\client\trophy.module.css.mjs
-		const css = ".AnwqOW_trophy{color:var(--dsw-alias-label-primary);cursor:pointer;font:inherit;background:0 0;border:1px solid #0000;border-radius:9px;align-items:center;gap:8px;padding:6px 8px;font-size:16px;transition:background .14s,border-color .14s,transform .14s;display:flex;position:relative}.AnwqOW_trophy:hover{background:#1c2832;border-color:#3b4b57;transform:translateY(-1px)}.AnwqOW_trophy[aria-pressed=true]{background:#302b22;border-color:#655b46}.AnwqOW_trophy:focus-visible{outline-offset:2px;outline:2px solid #b89a61}.AnwqOW_icon{color:#d8c28f;background:#3b3427;border:1px solid #b89a61;border-radius:7px;justify-content:center;align-items:center;width:23px;height:23px;font-size:14px;display:inline-flex}.AnwqOW_label{color:#c5cdd3;font-family:Georgia,Times New Roman,serif;font-size:12px;font-weight:700}.AnwqOW_badge{border:2px solid var(--dsw-alias-bg-base);color:#17130d;background:#b89a61;border-radius:999px;justify-content:center;align-items:center;min-width:17px;height:17px;padding:0 4px;font-size:10px;font-weight:800;line-height:13px;animation:.2s ease-out AnwqOW_badgeIn;display:inline-flex;position:absolute;top:-4px;right:-3px}@keyframes AnwqOW_badgeIn{0%{opacity:0;transform:scale(.75)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.AnwqOW_trophy{transition:none}.AnwqOW_badge{animation:none}}";
+		const css = ".AnwqOW_trophy{color:var(--dsw-alias-label-primary);cursor:pointer;background:0 0;border:1px solid #0000;align-items:center;gap:8px;padding:6px 8px;font-family:ui-monospace,Cascadia Mono,JetBrains Mono,Menlo,Consolas,monospace;font-size:15px;transition:background .14s,border-color .14s,transform .14s;display:flex;position:relative}.AnwqOW_trophy:hover{background:#10b9810f;border-color:#10b98180;transform:translateY(-1px)}.AnwqOW_trophy[aria-pressed=true]{background:#064e3b4d;border-color:#10b981cc}.AnwqOW_trophy:focus-visible{outline-offset:2px;outline:1px solid #10b981}.AnwqOW_icon{color:#34d399;background:#064e3b40;border:1px solid #10b981a6;justify-content:center;align-items:center;width:23px;height:23px;font-size:13px;display:inline-flex;box-shadow:inset 0 0 8px #10b9811a}.AnwqOW_label{color:#6ee7b7;letter-spacing:.04em;font-size:11px;font-weight:700}.AnwqOW_badge{border:2px solid var(--dsw-alias-bg-base);color:#020403;background:#10b981;border-radius:999px;justify-content:center;align-items:center;min-width:17px;height:17px;padding:0 4px;font-size:10px;font-weight:800;line-height:13px;animation:.2s ease-out AnwqOW_badgeIn;display:inline-flex;position:absolute;top:-4px;right:-3px}@keyframes AnwqOW_badgeIn{0%{opacity:0;transform:scale(.75)}to{opacity:1;transform:none}}@media (prefers-reduced-motion:reduce){.AnwqOW_trophy{transition:none}.AnwqOW_badge{animation:none}}";
 		const tagId = "@deepseek-ai/dsh-client-ui-achievements/trophy.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
 			const tag = document.createElement("style");
@@ -862,19 +893,19 @@ window.__ModuleLoader__.load({
 			document.head.appendChild(tag);
 		}
 		var trophy_module_css_default = {
-			"badgeIn": "AnwqOW_badgeIn",
+			"label": "AnwqOW_label",
 			"trophy": "AnwqOW_trophy",
 			"icon": "AnwqOW_icon",
-			"badge": "AnwqOW_badge",
-			"label": "AnwqOW_label"
+			"badgeIn": "AnwqOW_badgeIn",
+			"badge": "AnwqOW_badge"
 		};
 		//#endregion
-		//#region lib/types/client/trophy.js
+		//#region src/client/trophy.tsx
 		/** The sidebar footer trophy entry. */
 		function Trophy({ useSnapshot, toggle, wide, t }) {
 			const newCount = useSnapshot((s) => s.newCount);
 			const open = useSnapshot((s) => s.galleryOpen);
-			return (0, react_jsx_runtime.jsxs)("button", {
+			return /* @__PURE__ */ (0, react_jsx_runtime.jsxs)("button", {
 				type: "button",
 				className: trophy_module_css_default.trophy,
 				onClick: toggle,
@@ -882,15 +913,15 @@ window.__ModuleLoader__.load({
 				"aria-label": t("nav"),
 				"aria-pressed": open,
 				children: [
-					(0, react_jsx_runtime.jsx)("span", {
+					/* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: trophy_module_css_default.icon,
 						children: "🏆"
 					}),
-					wide && (0, react_jsx_runtime.jsx)("span", {
+					wide && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: trophy_module_css_default.label,
 						children: t("nav")
 					}),
-					newCount > 0 && (0, react_jsx_runtime.jsx)("span", {
+					newCount > 0 && /* @__PURE__ */ (0, react_jsx_runtime.jsx)("span", {
 						className: trophy_module_css_default.badge,
 						children: newCount
 					})
@@ -898,7 +929,7 @@ window.__ModuleLoader__.load({
 			});
 		}
 		//#endregion
-		//#region lib/types/client/store.js
+		//#region src/client/store.ts
 		/**
 		* Achievements client store: transient viewing state shared across the toast
 		* stack, sidebar trophy, gallery overlay, and composer dock. The Host stays
@@ -958,7 +989,7 @@ window.__ModuleLoader__.load({
 			}
 		};
 		//#endregion
-		//#region lib/types/client/locales.js
+		//#region src/client/locales.ts
 		/** `achievements` namespace dictionaries: gallery copy. */
 		/** Simplified Chinese dictionary (the key-set source of truth). */
 		const zh = {
@@ -975,6 +1006,8 @@ window.__ModuleLoader__.load({
 			"stats.total": "成就总数",
 			"stats.remaining": "待解锁",
 			"loading": "加载中…",
+			"loadError": "无法载入成就档案",
+			"retry": "重新载入",
 			"hidden": "隐藏成就，达成后揭晓",
 			"hiddenDesc": "隐藏",
 			"done": "✓ 已达成",
@@ -1030,6 +1063,8 @@ window.__ModuleLoader__.load({
 			"stats.total": "Total",
 			"stats.remaining": "Remaining",
 			"loading": "Loading…",
+			"loadError": "Unable to load achievement records",
+			"retry": "Try again",
 			"hidden": "Hidden achievement, revealed on unlock",
 			"hiddenDesc": "Hidden",
 			"done": "✓ Unlocked",
@@ -1071,14 +1106,7 @@ window.__ModuleLoader__.load({
 			"dock.complete": "All done!"
 		};
 		//#endregion
-		//#region lib/types/client/index.js
-		/**
-		* Achievements browser surface: the settings-section gallery, the trophy
-		* footer action, the composer dock readout, and the trophy-toggled gallery
-		* overlay plus unlock toast stack. The apply world polls the achievements
-		* Remote (`recent` + `dock`) on a timer and feeds one shared store; components
-		* read through the bound selector hook and write through the store actions.
-		*/
+		//#region src/client/index.ts
 		/** Dictionary namespace owned by this plugin. */
 		const NS = "achievements";
 		/** Poll cadence for the recent-unlock queue and dock readout. */

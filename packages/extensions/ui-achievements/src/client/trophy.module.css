@@ -1,39 +1,85 @@
-/* Achievements trophy: sidebar footer action with unread badge. */
+/*
+ * Achievements trophy: the sidebar footer action styled as a retro terminal
+ * seal — black, emerald border with corner brackets, monospace label.
+ */
+
 .trophy {
   position: relative;
-  background: none;
-  border: none;
-  color: inherit;
-  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px;
-  font-size: 16px;
+  gap: 8px;
+  padding: 6px 8px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  cursor: pointer;
+  font-family: ui-monospace, 'Cascadia Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  font-size: 15px;
+  transition: background .14s ease, border-color .14s ease, transform .14s ease;
+}
+
+.trophy:hover {
+  border-color: rgba(16, 185, 129, .5);
+  background: rgba(16, 185, 129, .06);
+  transform: translateY(-1px);
+}
+
+.trophy[aria-pressed="true"] {
+  border-color: rgba(16, 185, 129, .8);
+  background: rgba(6, 78, 59, .3);
+}
+
+.trophy:focus-visible {
+  outline: 1px solid #10b981;
+  outline-offset: 2px;
 }
 
 .icon {
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 23px;
+  height: 23px;
+  border: 1px solid rgba(16, 185, 129, .65);
+  background: rgba(6, 78, 59, .25);
+  color: #34d399;
+  font-size: 13px;
+  box-shadow: inset 0 0 8px rgba(16, 185, 129, .1);
 }
 
 .label {
-  font-size: 12px;
-  opacity: 0.85;
+  color: #6ee7b7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
 }
 
 .badge {
   position: absolute;
-  top: 0;
-  right: 0;
-  background: linear-gradient(135deg, #fbbf24, #f59e0b);
-  color: #1a1a1a;
+  top: -4px;
+  right: -3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border: 2px solid var(--dsw-alias-bg-base);
   border-radius: 999px;
+  background: #10b981;
+  color: #020403;
   font-size: 10px;
   font-weight: 800;
-  min-width: 16px;
-  height: 16px;
-  line-height: 16px;
-  text-align: center;
-  padding: 0 4px;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  line-height: 13px;
+  animation: badgeIn .2s ease-out;
+}
+
+@keyframes badgeIn {
+  from { opacity: 0; transform: scale(.75); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trophy { transition: none; }
+  .badge { animation: none; }
 }

@@ -1,54 +1,160 @@
-/* Achievements gallery overlay: trophy-toggled backdrop + panel. */
+/*
+ * Achievements gallery overlay — retro terminal style (matches
+ * AchievementsSection.module.css). Black CRT backdrop, emerald bordered
+ * panel with corner brackets, `[TITLE]` floating badge, monospace type.
+ */
+
 .backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  z-index: 60;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px;
+  background: rgba(2, 4, 3, .82);
   pointer-events: auto;
-  z-index: 60;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(6px);
 }
 
 .panel {
-  pointer-events: auto;
-  background: linear-gradient(180deg, rgba(30, 32, 42, 0.99), rgba(22, 24, 32, 0.99));
-  color: #e8eaf0;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 16px;
-  padding: 20px;
-  width: min(680px, calc(100vw - 48px));
-  max-height: 84vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(980px, 100%);
+  max-height: min(88vh, 900px);
   overflow: auto;
-  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+  padding: 22px 21px;
+  border: 1px solid #064e3b;
+  background: rgba(0, 0, 0, .94);
+  color: #d1fae5;
+  box-shadow: 0 0 30px rgba(16, 185, 129, .12);
+  pointer-events: auto;
+  font-family: ui-monospace, 'Cascadia Mono', 'JetBrains Mono', Menlo, Consolas, monospace;
+  --dsh-scrollbar-thumb: rgba(16, 185, 129, .35);
+  --dsh-scrollbar-thumb-hover: rgba(16, 185, 129, .6);
+  animation: rise .18s ease-out;
 }
 
+/* four corner brackets */
+.panel::before,
+.panel::after,
+.panel .head::before,
+.panel .head::after {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 2px solid #10b981;
+  content: '';
+  pointer-events: none;
+}
+
+.panel::before { top: -2px; left: -2px; border-right: 0; border-bottom: 0; }
+.panel::after { top: -2px; right: -2px; border-left: 0; border-bottom: 0; }
+.panel .head::before { bottom: -2px; left: -2px; border-right: 0; border-top: 0; }
+.panel .head::after { bottom: -2px; right: -2px; border-left: 0; border-top: 0; }
+
 .head {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  gap: 12px;
+  margin-bottom: 17px;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.headingIcon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(16, 185, 129, .65);
+  background: rgba(6, 78, 59, .25);
+  color: #34d399;
+  font-size: 20px;
+  box-shadow: inset 0 0 10px rgba(16, 185, 129, .1);
+}
+
+.heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.kicker {
+  color: #10b981;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
 }
 
 .title {
+  color: #d1fae5;
   font-size: 17px;
   font-weight: 700;
-  letter-spacing: 0.2px;
+  letter-spacing: .02em;
+  line-height: 22px;
+}
+
+.title::before {
+  content: '[';
+  color: #10b981;
+}
+
+.title::after {
+  content: ']';
+  color: #10b981;
 }
 
 .close {
-  background: none;
-  border: none;
-  color: #aab;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 31px;
+  height: 31px;
+  border: 1px solid transparent;
+  background: transparent;
+  color: #4b8f76;
   cursor: pointer;
+  font-family: inherit;
   font-size: 18px;
   line-height: 1;
-  padding: 2px 6px;
-  border-radius: 6px;
+  transition: background .14s ease, border-color .14s ease, color .14s ease;
 }
 
 .close:hover {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  border-color: rgba(16, 185, 129, .5);
+  background: rgba(16, 185, 129, .08);
+  color: #34d399;
+}
+
+.close:focus-visible {
+  outline: 1px solid #10b981;
+  outline-offset: 2px;
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px) scale(.985); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (max-width: 620px) {
+  .backdrop { align-items: flex-end; padding: 10px; }
+  .panel { max-height: 92vh; padding: 18px 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .close { animation: none; transition: none; }
 }
