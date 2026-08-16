@@ -138,6 +138,30 @@ describe('AchievementsService', () => {
     expect(snapshot.achievements.find(a => a.id === 'deep-whale')?.unlocked).toBe(false)
   })
 
+  it('unlocks the librarian achievement with 100 or more available skills', async () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    const skills = Array.from({ length: 120 }, (_, i) => ({ name: `skill-${i}` }))
+    ctx.provide('skills', { list: () => Promise.resolve(skills) })
+    void new AchievementsService(ctx)
+    await new Promise(resolve => setImmediate(resolve))
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    const snapshot = service.list()
+    expect(snapshot.achievements.find(a => a.id === 'librarian')?.unlocked).toBe(true)
+  })
+
+  it('keeps the librarian achievement locked below 100 available skills', async () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    const skills = Array.from({ length: 42 }, (_, i) => ({ name: `skill-${i}` }))
+    ctx.provide('skills', { list: () => Promise.resolve(skills) })
+    void new AchievementsService(ctx)
+    await new Promise(resolve => setImmediate(resolve))
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    const snapshot = service.list()
+    expect(snapshot.achievements.find(a => a.id === 'librarian')?.unlocked).toBe(false)
+  })
+
   it('dedupes token usage per session, turn, and step', () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })

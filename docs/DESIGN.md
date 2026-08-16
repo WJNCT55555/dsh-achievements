@@ -113,6 +113,7 @@ Host 引擎注册 10 类事件监听器：
 | `agent/error` | 清理 turnState | —（生命周期） |
 | `agent/turn-stopping` | turns、phoenix、that-works | first-turn、phoenix |
 | `goal/changed` | goalsCreated、goalsCompleted | first-goal、goal-done |
+| `skills/change` / 构造采样 | skills（`ctx.skills.list()` 数量） | librarian |
 | `subagent/start` / `subagent/end` | activeSubagents、subagents | multi-turn、first-subagent、subagent-5 |
 | `workflow/end` | workflows、bigWorkflow | first-workflow、big-workflow |
 | `agent-preset/selected` | presets | shape-shifter |
@@ -121,7 +122,7 @@ Host 引擎注册 10 类事件监听器：
 | `loader/entry-init` | deepWhale（重扫） | deep-whale |
 | 构造时种子 | sessions（`agents.list()`） | first-session |
 
-### 完整成就目录（25 个）
+### 完整成就目录（26 个）
 
 | id | 名称 | 分类 | 稀有度 | 规则 |
 |----|------|------|--------|------|
@@ -142,6 +143,7 @@ Host 引擎注册 10 类事件监听器：
 | big-workflow | 指挥家 | orchestration | epic | flag（agentsStarted ≥ 3，hidden） |
 | first-goal | 立旗 | goals | common | counter goalsCreated ≥ 1 |
 | goal-done | 旗开得胜 | goals | epic | counter goalsCompleted ≥ 1 |
+| librarian | 图书管理员 | skill | rare | counter skills ≥ 100 |
 | deep-whale | 吾栖之肤 | crossover | rare | flag（安装 dsh-deep-whale 皮肤） |
 | night-owl | 夜猫子 | hidden | rare | flag（0-5 点发消息，hidden） |
 | phoenix | 凤凰涅槃 | hidden | epic | flag（回合出错仍完成，hidden） |
@@ -174,7 +176,7 @@ Host 引擎注册 10 类事件监听器：
 
 `AchievementsSection` 内置 `SortMode`（`category` 默认 / `rarity`）：
 
-- 按分类：`CATEGORY_ORDER` = getting-started → toolsmith → filecraft → orchestration → goals → crossover → hidden。
+- 按分类：`CATEGORY_ORDER` = getting-started → toolsmith → filecraft → orchestration → goals → skill → crossover → hidden。
 - 按难度：`RARITY_ORDER` = common → rare → epic → legendary，按稀有度分组。
 - 分段按钮（`role="tablist"`）切换，`aria-selected` 标记当前模式。
 
@@ -277,6 +279,7 @@ AGPA 给隐藏成就配锁定前 `hint`（暗示不剧透）与解锁后 `tip`�
 |------|------|
 | 0.1.0-rc.5+ | 本设计文档建立时快照：25 成就、双排序、phoenix/去重/回合隔离修复、联动成就；删除与「马拉松」语义重叠的「行云流水」（streak-10） |
 | 0.1.0-rc.5+ | 未来方向补充 hermes-achievements 借鉴条目（多档位 tiers / best_session / multi_condition / 模型类成就；正文正则扫描不采用） |
+| 0.1.0-rc.5+ | 新增 skill 分类与「图书管理员」成就（`ctx.skills.list()` ≥ 100）；成就数 26 |
 
 ## 许可
 

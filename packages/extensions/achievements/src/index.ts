@@ -24,6 +24,7 @@ import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
 import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import type {} from '@deepseek-ai/dsh-workflow'
 import type {} from '@deepseek-ai/cordis-plugin-loader'
+import type { SkillCandidate } from '@deepseek-ai/dsh-skill'
 import type { JsonValue } from '@deepseek-ai/dsh-session/types'
 import type {
   AchievementCategory, AchievementProgress, AchievementRarity, AchievementView,
@@ -97,6 +98,7 @@ const ACHIEVEMENTS: readonly AchievementDefinition[] = [
   { id: 'big-workflow', name: '指挥家', desc: '单次 workflow 派出 3 个以上子代理', icon: '🎭', category: 'orchestration', rarity: 'epic', hidden: true, rule: { kind: 'flag', flag: 'bigWorkflow' } },
   { id: 'first-goal', name: '立旗', desc: '第一次创建 goal', icon: '🎯', category: 'goals', rarity: 'common', rule: { kind: 'counter', key: 'goalsCreated', target: 1 } },
   { id: 'goal-done', name: '旗开得胜', desc: '第一次完成 goal', icon: '🏁', category: 'goals', rarity: 'epic', rule: { kind: 'counter', key: 'goalsCompleted', target: 1 } },
+  { id: 'librarian', name: '图书管理员', desc: '拥有 100 个以上可用 skill', icon: '📚', category: 'skill', rarity: 'rare', rule: { kind: 'counter', key: 'skills', target: 100 } },
   { id: 'deep-whale', name: '吾栖之肤', desc: '安装 dsh-deep-whale 鲸鱼娘皮肤插件（联动成就）', icon: '🐋', category: 'crossover', rarity: 'rare', rule: { kind: 'flag', flag: 'deepWhale' } },
   { id: 'night-owl', name: '夜猫子', desc: '在凌晨 0-5 点发送消息', icon: '🦉', category: 'hidden', rarity: 'rare', hidden: true, rule: { kind: 'flag', flag: 'nightOwl' } },
   { id: 'phoenix', name: '凤凰涅槃', desc: '回合内出错却仍然完成', icon: '🔥', category: 'hidden', rarity: 'epic', hidden: true, rule: { kind: 'flag', flag: 'phoenix' } },
@@ -152,6 +154,23 @@ export class AchievementsService extends TypertRemoteService {
     ctx.on('loader/entry-init', () => {
       queueMicrotask(() => { this.detectDeepWhale(ctx) })
     })
+    this.trackSkills(ctx)
+  }
+
+  /** Track the number of available skills for the librarian achievement. */
+  private trackSkills(ctx: Context): void {
+    const skills = ctx.get('skills') as { list?: (options?: unknown) => Promise<SkillCandidate[]> } | undefined
+    const refresh = (): void => {
+      if (skills === undefined || typeof skills.list !== 'function') return
+      void skills.list().then((items) => {
+        this.counters.set('skills', items.length)
+        this.checkAll()
+      }).catch(() => {
+        // Provider discovery may be incomplete; keep the last observed count.
+      })
+    }
+    refresh()
+    ctx.on('skills/change', refresh)
   }
 
   /** Read the full catalog with live progress. */
