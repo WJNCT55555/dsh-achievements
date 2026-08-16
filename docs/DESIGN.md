@@ -6,11 +6,11 @@
 
 ## 1. 设计目标与原则
 
-成就系统为 DeepSeek Harness（DSH）Web 界面提供游戏化激励：把 agent 的真实行为（工具调用、文件操作、子代理、workflow、goal、preset 切换等）折叠成可展示的成就。设计遵循以下硬约束：
+成就系统为 DeepSeek Harness（DSH）Web 界面提供游戏化激励：把 agent 的真实行为（工具调用、文件操作、子代理、workflow、goal、preset 切换、skill、模型路由等）折叠成可展示的成就。设计遵循以下硬约束：
 
 1. **纯观察者，零干扰** — 服务只监听事件、累加计数，从不修改、拦截或影响 agent 循环；任何监听器异常都被隔离，不会泄漏进主流程。
-2. **最小窥探，零遥测** — 只读取叶子标量（工具名、成功标志、agent id、事件类型、文件路径、token 计数）。**从不读取**消息正文、文件内容、错误详情、搜索结果。无任何上传、无持久化、无网络调用。
-3. **进程级全局状态** — 计数与解锁集合跨会话共享，与动态插件前身的行为一致；重启即清零，不做磁盘持久化。
+2. **分层隐私** — 基础层只读取叶子标量（工具名、成功标志、agent id、事件类型、文件路径、token 计数），**从不读取**消息正文、文件内容、错误详情、搜索结果；深度洞察层（`deepInsights`，默认关闭、opt-in）允许对消息正文正则匹配与历史会话扫描，但正文只在运行时匹配、**绝不落盘**。零上传、零遥测。
+3. **本地持久化** — 计数、去重集合、标志与解锁时间戳写入 `~/.agent-achievements/state.json`（防抖写入，dispose 时 flush），重启后完整恢复；只持久化成就进度，不含任何消息/文件内容。
 4. **可验证** — 每个成就必须真实可达（存在能触发它的事件路径），通过单元测试断言。
 
 ---
@@ -103,55 +103,83 @@
 
 ## 4. 事件监听与成就目录
 
-Host 引擎注册 10 类事件监听器：
+Host 引擎注册的事件监听器（基础层）：
 
 | 事件 | 折叠进 | 成就 |
 |------|--------|------|
-| `tools/result` | tools、toolsUsed、writes、edits、streak、turnState | first-tool、tool-10/50/200、five-tools、first-write、edit-25、marathon、that-works、self-ref、linguist |
-| `session/event` (`assistant/message`) | tokens（去重采样） | billionaire |
+| `tools/result` | tools、toolsUsed、writes、edits、streak、turnState、selfQueries、skillCalls、skillsUsed | first-tool、tool-10/50/200、five-tools、tool-palette、first-write、edit-25、marathon、that-works、self-ref、self-ref-v2/v3、linguist、skill-sampler、skill-addict |
+| `session/event` (`assistant/message`) | tokens、outTokens、cacheRead、reasoningTokens（去重采样） | billionaire、token-bookworm、cache-whisperer |
+| `session/event` (`request/header`) | models、providers | model-hop、provider-polyglot、model-whale |
+| `session/event` (`plan/mode` / `approval/*` / `compaction/end` / `schedule/change` / `feedback/record` / `session/title`) | planEntries、approvalsAsked、approvalsRejected、compactions、schedulesCreated、feedbacks、titles | plan-before-act、permission-magnet、voter、compactor、scheduler、critic、title-architect |
 | `agent/request-error` | turnState.error | phoenix |
 | `agent/error` | 清理 turnState | —（生命周期） |
 | `agent/turn-stopping` | turns、phoenix、that-works | first-turn、phoenix |
 | `goal/changed` | goalsCreated、goalsCompleted | first-goal、goal-done |
-| `skills/change` / 构造采样 | skills（`ctx.skills.list()` 数量） | librarian |
-| `subagent/start` / `subagent/end` | activeSubagents、subagents | multi-turn、first-subagent、subagent-5 |
-| `workflow/end` | workflows、bigWorkflow | first-workflow、big-workflow |
+| `skills/change` / 构造采样 | skills（`ctx.skills.list()` 数量） | librarian、skill-hoarder |
+| `subagent/start` / `subagent/end` | activeSubagents、subagents | multi-turn、first-subagent、subagent-5、subagent-army |
+| `workflow/end` | workflows、maxAgentsStarted | first-workflow、big-workflow、workflow-symphony、delegation-king |
 | `agent-preset/selected` | presets | shape-shifter |
 | `agent/inbox/inserted` | nightOwl（本地时间 0-5 点） | night-owl |
 | `agent/session-start` | sessions | first-session |
-| `loader/entry-init` | deepWhale（重扫） | deep-whale |
+| `loader/entry-init` + 构造扫描 | deepWhale、extraPlugins | deep-whale、dsh-native |
 | 构造时种子 | sessions（`agents.list()`） | first-session |
+| `session/event` (`user/message` + `assistant/message`，深度层) | deepSorry、deepCodeHeavy、deepQuestion | deep-sorry、deep-code-heavy、deep-question |
 
-### 完整成就目录（26 个）
+### 完整成就目录（50 个）
 
-| id | 名称 | 分类 | 稀有度 | 规则 |
-|----|------|------|--------|------|
-| first-session | 启程 | getting-started | common | distinct sessions ≥ 1 |
-| first-turn | 初试身手 | getting-started | common | counter turns ≥ 1 |
-| first-tool | 工具初体验 | getting-started | common | counter tools ≥ 1 |
-| tool-10 | 工具新手 | toolsmith | common | counter tools ≥ 10 |
-| tool-50 | 工具达人 | toolsmith | rare | counter tools ≥ 50 |
-| tool-200 | 工具大师 | toolsmith | epic | counter tools ≥ 200 |
-| five-tools | 多面手 | toolsmith | rare | distinct toolsUsed ≥ 5 |
-| first-write | 白纸作画 | filecraft | common | counter writes ≥ 1 |
-| edit-25 | 精雕细琢 | filecraft | rare | counter edits ≥ 25 |
-| linguist | 语言学家 | filecraft | rare | lang-count ≥ 3 |
-| first-subagent | 指挥官 | orchestration | common | counter subagents ≥ 1 |
-| subagent-5 | 军团 | orchestration | rare | counter subagents ≥ 5 |
-| multi-turn | 多线程 | orchestration | rare | flag（3 并发，hidden） |
-| first-workflow | 编排师 | orchestration | rare | counter workflows ≥ 1 |
-| big-workflow | 指挥家 | orchestration | epic | flag（agentsStarted ≥ 3，hidden） |
-| first-goal | 立旗 | goals | common | counter goalsCreated ≥ 1 |
-| goal-done | 旗开得胜 | goals | epic | counter goalsCompleted ≥ 1 |
-| librarian | 图书管理员 | skill | rare | counter skills ≥ 100 |
-| deep-whale | 吾栖之肤 | crossover | rare | flag（安装 dsh-deep-whale 皮肤） |
-| night-owl | 夜猫子 | hidden | rare | flag（0-5 点发消息，hidden） |
-| phoenix | 凤凰涅槃 | hidden | epic | flag（回合出错仍完成，hidden） |
-| marathon | 马拉松 | hidden | rare | flag（单回合 10 工具，hidden） |
-| shape-shifter | 百变星君 | hidden | rare | distinct presets ≥ 3（hidden） |
-| self-ref | 自我指涉 | hidden | epic | flag（修改 DSH 自身，hidden） |
-| that-works | 这也能行？ | hidden | rare | flag（写可运行程序并运行，hidden） |
-| billionaire | 亿万富翁 | hidden | legendary | counter tokens ≥ 100,000,000 |
+| id | 名称 | 分类 | 稀有度 | 规则 | 深度 |
+|----|------|------|--------|------|------|
+| first-session | 启程 | getting-started | common | distinct sessions ≥ 1 | — |
+| first-turn | 初试身手 | getting-started | common | counter turns ≥ 1 | — |
+| first-tool | 工具初体验 | getting-started | common | counter tools ≥ 1 | — |
+| tool-10 | 工具新手 | toolsmith | common | counter tools ≥ 10 | — |
+| tool-50 | 工具达人 | toolsmith | rare | counter tools ≥ 50 | — |
+| tool-200 | 工具大师 | toolsmith | epic | counter tools ≥ 200 | — |
+| five-tools | 多面手 | toolsmith | rare | distinct toolsUsed ≥ 5 | — |
+| tool-palette | 工具箱收藏家 | toolsmith | epic | counter distinctToolsInTurn ≥ 8（hidden） | — |
+| first-write | 白纸作画 | filecraft | common | counter writes ≥ 1 | — |
+| edit-25 | 精雕细琢 | filecraft | rare | counter edits ≥ 25 | — |
+| linguist | 语言学家 | filecraft | rare | lang-count ≥ 3 | — |
+| first-subagent | 指挥官 | orchestration | common | counter subagents ≥ 1 | — |
+| subagent-5 | 军团 | orchestration | rare | counter subagents ≥ 5 | — |
+| multi-turn | 多线程 | orchestration | rare | flag（3 并发，hidden） | — |
+| first-workflow | 编排师 | orchestration | rare | counter workflows ≥ 1 | — |
+| big-workflow | 指挥家 | orchestration | epic | flag（agentsStarted ≥ 3，hidden） | — |
+| workflow-symphony | 编排交响乐 | orchestration | rare | counter workflows ≥ 20 | — |
+| delegation-king | 甩手掌柜 | orchestration | epic | counter maxAgentsStarted ≥ 10（hidden） | — |
+| subagent-army | 千军万马 | orchestration | epic | counter subagents ≥ 100 | — |
+| first-goal | 立旗 | goals | common | counter goalsCreated ≥ 1 | — |
+| goal-done | 旗开得胜 | goals | epic | counter goalsCompleted ≥ 1 | — |
+| librarian | 图书管理员 | skill | rare | counter skills ≥ 100 | — |
+| skill-hoarder | 藏书万卷 | skill | epic | counter skills ≥ 300 | — |
+| skill-sampler | 博览群书 | skill | rare | distinct skillsUsed ≥ 20 | — |
+| skill-addict | 人形锦囊 | skill | rare | counter skillCalls ≥ 100 | — |
+| model-hop | 模型蹦迪 | model | common | distinct models ≥ 5 | — |
+| provider-polyglot | Provider 语言学家 | model | rare | distinct providers ≥ 3 | — |
+| model-whale | 模型百科全书 | model | epic | distinct models ≥ 10 | — |
+| plan-before-act | 先谋后动 | behavior | rare | counter planEntries ≥ 20 | — |
+| permission-magnet | 审批磁铁 | behavior | rare | counter approvalsAsked ≥ 50 | — |
+| voter | 表决权持有人 | behavior | rare | counter approvalsRejected ≥ 5 | — |
+| compactor | 断舍离大师 | behavior | rare | counter compactions ≥ 10 | — |
+| scheduler | 时间管理大师 | behavior | common | counter schedulesCreated ≥ 1 | — |
+| critic | 苛刻的读者 | behavior | rare | counter feedbacks ≥ 3 | — |
+| title-architect | 起名大师 | behavior | rare | counter titles ≥ 10 | — |
+| deep-whale | 吾栖之肤 | crossover | rare | flag（安装 dsh-deep-whale 皮肤） | — |
+| dsh-native | 原教旨主义者 | crossover | rare | counter extraPlugins ≥ 5 | — |
+| night-owl | 夜猫子 | hidden | rare | flag（0-5 点发消息，hidden） | — |
+| phoenix | 凤凰涅槃 | hidden | epic | flag（回合出错仍完成，hidden） | — |
+| marathon | 马拉松 | hidden | rare | flag（单回合 10 工具，hidden） | — |
+| shape-shifter | 百变星君 | hidden | rare | distinct presets ≥ 3（hidden） | — |
+| self-ref | 自我指涉 | hidden | epic | flag（修改 DSH 自身，hidden） | — |
+| self-ref-v2 | 自我指涉·闭环 | hidden | rare | flag（用成就工具查询自己，hidden） | — |
+| self-ref-v3 | 观察者效应 | hidden | rare | counter selfQueries ≥ 10（hidden） | — |
+| that-works | 这也能行？ | hidden | rare | flag（写可运行程序并运行，hidden） | — |
+| billionaire | 亿万富翁 | hidden | legendary | counter tokens ≥ 100,000,000 | — |
+| token-bookworm | 啃书虫 | hidden | rare | counter outTokens ≥ 1,000,000 | — |
+| cache-whisperer | 缓存寻宝人 | hidden | epic | counter cacheRead ≥ 5,000,000 | — |
+| deep-sorry | 道歉大师 | hidden | rare | counter deepSorry ≥ 10（hidden） | ✅ |
+| deep-code-heavy | 代码洪流 | hidden | rare | counter deepCodeHeavy ≥ 50（hidden） | ✅ |
+| deep-question | 十万个为什么 | hidden | rare | counter deepQuestion ≥ 20（hidden） | ✅ |
 
 ---
 
@@ -211,10 +239,11 @@ Host 引擎注册 10 类事件监听器：
 
 ## 8. 当前已知限制
 
-- **进程级而非每会话** — 计数器与解锁集合进程共享，重启清零（与动态插件前身一致；如需每会话进度，需按 session id 分桶）。
+- **进程级而非每会话** — 计数器与解锁集合进程共享（已持久化，重启保留）；如需每会话进度，需按 session id 分桶。
 - **获得率未实装** — 零遥测无法统计真实用户比例，UI 不显示任何预估百分比。
 - **语言识别按扩展名映射，项目分桶按路径片段** — 对多语言/嵌套项目目录是粗粒度近似。
-- **无持久化** — streak 等跨会话成就（如「连续使用 N 天」）当前不可行，因为不落盘。
+- **深度洞察默认关闭** — 消息正文匹配与历史扫描需用户显式开启（首次运行询问 + 设置开关）；未开启时深度成就保持锁定。
+- **持久化格式 v1** — `~/.agent-achievements/state.json` 目前只存成就进度；若未来需要跨会话 streak 等派生状态，需扩展格式并升级 schema 版本。
 
 ---
 
@@ -420,6 +449,7 @@ DSH 是多 provider 架构，`request/header` 携带 provider/model 叶子标量
 | 0.1.0-rc.5+ | 未来方向补充 hermes-achievements 借鉴条目（多档位 tiers / best_session / multi_condition / 模型类成就；正文正则扫描不采用） |
 | 0.1.0-rc.5+ | 新增 skill 分类与「图书管理员」成就（`ctx.skills.list()` ≥ 100）；成就数 26 |
 | 0.1.0-rc.5+ | 新增第 10 节「成就扩充设计方案」：skill/token/model/联动/workflow/行为/hidden 彩蛋共 30+ 候选成就、信号速查表、新规则能力与优先级（未实现，待决策） |
+| 0.1.0-rc.5+ | **落地扩充方案**：本地持久化（`~/.agent-achievements/state.json`，重启保留）、深度洞察 opt-in（首次运行询问 + 设置开关 + 正文正则/历史扫描，正文不落盘）、新增 model/behavior 分类与 30+ 成就（成就数 50）、设置页深度开关 UI。§10 方案主体已实施 |
 
 ## 许可
 

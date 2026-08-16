@@ -61,6 +61,9 @@ export function apply(ctx: ClientContext): void {
   const useSnapshot = bindSnapshotSelector(store.store)
   const t = ctx.locale.bind(NS)
   const list = (): Promise<RemoteResult<AchievementsSnapshot>> => ctx.remote.achievements.list()
+  const deepState = (): Promise<RemoteResult<{ enabled: boolean }>> => ctx.remote.achievements.deepState()
+  const setDeepInsights = (enabled: boolean): Promise<RemoteResult<{ enabled: boolean }>> =>
+    ctx.remote.achievements.setDeepInsights(enabled)
 
   const poll = async (): Promise<void> => {
     const recent = await ctx.remote.achievements.recent()
@@ -77,7 +80,7 @@ export function apply(ctx: ClientContext): void {
   }
   void poll()
 
-  const injected = (): AchievementsSectionInjected => ({ list })
+  const injected = (): AchievementsSectionInjected => ({ list, deepState, setDeepInsights })
 
   ctx.slots.inject('settings.section', () => ctx.slots.register({
     name: 'settings.section',
@@ -101,7 +104,7 @@ export function apply(ctx: ClientContext): void {
     id: 'achievements-gallery',
     order: 101,
     locale: NS,
-    inject: () => ({ useSnapshot, close: () => { store.closeGallery() }, list }),
+    inject: () => ({ useSnapshot, close: () => { store.closeGallery() }, list, deepState, setDeepInsights }),
   }, GalleryOverlay))
 
   ctx.slots.inject('sidebar.footer.action', () => ctx.slots.register({

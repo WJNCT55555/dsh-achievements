@@ -36,10 +36,31 @@
       "path": "../../goal/goal"
     },
     {
+      "path": "../../skill/skill"
+    },
+    {
       "path": "../../subagent/subagent"
     },
     {
       "path": "../../workflow/workflow"
+    },
+    {
+      "path": "../../plan/plan-mode"
+    },
+    {
+      "path": "../../interaction/user-approval"
+    },
+    {
+      "path": "../../compaction/compaction"
+    },
+    {
+      "path": "../../schedule/schedule"
+    },
+    {
+      "path": "../../feedback/command-feedback"
+    },
+    {
+      "path": "../../session/session-title"
     },
     {
       "path": "../../typert/protocol"

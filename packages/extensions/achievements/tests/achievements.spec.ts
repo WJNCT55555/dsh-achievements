@@ -1,13 +1,31 @@
-/**
+﻿/**
  * Achievements engine behavior: event listeners fold observed activity into
  * counters and unlocks, and the Remote surface reads back a stable projection.
  */
 import { Context } from '@deepseek-ai/cordis'
 import type { ToolExecution, ToolExecutionResult } from '@deepseek-ai/dsh-tools'
+import { mkdtempSync, rmSync } from 'node:fs'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { AchievementsService } from '../src/index.ts'
 import type { AchievementsDock, AchievementsSnapshot } from '../src/types.ts'
 
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it } from 'vitest'
+
+/** Per-test temp state dirs, removed after each test. */
+const stateDirs: string[] = []
+afterEach(() => {
+  for (const dir of stateDirs.splice(0)) {
+    try { rmSync(dir, { recursive: true, force: true }) } catch { /* best-effort */ }
+  }
+})
+
+/** Build a service against an isolated state directory. */
+function makeService(ctx: Context, config: { deepInsights?: boolean } = {}): AchievementsService {
+  const stateDir = mkdtempSync(join(tmpdir(), 'dsh-achievements-test-'))
+  stateDirs.push(stateDir)
+  return new AchievementsService(ctx, { ...config, stateDir })
+}
 
 /** Emit helper that sidesteps the typed Event overloads for hand-built payloads. */
 function emit(ctx: Context, name: string, ...args: unknown[]): void {
@@ -41,7 +59,7 @@ describe('AchievementsService', () => {
     const ctx = new Context()
     ctx.provide('agents', { list: () => [{ id: 'session-a' }] })
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
     const snapshot = service.list()
     expect(snapshot.achievements.find(a => a.id === 'first-session')?.unlocked).toBe(true)
@@ -50,7 +68,7 @@ describe('AchievementsService', () => {
   it('unlocks first-tool and counts tool calls across sessions', () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     emit(ctx, 'tools/result', exec('read', 'a'), ok())
     emit(ctx, 'tools/result', exec('grep', 'b'), ok())
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
@@ -61,7 +79,7 @@ describe('AchievementsService', () => {
   it('resets the success streak on a failed tool call', () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     emit(ctx, 'tools/result', exec('read'), ok())
     emit(ctx, 'tools/result', exec('read'), ok({ isError: true, error: {} as never }))
     const service = ctx.get('achievements') as unknown as { dock: () => AchievementsDock }
@@ -71,7 +89,7 @@ describe('AchievementsService', () => {
   it('unlocks multi-turn at three concurrent subagents', () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     emit(ctx, 'subagent/start', { runId: 'r1' })
     emit(ctx, 'subagent/start', { runId: 'r2' })
     emit(ctx, 'subagent/start', { runId: 'r3' })
@@ -82,7 +100,7 @@ describe('AchievementsService', () => {
   it('unlocks phoenix when a request error is recovered and the turn completes', async () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     // A recoverable request error marks the turn; the fallback (retry) is chosen.
     await waterfall(ctx, 'agent/request-error', { agent: { id: 'a' }, turn: 1, step: 1, provider: 'p', failure: {}, retryPolicy: undefined, signal: new AbortController().signal }, { kind: 'retry' })
     emit(ctx, 'agent/turn-stopping', { agent: { id: 'a' }, turn: 1, signal: new AbortController().signal })
@@ -93,7 +111,7 @@ describe('AchievementsService', () => {
   it('does not unlock phoenix when the request error was never recovered', async () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     // No request-error at all: a clean turn must not count as phoenix.
     emit(ctx, 'agent/turn-stopping', { agent: { id: 'a' }, turn: 1, signal: new AbortController().signal })
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
@@ -103,7 +121,7 @@ describe('AchievementsService', () => {
   it('resets marathon turn state on a fatal turn error', () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     // Nine calls in turn A: one short of marathon, then the turn dies.
     for (let i = 0; i < 9; i++) emit(ctx, 'tools/result', exec('read', 'a'), ok())
     emit(ctx, 'agent/error', { agent: { id: 'a' }, turn: 1, step: 1, error: new Error('fatal') })
@@ -120,7 +138,7 @@ describe('AchievementsService', () => {
     ctx.provide('loader', { entries: () => [
       { options: { name: '@dsh-external/dsh-client-ui-skin-maid-atelier' } },
     ] })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
     const snapshot = service.list()
     expect(snapshot.achievements.find(a => a.id === 'deep-whale')?.unlocked).toBe(true)
@@ -132,7 +150,7 @@ describe('AchievementsService', () => {
     ctx.provide('loader', { entries: () => [
       { options: { name: '@deepseek-ai/dsh-achievements' } },
     ] })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
     const snapshot = service.list()
     expect(snapshot.achievements.find(a => a.id === 'deep-whale')?.unlocked).toBe(false)
@@ -143,8 +161,8 @@ describe('AchievementsService', () => {
     ctx.provide('tools', { register: () => () => {} })
     const skills = Array.from({ length: 120 }, (_, i) => ({ name: `skill-${i}` }))
     ctx.provide('skills', { list: () => Promise.resolve(skills) })
-    void new AchievementsService(ctx)
-    await new Promise(resolve => setImmediate(resolve))
+    void makeService(ctx)
+    await new Promise(resolve => setTimeout(resolve, 30))
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
     const snapshot = service.list()
     expect(snapshot.achievements.find(a => a.id === 'librarian')?.unlocked).toBe(true)
@@ -155,8 +173,8 @@ describe('AchievementsService', () => {
     ctx.provide('tools', { register: () => () => {} })
     const skills = Array.from({ length: 42 }, (_, i) => ({ name: `skill-${i}` }))
     ctx.provide('skills', { list: () => Promise.resolve(skills) })
-    void new AchievementsService(ctx)
-    await new Promise(resolve => setImmediate(resolve))
+    void makeService(ctx)
+    await new Promise(resolve => setTimeout(resolve, 30))
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
     const snapshot = service.list()
     expect(snapshot.achievements.find(a => a.id === 'librarian')?.unlocked).toBe(false)
@@ -165,7 +183,7 @@ describe('AchievementsService', () => {
   it('dedupes token usage per session, turn, and step', () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
-    void new AchievementsService(ctx)
+    void makeService(ctx)
     const usage = { inputTokens: 100, outputTokens: 50 }
     const message = { type: 'assistant/message', data: { turn: 1, step: 1, message: {}, usage } }
     // Same session, turn, step: second sample must be deduped.
@@ -176,5 +194,80 @@ describe('AchievementsService', () => {
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
     const a = service.list().achievements.find(a => a.id === 'billionaire')!
     expect(a.progress.current).toBe(300)
+  })
+
+  it('persists unlocks across service instances sharing a state dir', async () => {
+    const stateDir = mkdtempSync(join(tmpdir(), 'dsh-achievements-persist-'))
+    stateDirs.push(stateDir)
+    const first = new Context()
+    first.provide('tools', { register: () => () => {} })
+    first.provide('loader', { entries: () => [
+      { options: { name: '@dsh-external/dsh-client-ui-skin-maid-atelier' } },
+    ] })
+    const svcA = new AchievementsService(first, { stateDir })
+    await new Promise(resolve => setTimeout(resolve, 30))
+    await (svcA as unknown as { store: { flush: () => Promise<void> } }).store.flush()
+    const second = new Context()
+    second.provide('tools', { register: () => () => {} })
+    second.provide('loader', { entries: () => [{ options: { name: '@deepseek-ai/dsh-achievements' } }] })
+    void new AchievementsService(second, { stateDir })
+    await new Promise(resolve => setTimeout(resolve, 60))
+    const service = second.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    // deep-whale was unlocked in the first instance and restored in the second.
+    expect(service.list().achievements.find(a => a.id === 'deep-whale')?.unlocked).toBe(true)
+  })
+
+  it('keeps deep achievements locked while deep insights are off', async () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    await new Promise(resolve => setTimeout(resolve, 30))
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    const view = service.list().achievements.find(a => a.id === 'deep-sorry')!
+    expect(view.deepLocked).toBe(true)
+    expect(view.unlocked).toBe(false)
+  })
+
+  it('counts deep body matches only when deep insights are enabled', async () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    const svc = makeService(ctx, { deepInsights: true })
+    await new Promise(resolve => setTimeout(resolve, 30))
+    const msg = { type: 'assistant/message', data: { turn: 1, step: 1, message: { content: [{ type: 'text', text: 'Sorry about that' }] }, usage: undefined } }
+    emit(ctx, 'session/event', { id: 's1' }, msg)
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    const view = service.list().achievements.find(a => a.id === 'deep-sorry')!
+    expect(view.deepLocked).toBe(false)
+    expect(view.progress.current).toBe(1)
+    void (svc as unknown as { store: { flush: () => Promise<void> } }).store.flush()
+  })
+
+  it('tracks distinct models from request headers', async () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'request/header', data: { header: { config: { provider: 'deepseek', model: 'deepseek-v4' } }, reason: 'first' } })
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'request/header', data: { header: { config: { provider: 'anthropic', model: 'claude-4' } }, reason: 'next' } })
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'request/header', data: { header: { config: { provider: 'openai', model: 'gpt-5' } }, reason: 'next' } })
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    const view = service.list().achievements.find(a => a.id === 'model-hop')!
+    expect(view.progress.current).toBe(3)
+    const polyglot = service.list().achievements.find(a => a.id === 'provider-polyglot')!
+    expect(polyglot.progress.current).toBe(3)
+  })
+
+  it('counts behavior events from session history events', async () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'plan/mode', data: { active: true } })
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'approval/asked', data: { id: 'a1', toolName: 'bash' } })
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'approval/decided', data: { id: 'a1', outcome: 'rejected' } })
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'compaction/end', data: { compactionId: 'c1', turn: null } })
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    expect(service.list().achievements.find(a => a.id === 'plan-before-act')!.progress.current).toBe(1)
+    expect(service.list().achievements.find(a => a.id === 'permission-magnet')!.progress.current).toBe(1)
+    expect(service.list().achievements.find(a => a.id === 'voter')!.progress.current).toBe(1)
+    expect(service.list().achievements.find(a => a.id === 'compactor')!.progress.current).toBe(1)
   })
 })

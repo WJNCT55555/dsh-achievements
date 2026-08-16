@@ -12,7 +12,7 @@ import { twemojiPath, TWEMOJI_BASE } from './twemoji.ts'
 import type { AchievementsKey } from './locales.ts'
 import styles from './AchievementsSection.module.css'
 
-const CATEGORY_ORDER = ['getting-started', 'toolsmith', 'filecraft', 'orchestration', 'goals', 'skill', 'crossover', 'hidden'] as const
+const CATEGORY_ORDER = ['getting-started', 'toolsmith', 'filecraft', 'orchestration', 'goals', 'skill', 'model', 'behavior', 'crossover', 'hidden'] as const
 
 /** Rarity tiers in ascending difficulty for the by-rarity sort. */
 const RARITY_ORDER = ['common', 'rare', 'epic', 'legendary'] as const
@@ -30,6 +30,8 @@ const CATEGORY_ICONS: Record<AchievementView['category'], string> = {
   orchestration: '✧',
   goals: '◎',
   skill: '⌘',
+  model: '🧠',
+  behavior: '🌱',
   crossover: '⟲',
   hidden: '◌',
 }
@@ -45,6 +47,10 @@ const RARITY_ICONS: Record<AchievementView['rarity'], string> = {
 export interface AchievementsSectionInjected {
   /** Remote-backed snapshot loader. */
   list: () => Promise<RemoteResult<AchievementsSnapshot>>
+  /** Read the deep-insights opt-in state. */
+  deepState: () => Promise<RemoteResult<{ enabled: boolean }>>
+  /** Toggle the deep-insights opt-in. */
+  setDeepInsights: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
 }
 
 /** Emoji icon via Twemoji CDN with a text fallback on load failure. */
@@ -67,20 +73,23 @@ function statusMatches(a: AchievementView, filter: StatusFilter): boolean {
 /** One achievement card. */
 function Row({ a, t }: { a: AchievementView; t: (key: AchievementsKey) => string }) {
   const hiddenLocked = a.hidden && !a.unlocked
+  const deepLocked = a.deepLocked && !a.unlocked
   const name = hiddenLocked ? '？？？' : a.name
-  const desc = hiddenLocked ? t('hidden') : a.desc
+  const desc = hiddenLocked ? t('hidden') : (deepLocked ? t('deepLocked') : a.desc)
   const rarityClass = styles[`rarity-${a.rarity}`] ?? styles['rarity-common']
-  const rowClass = `${styles.row} ${rarityClass} ${a.unlocked ? styles.done : ''} ${hiddenLocked || !a.unlocked ? styles.locked : ''}`
+  const rowClass = `${styles.row} ${rarityClass} ${a.unlocked ? styles.done : ''} ${hiddenLocked || deepLocked || !a.unlocked ? styles.locked : ''}`
   const badgeClass = hiddenLocked
     ? styles['badge-locked']
     : (styles[`badge-${a.rarity}`] ?? styles['badge-common'])
   const progress = completionOf(a.progress.current, a.progress.target)
   const statusBadge = a.unlocked
     ? <span className={`${styles.badge} ${styles['badge-done']}`}>{t('done')}</span>
-    : (a.progress.target > 1
-      ? <span className={`${styles.badge} ${styles['badge-locked']}`}>{a.progress.current} / {a.progress.target}</span>
-      : <span className={`${styles.badge} ${styles['badge-locked']}`}>{t('todo')}</span>)
-  const bar = (!hiddenLocked && a.progress.target > 1 && !a.unlocked)
+    : (deepLocked
+      ? <span className={`${styles.badge} ${styles['badge-locked']}`}>{t('deepHint')}</span>
+      : (a.progress.target > 1
+        ? <span className={`${styles.badge} ${styles['badge-locked']}`}>{a.progress.current} / {a.progress.target}</span>
+        : <span className={`${styles.badge} ${styles['badge-locked']}`}>{t('todo')}</span>))
+  const bar = (!hiddenLocked && !deepLocked && a.progress.target > 1 && !a.unlocked)
     ? (
       <div className={styles.barWrap}>
         <div className={styles.bar} aria-hidden="true">
@@ -115,10 +124,12 @@ function Row({ a, t }: { a: AchievementView; t: (key: AchievementsKey) => string
 }
 
 /** Full settings-section gallery over the achievements Remote namespace. */
-export function AchievementsSection({ list, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
+export function AchievementsSection({ list, deepState, setDeepInsights, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
   const [snapshot, setSnapshot] = useState<AchievementsSnapshot | null>(null)
   const [mode, setMode] = useState<SortMode>('category')
   const [status, setStatus] = useState<StatusFilter>('all')
+  const [deepEnabled, setDeepEnabled] = useState(false)
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(null)
   useEffect(() => {
     let alive = true
     void list().then((result) => {
@@ -126,12 +137,25 @@ export function AchievementsSection({ list, t }: AchievementsSectionInjected & P
     }).catch(() => {
       if (alive) setSnapshot(null)
     })
+    void deepState().then((result) => {
+      if (alive && result.ok) setDeepEnabled(result.value.enabled)
+    }).catch(() => {
+      if (alive) setDeepEnabled(false)
+    })
     return () => {
       alive = false
     }
-  }, [list])
+  }, [list, deepState])
   if (snapshot === null) {
     return <div className={styles.loading} role="status"><span className={styles.loadingSpinner} aria-hidden="true" />{t('loading')}</div>
+  }
+
+  const toggleDeep = (): void => {
+    void setDeepInsights(!deepEnabled).then((result) => {
+      if (result.ok) setDeepEnabled(result.value.enabled)
+    }).catch(() => {
+      // The toggle is best-effort; keep the current state on failure.
+    })
   }
 
   const unlocked = snapshot.unlocked
@@ -151,6 +175,17 @@ export function AchievementsSection({ list, t }: AchievementsSectionInjected & P
       icon: RARITY_ICONS[id],
       all: snapshot.achievements.filter(a => a.rarity === id),
     }))
+  const visibleGroups = groups.map((group) => {
+    const items = group.all.filter(a => statusMatches(a, status))
+    const groupUnlocked = group.all.filter(a => a.unlocked).length
+    return {
+      ...group,
+      items,
+      groupUnlocked,
+      groupCompletion: completionOf(groupUnlocked, group.all.length),
+    }
+  }).filter(group => group.items.length > 0)
+  const activeGroup = visibleGroups.find(group => group.id === activeGroupId) ?? visibleGroups[0]
 
   return (
     <div className={styles.section}>
@@ -165,9 +200,12 @@ export function AchievementsSection({ list, t }: AchievementsSectionInjected & P
           </div>
           <div
             className={styles.ring}
-            style={{ background: `conic-gradient(var(--dsw-alias-state-business-primary) ${completion}%, var(--dsw-alias-border-l2) 0)` }}
             aria-label={`${completion}% ${t('complete')}`}
           >
+            <svg className={styles.ringGraphic} viewBox="0 0 44 44" aria-hidden="true">
+              <circle className={styles.ringTrack} cx="22" cy="22" r="19" />
+              <circle className={styles.ringValue} cx="22" cy="22" r="19" pathLength="100" strokeDasharray={`${completion} 100`} />
+            </svg>
             <div className={styles.ringInner}><strong>{completion}%</strong><span>{t('complete')}</span></div>
           </div>
         </div>
@@ -200,27 +238,61 @@ export function AchievementsSection({ list, t }: AchievementsSectionInjected & P
               </button>
             ))}
           </div>
+          <button type="button" aria-pressed={deepEnabled} className={`${styles.deepBtn} ${deepEnabled ? styles.deepActive : ''}`} onClick={toggleDeep} title={t('settings.deepDesc')}>
+            {t('settings.deepTitle')} · {deepEnabled ? t('settings.deepDisable') : t('settings.deepEnable')}
+          </button>
         </div>
       </div>
 
-      {groups.map((group) => {
-        const items = group.all.filter(a => statusMatches(a, status))
-        if (items.length === 0) return null
-        const groupUnlocked = group.all.filter(a => a.unlocked).length
-        const groupCompletion = completionOf(groupUnlocked, group.all.length)
-        return (
-          <section key={group.id} className={styles.group}>
-            <div className={styles.groupHeader}>
-              <div className={styles.groupHeading}>
-                <span className={styles.groupIcon} aria-hidden="true">{group.icon}</span>
-                <div><h3 className={styles.groupTitle}>{group.label}</h3><span className={styles.groupMeta}>{groupUnlocked} / {group.all.length} {t('stats.unlocked')}</span></div>
-              </div>
-              <div className={styles.groupProgress} aria-hidden="true"><div style={{ width: `${groupCompletion}%` }} /></div>
+      {activeGroup && (
+        <div className={styles.archive}>
+          <nav className={styles.rail} aria-label={mode === 'category' ? t('sort.byCategory') : t('sort.byRarity')}>
+            <div className={styles.railHeader}>
+              <span className={styles.railTitle}>{mode === 'category' ? t('sort.byCategory') : t('sort.byRarity')}</span>
+              <span className={styles.railCount}>{visibleGroups.length}</span>
             </div>
-            <div className={styles.rows}>{items.map(a => <Row key={a.id} a={a} t={t} />)}</div>
+            <div className={styles.railList}>
+              {visibleGroups.map((group) => {
+                const active = group.id === activeGroup.id
+                return (
+                  <button
+                    key={group.id}
+                    type="button"
+                    className={`${styles.railItem} ${active ? styles.railItemActive : ''}`}
+                    aria-current={active ? 'page' : undefined}
+                    onClick={() => { setActiveGroupId(group.id) }}
+                  >
+                    <span className={styles.railIcon} aria-hidden="true">{group.icon}</span>
+                    <span className={styles.railCopy}>
+                      <strong>{group.label}</strong>
+                      <small>{group.groupUnlocked} / {group.all.length}</small>
+                    </span>
+                    <span className={styles.railMeter} aria-hidden="true"><span style={{ width: `${group.groupCompletion}%` }} /></span>
+                  </button>
+                )
+              })}
+            </div>
+          </nav>
+
+          <section className={styles.ledger} aria-labelledby={`achievement-group-${activeGroup.id}`}>
+            <div className={styles.ledgerHeader}>
+              <div className={styles.groupHeading}>
+                <span className={styles.groupIcon} aria-hidden="true">{activeGroup.icon}</span>
+                <div>
+                  <h3 className={styles.groupTitle} id={`achievement-group-${activeGroup.id}`}>{activeGroup.label}</h3>
+                  <span className={styles.groupMeta}>{activeGroup.groupUnlocked} / {activeGroup.all.length} {t('stats.unlocked')}</span>
+                </div>
+              </div>
+              <div className={styles.ledgerCompletion}>
+                <strong>{activeGroup.groupCompletion}%</strong>
+                <span>{t('complete')}</span>
+              </div>
+            </div>
+            <div className={styles.groupProgress} aria-hidden="true"><div style={{ width: `${activeGroup.groupCompletion}%` }} /></div>
+            <div className={styles.rows}>{activeGroup.items.map(a => <Row key={a.id} a={a} t={t} />)}</div>
           </section>
-        )
-      })}
+        </div>
+      )}
       {visibleCount === 0 && <div className={styles.empty}>{t('empty')}</div>}
     </div>
   )

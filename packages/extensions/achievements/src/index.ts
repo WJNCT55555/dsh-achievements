@@ -1,18 +1,22 @@
 /**
  * Achievements engine: a root-scoped Typert Remote service observing the agent
- * plane and folding observed activity into a process-global in-memory state.
- * Progress is intentionally global (not per-session): the dynamic-plugin
- * predecessor mounted under the root `cordis-dynamic` group, so this service
- * preserves that contract — counters and unlocks are shared across every
- * session in the process and reset only on restart.
+ * plane and folding observed activity into a durable, process-global state.
+ * Counters, distinct sets, flags, and unlock timestamps are persisted to
+ * `~/.agent-achievements/state.json` so progress survives restarts.
  *
- * Privacy: listeners read only leaf scalars (tool name, success flag, agent id,
- * event kind, write/edit file paths, token counts). Message bodies, file
- * contents, error details, and search results are never read. Every listener is
- * wrapped so an observer bug can never leak into the agent loop.
+ * Two privacy tiers:
+ * - The base tier (always on) reads only leaf scalars — tool name, success
+ *   flag, agent id, event kind, write/edit file paths, token counts. Message
+ *   bodies, file contents, error details, and search results are never read.
+ * - The deep tier (`deepInsights`, default OFF, opted in at first run via the
+ *   user-questions UI) enables message-body regex matching and session-log
+ *   history scanning for dedicated achievements. Deep tier matches bodies at
+ *   runtime and persists only which achievement unlocked — never body text.
  * @module @deepseek-ai/dsh-achievements
  */
 
+import { join } from 'node:path'
+import { homedir } from 'node:os'
 import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type {} from '@deepseek-ai/dsh-agent-presets/types'
@@ -24,14 +28,30 @@ import type { ToolRunContext } from '@deepseek-ai/dsh-tools'
 import { Remote, TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol'
 import type {} from '@deepseek-ai/dsh-workflow'
 import type {} from '@deepseek-ai/cordis-plugin-loader'
+import type {} from '@deepseek-ai/dsh-plan-mode'
+import type {} from '@deepseek-ai/dsh-user-approval'
+import type {} from '@deepseek-ai/dsh-compaction'
+import type {} from '@deepseek-ai/dsh-schedule'
+import type {} from '@deepseek-ai/dsh-command-feedback'
+import type {} from '@deepseek-ai/dsh-session-title'
 import type { SkillCandidate } from '@deepseek-ai/dsh-skill'
 import type { JsonValue } from '@deepseek-ai/dsh-session/types'
+import { z } from 'zod'
+import { AchievementStateStore, type PersistedState } from './state.ts'
 import type {
   AchievementCategory, AchievementProgress, AchievementRarity, AchievementView,
   AchievementsDock, AchievementsSnapshot, RecentUnlock,
 } from './types.ts'
 
 export type * from './types.ts'
+
+/** Config: the deep-insights opt-in and the state-file location. */
+export const Config = z.object({
+  /** Enable message-body regex and session-history achievements (default OFF). */
+  deepInsights: z.boolean().default(false),
+  /** State directory; defaults to `~/.agent-achievements`. */
+  stateDir: z.string().optional(),
+})
 
 /** Internal rule: a counter threshold, a distinct-set threshold, or a one-shot flag. */
 type Rule =
@@ -48,6 +68,8 @@ interface AchievementDefinition {
   readonly category: AchievementCategory
   readonly rarity: AchievementRarity
   readonly hidden?: boolean
+  /** Requires the deep-insights opt-in; the gallery hides it otherwise. */
+  readonly deep?: boolean
   readonly rule: Rule
 }
 
@@ -57,7 +79,19 @@ interface TurnState {
   error: boolean
   wroteRunnable: boolean
   ranShell: boolean
+  /** Distinct tool names seen in this turn. */
+  distinctTools: Set<string>
 }
+
+/** The deep-insights first-run question. */
+const DEEP_INSIGHTS_QUESTION = {
+  id: 'deep-insights',
+  question: '启用「深度洞察」成就？它会读取消息正文与历史会话做统计匹配（仅用于成就解锁，不存储、不上传、不影响正常使用）。',
+  options: [
+    { label: '启用', value: 'enable' },
+    { label: '暂不启用', value: 'skip' },
+  ],
+} as const
 
 const LANG_BY_EXT: Readonly<Record<string, string>> = {
   '.ts': 'TypeScript', '.tsx': 'TypeScript',
@@ -81,33 +115,80 @@ function isDeepWhaleName(name: string): boolean {
   return DEEP_WHALE_NAMES.some(fragment => name.includes(fragment))
 }
 
+/** Skill tool family: tool names that load/execute skills (from the skill tool). */
+const SKILL_TOOL_NAMES: ReadonlySet<string> = new Set(['skill'])
+
+/** Deep-tier message-body regexes, matched only while deepInsights is on. */
+const DEEP_BODY_PATTERNS: Readonly<Record<string, RegExp>> = {
+  'deep-sorry': /sorry|抱歉|apologiz|对不起/i,
+  'deep-code-heavy': /```|function |class |const |let |def |import /,
+  'deep-question': /\?$/m,
+}
+
 const ACHIEVEMENTS: readonly AchievementDefinition[] = [
+  // getting-started
   { id: 'first-session', name: '启程', desc: '开始你的第一个会话', icon: '🚀', category: 'getting-started', rarity: 'common', rule: { kind: 'distinct', key: 'sessions', target: 1 } },
   { id: 'first-turn', name: '初试身手', desc: '完成第一轮对话', icon: '👋', category: 'getting-started', rarity: 'common', rule: { kind: 'counter', key: 'turns', target: 1 } },
   { id: 'first-tool', name: '工具初体验', desc: '第一次调用工具', icon: '🛠️', category: 'getting-started', rarity: 'common', rule: { kind: 'counter', key: 'tools', target: 1 } },
+  // toolsmith
   { id: 'tool-10', name: '工具新手', desc: '累计调用 10 次工具', icon: '🔧', category: 'toolsmith', rarity: 'common', rule: { kind: 'counter', key: 'tools', target: 10 } },
   { id: 'tool-50', name: '工具达人', desc: '累计调用 50 次工具', icon: '⚙️', category: 'toolsmith', rarity: 'rare', rule: { kind: 'counter', key: 'tools', target: 50 } },
   { id: 'tool-200', name: '工具大师', desc: '累计调用 200 次工具', icon: '🔩', category: 'toolsmith', rarity: 'epic', rule: { kind: 'counter', key: 'tools', target: 200 } },
   { id: 'five-tools', name: '多面手', desc: '使用过 5 种不同的工具', icon: '🧰', category: 'toolsmith', rarity: 'rare', rule: { kind: 'distinct', key: 'toolsUsed', target: 5 } },
+  { id: 'tool-palette', name: '工具箱收藏家', desc: '单回合使用 8 种不同工具', icon: '🎨', category: 'toolsmith', rarity: 'epic', hidden: true, rule: { kind: 'counter', key: 'distinctToolsInTurn', target: 8 } },
+  // filecraft
   { id: 'first-write', name: '白纸作画', desc: '第一次写入文件', icon: '📝', category: 'filecraft', rarity: 'common', rule: { kind: 'counter', key: 'writes', target: 1 } },
   { id: 'edit-25', name: '精雕细琢', desc: '累计编辑文件 25 次', icon: '✏️', category: 'filecraft', rarity: 'rare', rule: { kind: 'counter', key: 'edits', target: 25 } },
+  { id: 'linguist', name: '语言学家', desc: '在单个项目中，用 AI 生成了 3 种或以上不同编程语言的代码', icon: '🌐', category: 'filecraft', rarity: 'rare', rule: { kind: 'lang-count', target: 3 } },
+  // orchestration
   { id: 'first-subagent', name: '指挥官', desc: '第一次派出子代理', icon: '🧑‍💼', category: 'orchestration', rarity: 'common', rule: { kind: 'counter', key: 'subagents', target: 1 } },
   { id: 'subagent-5', name: '军团', desc: '累计派出 5 个子代理', icon: '👥', category: 'orchestration', rarity: 'rare', rule: { kind: 'counter', key: 'subagents', target: 5 } },
   { id: 'multi-turn', name: '多线程', desc: '同时运行 3 个子代理', icon: '⚡', category: 'orchestration', rarity: 'rare', hidden: true, rule: { kind: 'flag', flag: 'multiTurn' } },
   { id: 'first-workflow', name: '编排师', desc: '第一次运行 workflow', icon: '🎼', category: 'orchestration', rarity: 'rare', rule: { kind: 'counter', key: 'workflows', target: 1 } },
   { id: 'big-workflow', name: '指挥家', desc: '单次 workflow 派出 3 个以上子代理', icon: '🎭', category: 'orchestration', rarity: 'epic', hidden: true, rule: { kind: 'flag', flag: 'bigWorkflow' } },
+  { id: 'workflow-symphony', name: '编排交响乐', desc: '累计运行 20 次 workflow', icon: '🎻', category: 'orchestration', rarity: 'rare', rule: { kind: 'counter', key: 'workflows', target: 20 } },
+  { id: 'delegation-king', name: '甩手掌柜', desc: '单次 workflow 派出 10 个子代理', icon: '🤴', category: 'orchestration', rarity: 'epic', hidden: true, rule: { kind: 'counter', key: 'maxAgentsStarted', target: 10 } },
+  { id: 'subagent-army', name: '千军万马', desc: '累计派出 100 个子代理', icon: '⚔️', category: 'orchestration', rarity: 'epic', rule: { kind: 'counter', key: 'subagents', target: 100 } },
+  // goals
   { id: 'first-goal', name: '立旗', desc: '第一次创建 goal', icon: '🎯', category: 'goals', rarity: 'common', rule: { kind: 'counter', key: 'goalsCreated', target: 1 } },
   { id: 'goal-done', name: '旗开得胜', desc: '第一次完成 goal', icon: '🏁', category: 'goals', rarity: 'epic', rule: { kind: 'counter', key: 'goalsCompleted', target: 1 } },
+  // skill
   { id: 'librarian', name: '图书管理员', desc: '拥有 100 个以上可用 skill', icon: '📚', category: 'skill', rarity: 'rare', rule: { kind: 'counter', key: 'skills', target: 100 } },
+  { id: 'skill-hoarder', name: '藏书万卷', desc: '拥有 300 个以上可用 skill', icon: '🗄️', category: 'skill', rarity: 'epic', rule: { kind: 'counter', key: 'skills', target: 300 } },
+  { id: 'skill-sampler', name: '博览群书', desc: '使用过 20 种不同 skill', icon: '📖', category: 'skill', rarity: 'rare', rule: { kind: 'distinct', key: 'skillsUsed', target: 20 } },
+  { id: 'skill-addict', name: '人形锦囊', desc: '累计调用 skill 工具 100 次', icon: '🧰', category: 'skill', rarity: 'rare', rule: { kind: 'counter', key: 'skillCalls', target: 100 } },
+  // crossover
   { id: 'deep-whale', name: '吾栖之肤', desc: '安装 dsh-deep-whale 鲸鱼娘皮肤插件（联动成就）', icon: '🐋', category: 'crossover', rarity: 'rare', rule: { kind: 'flag', flag: 'deepWhale' } },
+  { id: 'dsh-native', name: '原教旨主义者', desc: '安装了 5 个以上 DSH 官方之外的插件', icon: '📦', category: 'crossover', rarity: 'rare', rule: { kind: 'counter', key: 'extraPlugins', target: 5 } },
+  // token
+  { id: 'billionaire', name: '亿万富翁', desc: '累计消耗一亿万（1 亿）token', icon: '💰', category: 'hidden', rarity: 'legendary', rule: { kind: 'counter', key: 'tokens', target: 100000000 } },
+  { id: 'token-bookworm', name: '啃书虫', desc: '累计输出 100 万 token', icon: '🐛', category: 'hidden', rarity: 'rare', rule: { kind: 'counter', key: 'outTokens', target: 1000000 } },
+  { id: 'cache-whisperer', name: '缓存寻宝人', desc: '累计命中 500 万 cache-read token', icon: '🔮', category: 'hidden', rarity: 'epic', rule: { kind: 'counter', key: 'cacheRead', target: 5000000 } },
+  // model
+  { id: 'model-hop', name: '模型蹦迪', desc: '用过 5 个不同的 model', icon: '🎵', category: 'model', rarity: 'common', rule: { kind: 'distinct', key: 'models', target: 5 } },
+  { id: 'provider-polyglot', name: 'Provider 语言学家', desc: '用过 3 个不同的 provider', icon: '🌍', category: 'model', rarity: 'rare', rule: { kind: 'distinct', key: 'providers', target: 3 } },
+  { id: 'model-whale', name: '模型百科全书', desc: '用过 10 个不同的 model', icon: '🐘', category: 'model', rarity: 'epic', rule: { kind: 'distinct', key: 'models', target: 10 } },
+  // behavior
+  { id: 'plan-before-act', name: '先谋后动', desc: '进入计划模式 20 次', icon: '📐', category: 'behavior', rarity: 'rare', rule: { kind: 'counter', key: 'planEntries', target: 20 } },
+  { id: 'permission-magnet', name: '审批磁铁', desc: '累计触发 50 次工具审批', icon: '🧲', category: 'behavior', rarity: 'rare', rule: { kind: 'counter', key: 'approvalsAsked', target: 50 } },
+  { id: 'voter', name: '表决权持有人', desc: '累计拒绝 5 次工具调用', icon: '🗳️', category: 'behavior', rarity: 'rare', rule: { kind: 'counter', key: 'approvalsRejected', target: 5 } },
+  { id: 'compactor', name: '断舍离大师', desc: '触发 10 次上下文压缩', icon: '🗜️', category: 'behavior', rarity: 'rare', rule: { kind: 'counter', key: 'compactions', target: 10 } },
+  { id: 'scheduler', name: '时间管理大师', desc: '创建过定时任务', icon: '⏰', category: 'behavior', rarity: 'common', rule: { kind: 'counter', key: 'schedulesCreated', target: 1 } },
+  { id: 'critic', name: '苛刻的读者', desc: '提交过 3 次反馈', icon: '🕵️', category: 'behavior', rarity: 'rare', rule: { kind: 'counter', key: 'feedbacks', target: 3 } },
+  { id: 'title-architect', name: '起名大师', desc: '会话标题被 AI 起名 10 次', icon: '🏷️', category: 'behavior', rarity: 'rare', rule: { kind: 'counter', key: 'titles', target: 10 } },
+  // hidden
   { id: 'night-owl', name: '夜猫子', desc: '在凌晨 0-5 点发送消息', icon: '🦉', category: 'hidden', rarity: 'rare', hidden: true, rule: { kind: 'flag', flag: 'nightOwl' } },
   { id: 'phoenix', name: '凤凰涅槃', desc: '回合内出错却仍然完成', icon: '🔥', category: 'hidden', rarity: 'epic', hidden: true, rule: { kind: 'flag', flag: 'phoenix' } },
   { id: 'marathon', name: '马拉松', desc: '单回合内调用 10 次工具', icon: '🏃', category: 'hidden', rarity: 'rare', hidden: true, rule: { kind: 'flag', flag: 'marathon' } },
   { id: 'shape-shifter', name: '百变星君', desc: '切换过 3 种不同的 agent preset', icon: '🦎', category: 'hidden', rarity: 'rare', hidden: true, rule: { kind: 'distinct', key: 'presets', target: 3 } },
   { id: 'self-ref', name: '自我指涉', desc: '用 DeepSeek Harness 修改了 DSH 本身', icon: '♻️', category: 'hidden', rarity: 'epic', hidden: true, rule: { kind: 'flag', flag: 'selfRef' } },
-  { id: 'linguist', name: '语言学家', desc: '在单个项目中，用 AI 生成了 3 种或以上不同编程语言的代码', icon: '🌐', category: 'filecraft', rarity: 'rare', rule: { kind: 'lang-count', target: 3 } },
+  { id: 'self-ref-v2', name: '自我指涉·闭环', desc: '用成就工具查询自己', icon: '🪞', category: 'hidden', rarity: 'rare', hidden: true, rule: { kind: 'flag', flag: 'selfRefV2' } },
+  { id: 'self-ref-v3', name: '观察者效应', desc: '查询成就进度 10 次', icon: '👁️', category: 'hidden', rarity: 'rare', hidden: true, rule: { kind: 'counter', key: 'selfQueries', target: 10 } },
   { id: 'that-works', name: '这也能行？', desc: '用一段看似毫不相关的自然语言描述，让 AI 生成了一个可运行的程序', icon: '🤔', category: 'hidden', rarity: 'rare', hidden: true, rule: { kind: 'flag', flag: 'thatWorks' } },
-  { id: 'billionaire', name: '亿万富翁', desc: '累计消耗一亿万（1 亿）token', icon: '💰', category: 'hidden', rarity: 'legendary', rule: { kind: 'counter', key: 'tokens', target: 100000000 } },
+  // deep (opt-in)
+  { id: 'deep-sorry', name: '道歉大师', desc: 'AI 累计道歉 10 次（深度洞察）', icon: '🙇', category: 'hidden', rarity: 'rare', hidden: true, deep: true, rule: { kind: 'counter', key: 'deepSorry', target: 10 } },
+  { id: 'deep-code-heavy', name: '代码洪流', desc: '收到 50 条含代码块的消息（深度洞察）', icon: '🌊', category: 'hidden', rarity: 'rare', hidden: true, deep: true, rule: { kind: 'counter', key: 'deepCodeHeavy', target: 50 } },
+  { id: 'deep-question', name: '十万个为什么', desc: '用户连续提问 20 次（深度洞察）', icon: '❓', category: 'hidden', rarity: 'rare', hidden: true, deep: true, rule: { kind: 'counter', key: 'deepQuestion', target: 20 } },
 ]
 
 /** Return the lowercase file extension, or '' for paths without one. */
@@ -130,7 +211,26 @@ function isDshPath(path: unknown): boolean {
     || norm.includes('/scripts/')
 }
 
-/** Achievements service: global observers, one-shot unlock queue, and read-only Remote surface. */
+/** Extract plain text from a message-like value (deep tier only; never stored). */
+function textOf(message: unknown): string {
+  if (typeof message === 'string') return message
+  if (message === null || typeof message !== 'object') return ''
+  const content = (message as { content?: unknown }).content
+  if (typeof content === 'string') return content
+  if (Array.isArray(content)) {
+    return content
+      .map((block) => {
+        if (block === null || typeof block !== 'object') return ''
+        const b = block as { type?: unknown; text?: unknown; content?: unknown }
+        if (typeof b.text === 'string') return b.text
+        return typeof b.content === 'string' ? b.content : ''
+      })
+      .join('\n')
+  }
+  return ''
+}
+
+/** Achievements service: durable global observers, one-shot unlock queue, and read-only Remote surface. */
 export class AchievementsService extends TypertRemoteService {
   static inject = ['tools']
 
@@ -142,19 +242,116 @@ export class AchievementsService extends TypertRemoteService {
   private readonly unlockQueue: RecentUnlock[] = []
   private readonly activeSubagents = new Set<string>()
   private readonly seenUsage = new Set<string>()
+  private readonly store: AchievementStateStore
+  private deepInsights: boolean
 
-  constructor(ctx: Context) {
+  constructor(ctx: Context, config: Partial<z.infer<typeof Config>> = {}) {
     super(ctx, 'achievements')
+    this.ownCtx = ctx
+    this.deepInsights = config.deepInsights ?? false
+    const stateDir = config.stateDir ?? join(homedir(), '.agent-achievements')
+    this.store = new AchievementStateStore(join(stateDir, 'state.json'))
+    // Load before attaching listeners so persisted progress is present at seed time.
+    void this.restore(ctx)
     this.attachListeners(ctx)
+    this.attachDeepListeners(ctx)
     this.seedSessions(ctx)
     this.registerTool(ctx)
     this.detectDeepWhale(ctx)
-    // A skin installed by a later loader row (HMR/user patch) is only visible
-    // once its entry's options are applied; re-scan after each entry-init.
     ctx.on('loader/entry-init', () => {
       queueMicrotask(() => { this.detectDeepWhale(ctx) })
     })
     this.trackSkills(ctx)
+    // Flush pending writes on disposal.
+    ctx.effect(() => async () => { await this.store.flush() }, 'achievements: flush state')
+  }
+
+  /** Restore persisted state, then run the first-run deep-insights opt-in when applicable. */
+  private async restore(ctx: Context): Promise<void> {
+    const state = await this.store.load()
+    this.applyPersisted(state)
+    // First run: if deep insights are off and no prior decision is persisted, ask once.
+    const decided = state.counters['deepAsked'] !== undefined
+    if (!this.deepInsights && !decided) {
+      const questions = ctx.get('userQuestions') as { ask?: (request: unknown) => Promise<{ answers?: Array<{ id: string; selected?: string[] }> }> } | undefined
+      if (questions !== undefined && typeof questions.ask === 'function') {
+        try {
+          const answer = await questions.ask({ questions: [DEEP_INSIGHTS_QUESTION] })
+          const chosen = answer.answers?.find(a => a.id === 'deep-insights')?.selected?.[0]
+          if (chosen === 'enable') this.enableDeepInsights(ctx)
+        } catch {
+          // No provider or declined: deep tier stays off; never block normal use.
+        }
+      }
+      this.counters.set('deepAsked', 1)
+      this.scheduleSave()
+    }
+    this.checkAll()
+  }
+
+  /** Turn on deep insights at runtime (from the settings toggle or the first-run ask). */
+  private enableDeepInsights(ctx: Context): void {
+    if (this.deepInsights) return
+    this.deepInsights = true
+    // Run one history scan so past sessions count immediately.
+    void this.scanHistory(ctx)
+    this.scheduleSave()
+  }
+
+  /** Remote surface: read the deep-insights opt-in state. */
+  @Remote('deepState')
+  deepState(): { enabled: boolean } {
+    return { enabled: this.deepInsights }
+  }
+
+  /** Remote surface: toggle deep insights from the settings panel. */
+  @Remote('setDeepInsights')
+  setDeepInsights(enabled: boolean): { enabled: boolean } {
+    if (enabled && !this.deepInsights) {
+      const ctx = this.ownCtx
+      if (ctx !== undefined) this.enableDeepInsights(ctx)
+      else this.deepInsights = true
+    } else if (!enabled) {
+      this.deepInsights = false
+      this.scheduleSave()
+    }
+    return { enabled: this.deepInsights }
+  }
+
+  /** The context this service was constructed with (retained for runtime wiring). */
+  private ownCtx: Context | undefined
+
+  /** Fold persisted state back into the in-memory containers. */
+  private applyPersisted(state: PersistedState): void {
+    for (const [key, value] of Object.entries(state.counters)) {
+      if (typeof value === 'number') this.counters.set(key, value)
+    }
+    for (const [key, values] of Object.entries(state.distinct)) {
+      if (!Array.isArray(values)) continue
+      const set = new Set<string>()
+      for (const value of values) if (typeof value === 'string') set.add(value)
+      if (set.size > 0) this.distinct.set(key, set)
+    }
+    for (const flag of state.flags) if (typeof flag === 'string') this.flags.add(flag)
+    for (const [id, at] of Object.entries(state.unlocked)) {
+      if (typeof at === 'number') this.unlocked.set(id, at)
+    }
+  }
+
+  /** Snapshot current state for persistence (deep bodies never included). */
+  private snapshot(): PersistedState {
+    const counters: Record<string, number> = {}
+    for (const [key, value] of this.counters) counters[key] = value
+    const distinct: Record<string, string[]> = {}
+    for (const [key, set] of this.distinct) distinct[key] = [...set]
+    const flags = [...this.flags]
+    const unlocked: Record<string, number> = {}
+    for (const [id, at] of this.unlocked) unlocked[id] = at
+    return { schemaVersion: 1, counters, distinct, flags, unlocked }
+  }
+
+  private scheduleSave(): void {
+    this.store.save(this.snapshot())
   }
 
   /** Track the number of available skills for the librarian achievement. */
@@ -216,6 +413,8 @@ export class AchievementsService extends TypertRemoteService {
       category: a.category,
       rarity: a.rarity,
       hidden: a.hidden === true,
+      deep: a.deep === true,
+      deepLocked: a.deep === true && !this.deepInsights,
       unlocked: this.unlocked.has(a.id),
       unlockedAt: this.unlocked.get(a.id) ?? null,
       progress: this.progressOf(a.rule),
@@ -224,16 +423,19 @@ export class AchievementsService extends TypertRemoteService {
 
   private bump(key: string, by = 1): void {
     this.counters.set(key, (this.counters.get(key) ?? 0) + by)
+    this.scheduleSave()
   }
 
   private addDistinct(key: string, value: string): void {
     let set = this.distinct.get(key)
     if (set === undefined) { set = new Set(); this.distinct.set(key, set) }
     set.add(value)
+    this.scheduleSave()
   }
 
   private mark(flag: string): void {
     this.flags.add(flag)
+    this.scheduleSave()
   }
 
   private agentKey(agent: Agent | undefined): string {
@@ -269,18 +471,24 @@ export class AchievementsService extends TypertRemoteService {
   }
 
   private checkAll(): void {
+    let changed = false
     for (const a of ACHIEVEMENTS) {
       if (this.unlocked.has(a.id) || !this.ruleMet(a.rule)) continue
       const at = Date.now()
       this.unlocked.set(a.id, at)
       this.unlockQueue.push({ id: a.id, name: a.name, rarity: a.rarity, icon: a.icon, at })
+      changed = true
     }
+    if (changed) this.scheduleSave()
   }
 
   private turnFor(agent: Agent | undefined): TurnState {
     const key = this.agentKey(agent)
     let turn = this.turnState.get(key)
-    if (turn === undefined) { turn = { toolCalls: 0, error: false, wroteRunnable: false, ranShell: false }; this.turnState.set(key, turn) }
+    if (turn === undefined) {
+      turn = { toolCalls: 0, error: false, wroteRunnable: false, ranShell: false, distinctTools: new Set() }
+      this.turnState.set(key, turn)
+    }
     return turn
   }
 
@@ -293,16 +501,21 @@ export class AchievementsService extends TypertRemoteService {
     this.checkAll()
   }
 
-  /** Mark the dsh-deep-whale crossover achievement when its skin is installed. */
+  /** Mark the dsh-deep-whale crossover achievement and count third-party plugins. */
   private detectDeepWhale(ctx: Context): void {
     const loader = ctx.get('loader')
     if (loader === undefined) return
+    let deepWhaleSeen = false
+    let extraPlugins = 0
     for (const entry of loader.entries()) {
-      if (typeof entry.options.name === 'string' && isDeepWhaleName(entry.options.name)) {
-        this.mark('deepWhale')
-        break
-      }
+      const name = entry.options.name
+      if (typeof name !== 'string') continue
+      if (isDeepWhaleName(name)) deepWhaleSeen = true
+      // Non-official rows (not @deepseek-ai/dsh-*) count as third-party plugins.
+      if (!name.startsWith('@deepseek-ai/dsh-') && !name.startsWith('cordis:') && !name.startsWith('.')) extraPlugins += 1
     }
+    if (deepWhaleSeen) this.mark('deepWhale')
+    if (extraPlugins >= 5) this.counters.set('extraPlugins', extraPlugins)
     this.checkAll()
   }
 
@@ -318,7 +531,18 @@ export class AchievementsService extends TypertRemoteService {
 
       const turn = this.turnFor(exec.agent)
       turn.toolCalls += 1
+      turn.distinctTools.add(name)
       if (turn.toolCalls >= 10) this.mark('marathon')
+      if (turn.distinctTools.size >= 8) this.mark('toolPalette')
+
+      if (name === 'list_achievements') {
+        this.bump('selfQueries')
+        this.mark('selfRefV2')
+      }
+      if (SKILL_TOOL_NAMES.has(name)) {
+        this.bump('skillCalls')
+        this.addDistinct('skillsUsed', name)
+      }
 
       if ((name === 'write' || name === 'edit') && exec.arguments !== undefined) {
         const args = exec.arguments as { file_path?: unknown }
@@ -343,25 +567,71 @@ export class AchievementsService extends TypertRemoteService {
 
     // Count only the final per-(turn,step) sample to avoid double counting the chunk snapshot.
     ctx.on('session/event', (_session: Session, event: SessionEvent) => {
-      if (event.type !== 'assistant/message') return
-      const usage = event.data.usage
-      if (usage === undefined || typeof usage !== 'object') return
-      const turn = event.data.turn
-      const step = event.data.step
-      // Key by session too: two live sessions can share the same (turn, step).
-      const key = `${_session.id}:${turn}:${step}`
-      if (this.seenUsage.has(key)) return
-      this.seenUsage.add(key)
-      const record = usage as {
-        inputTokens?: unknown
-        outputTokens?: unknown
-        cacheReadTokens?: unknown
-        cacheWriteTokens?: unknown
-        reasoningTokens?: unknown
+      if (event.type === 'assistant/message') {
+        const usage = event.data.usage
+        if (usage !== undefined && typeof usage === 'object') {
+          const turn = event.data.turn
+          const step = event.data.step
+          // Key by session too: two live sessions can share the same (turn, step).
+          const key = `${_session.id}:${turn}:${step}`
+          if (!this.seenUsage.has(key)) {
+            this.seenUsage.add(key)
+            const record = usage as {
+              inputTokens?: unknown
+              outputTokens?: unknown
+              cacheReadTokens?: unknown
+              cacheWriteTokens?: unknown
+              reasoningTokens?: unknown
+            }
+            const total = [record.inputTokens, record.outputTokens, record.cacheReadTokens, record.cacheWriteTokens, record.reasoningTokens]
+              .reduce((sum: number, value) => sum + (typeof value === 'number' ? value : 0), 0)
+            if (total > 0) this.bump('tokens', total)
+            if (typeof record.outputTokens === 'number') this.bump('outTokens', record.outputTokens)
+            if (typeof record.cacheReadTokens === 'number') this.bump('cacheRead', record.cacheReadTokens)
+            if (typeof record.reasoningTokens === 'number') this.bump('reasoningTokens', record.reasoningTokens)
+          }
+        }
+        return
       }
-      const total = [record.inputTokens, record.outputTokens, record.cacheReadTokens, record.cacheWriteTokens, record.reasoningTokens]
-        .reduce((sum: number, value) => sum + (typeof value === 'number' ? value : 0), 0)
-      if (total > 0) { this.bump('tokens', total); this.checkAll() }
+      if (event.type === 'request/header') {
+        const header = event.data.header as { config?: { provider?: unknown; model?: unknown } } | undefined
+        const provider = header?.config?.provider
+        const model = header?.config?.model
+        if (typeof provider === 'string' && provider.length > 0) this.addDistinct('providers', provider)
+        if (typeof model === 'string' && model.length > 0) this.addDistinct('models', model)
+        return
+      }
+      if (event.type === 'plan/mode') {
+        if (event.data.active) this.bump('planEntries')
+        return
+      }
+      if (event.type === 'approval/asked') {
+        this.bump('approvalsAsked')
+        return
+      }
+      if (event.type === 'approval/decided') {
+        if (event.data.outcome === 'rejected') this.bump('approvalsRejected')
+        return
+      }
+      if (event.type === 'compaction/end') {
+        this.bump('compactions')
+        return
+      }
+      if (event.type === 'schedule/change') {
+        if (event.data.operation === 'create') this.bump('schedulesCreated')
+        return
+      }
+      if (event.type === 'feedback/record') {
+        this.bump('feedbacks')
+        return
+      }
+      if (event.type === 'session/title') {
+        this.bump('titles')
+        return
+      }
+      if (event.type === 'user/message' && this.deepInsights && textOf(event.data).endsWith('?')) {
+        this.bump('deepQuestion')
+      }
     })
 
     // phoenix: a turn that saw a recoverable request error yet still completed.
@@ -415,6 +685,11 @@ export class AchievementsService extends TypertRemoteService {
     ctx.on('workflow/end', (_info, result) => {
       this.bump('workflows')
       if (result.agentsStarted >= 3) this.mark('bigWorkflow')
+      const prev = this.counters.get('maxAgentsStarted') ?? 0
+      if (result.agentsStarted > prev) {
+        this.counters.set('maxAgentsStarted', result.agentsStarted)
+        this.scheduleSave()
+      }
       this.checkAll()
     })
 
@@ -433,6 +708,57 @@ export class AchievementsService extends TypertRemoteService {
       this.addDistinct('sessions', this.agentKey(payload.agent))
       this.checkAll()
     })
+  }
+
+  /** Deep-tier listeners: message-body regex matches (runtime only, never stored). */
+  private attachDeepListeners(ctx: Context): void {
+    ctx.on('session/event', (_session: Session, event: SessionEvent) => {
+      if (!this.deepInsights) return
+      if (event.type !== 'assistant/message') return
+      const text = textOf(event.data.message)
+      if (DEEP_BODY_PATTERNS['deep-sorry']?.test(text)) this.bump('deepSorry')
+      if (DEEP_BODY_PATTERNS['deep-code-heavy']?.test(text)) this.bump('deepCodeHeavy')
+      this.checkAll()
+    })
+  }
+
+  /** One history scan over known sessions (deep tier): seed counters from past events. */
+  private async scanHistory(ctx: Context): Promise<void> {
+    const sessions = ctx.get('sessions') as { list?: () => Promise<Array<{ events: readonly SessionEvent[] }>> } | undefined
+    if (sessions === undefined || typeof sessions.list !== 'function') return
+    try {
+      const all = await sessions.list()
+      for (const session of all) {
+        for (const event of session.events) {
+          if (event.type === 'assistant/message') {
+            const usage = event.data.usage
+            if (usage !== undefined && typeof usage === 'object') {
+              const record = usage as { outputTokens?: unknown; cacheReadTokens?: unknown }
+              if (typeof record.outputTokens === 'number') this.bump('outTokens', record.outputTokens)
+              if (typeof record.cacheReadTokens === 'number') this.bump('cacheRead', record.cacheReadTokens)
+            }
+            const text = textOf(event.data.message)
+            if (DEEP_BODY_PATTERNS['deep-sorry']?.test(text)) this.bump('deepSorry')
+            if (DEEP_BODY_PATTERNS['deep-code-heavy']?.test(text)) this.bump('deepCodeHeavy')
+          } else if (event.type === 'request/header') {
+            const header = event.data.header as { config?: { provider?: unknown; model?: unknown } } | undefined
+            if (typeof header?.config?.provider === 'string') this.addDistinct('providers', header.config.provider)
+            if (typeof header?.config?.model === 'string') this.addDistinct('models', header.config.model)
+          } else if (event.type === 'plan/mode' && event.data.active) {
+            this.bump('planEntries')
+          } else if (event.type === 'approval/asked') {
+            this.bump('approvalsAsked')
+          } else if (event.type === 'approval/decided' && event.data.outcome === 'rejected') {
+            this.bump('approvalsRejected')
+          } else if (event.type === 'compaction/end') {
+            this.bump('compactions')
+          }
+        }
+      }
+      this.checkAll()
+    } catch {
+      // History scanning is best-effort; a failure never blocks the engine.
+    }
   }
 
   private registerTool(ctx: Context): void {

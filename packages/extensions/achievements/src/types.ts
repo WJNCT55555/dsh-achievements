@@ -18,6 +18,8 @@ export type AchievementCategory =
   | 'orchestration'
   | 'goals'
   | 'skill'
+  | 'model'
+  | 'behavior'
   | 'crossover'
   | 'hidden'
 
@@ -40,6 +42,10 @@ export interface AchievementView {
   readonly rarity: AchievementRarity
   /** Secret achievements hide their name/desc until unlocked. */
   readonly hidden: boolean
+  /** Requires the deep-insights opt-in. */
+  readonly deep: boolean
+  /** True while deep insights are off: the achievement is not yet eligible. */
+  readonly deepLocked: boolean
   readonly unlocked: boolean
   /** Epoch ms of the unlock, or null while locked. */
   readonly unlockedAt: number | null
