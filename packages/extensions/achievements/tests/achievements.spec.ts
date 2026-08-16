@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Achievements engine behavior: event listeners fold observed activity into
  * counters and unlocks, and the Remote surface reads back a stable projection.
  */
@@ -269,5 +269,36 @@ describe('AchievementsService', () => {
     expect(service.list().achievements.find(a => a.id === 'permission-magnet')!.progress.current).toBe(1)
     expect(service.list().achievements.find(a => a.id === 'voter')!.progress.current).toBe(1)
     expect(service.list().achievements.find(a => a.id === 'compactor')!.progress.current).toBe(1)
+  })
+
+  it('sets the billionaire target to one trillion tokens', () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    const view = service.list().achievements.find(a => a.id === 'billionaire')!
+    expect(view.progress.target).toBe(1000000000000)
+  })
+
+  it('unlocks cache-perfect when the cumulative cache hit rate exceeds 99%', () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    // 9900 cache reads against only 99 fresh input tokens → 99.01% hit rate.
+    const usage = { inputTokens: 99, cacheReadTokens: 9900 }
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'assistant/message', data: { turn: 1, step: 1, message: {}, usage } })
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    expect(service.list().achievements.find(a => a.id === 'cache-perfect')?.unlocked).toBe(true)
+  })
+
+  it('keeps cache-perfect locked below the 99% hit rate', () => {
+    const ctx = new Context()
+    ctx.provide('tools', { register: () => () => {} })
+    void makeService(ctx)
+    // 50% hit rate: equal fresh and cached input.
+    const usage = { inputTokens: 100, cacheReadTokens: 100 }
+    emit(ctx, 'session/event', { id: 's1' }, { type: 'assistant/message', data: { turn: 1, step: 1, message: {}, usage } })
+    const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
+    expect(service.list().achievements.find(a => a.id === 'cache-perfect')?.unlocked).toBe(false)
   })
 })

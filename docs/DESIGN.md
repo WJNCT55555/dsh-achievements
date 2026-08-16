@@ -125,7 +125,7 @@ Host 引擎注册的事件监听器（基础层）：
 | 构造时种子 | sessions（`agents.list()`） | first-session |
 | `session/event` (`user/message` + `assistant/message`，深度层) | deepSorry、deepCodeHeavy、deepQuestion | deep-sorry、deep-code-heavy、deep-question |
 
-### 完整成就目录（50 个）
+### 完整成就目录（51 个）
 
 | id | 名称 | 分类 | 稀有度 | 规则 | 深度 |
 |----|------|------|--------|------|------|
@@ -174,9 +174,10 @@ Host 引擎注册的事件监听器（基础层）：
 | self-ref-v2 | 自我指涉·闭环 | hidden | rare | flag（用成就工具查询自己，hidden） | — |
 | self-ref-v3 | 观察者效应 | hidden | rare | counter selfQueries ≥ 10（hidden） | — |
 | that-works | 这也能行？ | hidden | rare | flag（写可运行程序并运行，hidden） | — |
-| billionaire | 亿万富翁 | hidden | legendary | counter tokens ≥ 100,000,000 | — |
+| billionaire | 亿万富翁 | hidden | legendary | counter tokens ≥ 1,000,000,000,000 | — |
 | token-bookworm | 啃书虫 | hidden | rare | counter outTokens ≥ 1,000,000 | — |
 | cache-whisperer | 缓存寻宝人 | hidden | epic | counter cacheRead ≥ 5,000,000 | — |
+| cache-perfect | 百发百中 | hidden | epic | flag（累计缓存命中率 > 99%，hidden） | — |
 | deep-sorry | 道歉大师 | hidden | rare | counter deepSorry ≥ 10（hidden） | ✅ |
 | deep-code-heavy | 代码洪流 | hidden | rare | counter deepCodeHeavy ≥ 50（hidden） | ✅ |
 | deep-question | 十万个为什么 | hidden | rare | counter deepQuestion ≥ 20（hidden） | ✅ |
@@ -450,6 +451,7 @@ DSH 是多 provider 架构，`request/header` 携带 provider/model 叶子标量
 | 0.1.0-rc.5+ | 新增 skill 分类与「图书管理员」成就（`ctx.skills.list()` ≥ 100）；成就数 26 |
 | 0.1.0-rc.5+ | 新增第 10 节「成就扩充设计方案」：skill/token/model/联动/workflow/行为/hidden 彩蛋共 30+ 候选成就、信号速查表、新规则能力与优先级（未实现，待决策） |
 | 0.1.0-rc.5+ | **落地扩充方案**：本地持久化（`~/.agent-achievements/state.json`，重启保留）、深度洞察 opt-in（首次运行询问 + 设置开关 + 正文正则/历史扫描，正文不落盘）、新增 model/behavior 分类与 30+ 成就（成就数 50）、设置页深度开关 UI。§10 方案主体已实施 |
+| 0.1.0-rc.5+ | 亿万富翁 target 提升至 1 万亿 token；新增「百发百中」（累计缓存命中率 > 99%，hidden）；修复 token 类成就 checkAll 回归；成就数 51 |
 
 ## 许可
 

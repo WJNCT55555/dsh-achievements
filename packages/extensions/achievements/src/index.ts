@@ -161,9 +161,10 @@ const ACHIEVEMENTS: readonly AchievementDefinition[] = [
   { id: 'deep-whale', name: '吾栖之肤', desc: '安装 dsh-deep-whale 鲸鱼娘皮肤插件（联动成就）', icon: '🐋', category: 'crossover', rarity: 'rare', rule: { kind: 'flag', flag: 'deepWhale' } },
   { id: 'dsh-native', name: '原教旨主义者', desc: '安装了 5 个以上 DSH 官方之外的插件', icon: '📦', category: 'crossover', rarity: 'rare', rule: { kind: 'counter', key: 'extraPlugins', target: 5 } },
   // token
-  { id: 'billionaire', name: '亿万富翁', desc: '累计消耗一亿万（1 亿）token', icon: '💰', category: 'hidden', rarity: 'legendary', rule: { kind: 'counter', key: 'tokens', target: 100000000 } },
+  { id: 'billionaire', name: '亿万富翁', desc: '累计消耗一万亿 token', icon: '💰', category: 'hidden', rarity: 'legendary', rule: { kind: 'counter', key: 'tokens', target: 1000000000000 } },
   { id: 'token-bookworm', name: '啃书虫', desc: '累计输出 100 万 token', icon: '🐛', category: 'hidden', rarity: 'rare', rule: { kind: 'counter', key: 'outTokens', target: 1000000 } },
   { id: 'cache-whisperer', name: '缓存寻宝人', desc: '累计命中 500 万 cache-read token', icon: '🔮', category: 'hidden', rarity: 'epic', rule: { kind: 'counter', key: 'cacheRead', target: 5000000 } },
+  { id: 'cache-perfect', name: '百发百中', desc: '累计缓存命中率超过 99%', icon: '🎯', category: 'hidden', rarity: 'epic', hidden: true, rule: { kind: 'flag', flag: 'cachePerfect' } },
   // model
   { id: 'model-hop', name: '模型蹦迪', desc: '用过 5 个不同的 model', icon: '🎵', category: 'model', rarity: 'common', rule: { kind: 'distinct', key: 'models', target: 5 } },
   { id: 'provider-polyglot', name: 'Provider 语言学家', desc: '用过 3 个不同的 provider', icon: '🌍', category: 'model', rarity: 'rare', rule: { kind: 'distinct', key: 'providers', target: 3 } },
@@ -588,7 +589,16 @@ export class AchievementsService extends TypertRemoteService {
             if (total > 0) this.bump('tokens', total)
             if (typeof record.outputTokens === 'number') this.bump('outTokens', record.outputTokens)
             if (typeof record.cacheReadTokens === 'number') this.bump('cacheRead', record.cacheReadTokens)
+            if (typeof record.inputTokens === 'number') this.bump('uncachedInput', record.inputTokens)
             if (typeof record.reasoningTokens === 'number') this.bump('reasoningTokens', record.reasoningTokens)
+            this.checkAll()
+            // 百发百中: cumulative cache hit rate (cacheRead / (cacheRead + fresh input)) above 99%.
+            const cacheRead = this.counters.get('cacheRead') ?? 0
+            const uncached = this.counters.get('uncachedInput') ?? 0
+            if (cacheRead > 0 && uncached > 0 && cacheRead / (cacheRead + uncached) >= 0.99) {
+              this.mark('cachePerfect')
+              this.checkAll()
+            }
           }
         }
         return
@@ -733,9 +743,10 @@ export class AchievementsService extends TypertRemoteService {
           if (event.type === 'assistant/message') {
             const usage = event.data.usage
             if (usage !== undefined && typeof usage === 'object') {
-              const record = usage as { outputTokens?: unknown; cacheReadTokens?: unknown }
+              const record = usage as { outputTokens?: unknown; cacheReadTokens?: unknown; inputTokens?: unknown }
               if (typeof record.outputTokens === 'number') this.bump('outTokens', record.outputTokens)
               if (typeof record.cacheReadTokens === 'number') this.bump('cacheRead', record.cacheReadTokens)
+              if (typeof record.inputTokens === 'number') this.bump('uncachedInput', record.inputTokens)
             }
             const text = textOf(event.data.message)
             if (DEEP_BODY_PATTERNS['deep-sorry']?.test(text)) this.bump('deepSorry')
