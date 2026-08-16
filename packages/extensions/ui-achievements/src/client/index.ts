@@ -61,9 +61,14 @@ export function apply(ctx: ClientContext): void {
   const useSnapshot = bindSnapshotSelector(store.store)
   const t = ctx.locale.bind(NS)
   const list = (): Promise<RemoteResult<AchievementsSnapshot>> => ctx.remote.achievements.list()
-  const deepState = (): Promise<RemoteResult<{ enabled: boolean }>> => ctx.remote.achievements.deepState()
-  const setDeepInsights = (enabled: boolean): Promise<RemoteResult<{ enabled: boolean }>> =>
-    ctx.remote.achievements.setDeepInsights(enabled)
+  // The deep-insights Remote methods may be absent on hosts that predate them;
+  // keep the plugin applyable so the gallery still opens there.
+  const deepRemote = (ctx.remote.achievements as unknown as {
+    deepState?: () => Promise<RemoteResult<{ enabled: boolean }>>
+    setDeepInsights?: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
+  })
+  const deepState = deepRemote.deepState
+  const setDeepInsights = deepRemote.setDeepInsights
 
   const poll = async (): Promise<void> => {
     const recent = await ctx.remote.achievements.recent()
@@ -80,7 +85,11 @@ export function apply(ctx: ClientContext): void {
   }
   void poll()
 
-  const injected = (): AchievementsSectionInjected => ({ list, deepState, setDeepInsights })
+  const injected = (): AchievementsSectionInjected => ({
+    list,
+    ...deepState !== undefined ? { deepState } : {},
+    ...setDeepInsights !== undefined ? { setDeepInsights } : {},
+  })
 
   ctx.slots.inject('settings.section', () => ctx.slots.register({
     name: 'settings.section',
@@ -104,7 +113,13 @@ export function apply(ctx: ClientContext): void {
     id: 'achievements-gallery',
     order: 101,
     locale: NS,
-    inject: () => ({ useSnapshot, close: () => { store.closeGallery() }, list, deepState, setDeepInsights }),
+    inject: () => ({
+      useSnapshot,
+      close: () => { store.closeGallery() },
+      list,
+      ...deepState !== undefined ? { deepState } : {},
+      ...setDeepInsights !== undefined ? { setDeepInsights } : {},
+    }),
   }, GalleryOverlay))
 
   ctx.slots.inject('sidebar.footer.action', () => ctx.slots.register({

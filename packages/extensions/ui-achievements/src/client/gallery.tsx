@@ -40,7 +40,12 @@ export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepIns
           </div>
           <button type="button" className={styles.close} onClick={close} aria-label={t('gallery.close')}>×</button>
         </div>
-        <AchievementsSection list={list} deepState={deepState} setDeepInsights={setDeepInsights} t={t} />
+        <AchievementsSection
+          list={list}
+          {...deepState !== undefined ? { deepState } : {}}
+          {...setDeepInsights !== undefined ? { setDeepInsights } : {}}
+          t={t}
+        />
       </div>
     </div>
   )

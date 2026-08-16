@@ -47,10 +47,10 @@ const RARITY_ICONS: Record<AchievementView['rarity'], string> = {
 export interface AchievementsSectionInjected {
   /** Remote-backed snapshot loader. */
   list: () => Promise<RemoteResult<AchievementsSnapshot>>
-  /** Read the deep-insights opt-in state. */
-  deepState: () => Promise<RemoteResult<{ enabled: boolean }>>
-  /** Toggle the deep-insights opt-in. */
-  setDeepInsights: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
+  /** Read the deep-insights opt-in state; absent when the host predates it. */
+  deepState?: () => Promise<RemoteResult<{ enabled: boolean }>>
+  /** Toggle the deep-insights opt-in; absent when the host predates it. */
+  setDeepInsights?: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
 }
 
 /** Emoji icon via Twemoji CDN with a text fallback on load failure. */
@@ -137,11 +137,14 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
     }).catch(() => {
       if (alive) setSnapshot(null)
     })
-    void deepState().then((result) => {
-      if (alive && result.ok) setDeepEnabled(result.value.enabled)
-    }).catch(() => {
-      if (alive) setDeepEnabled(false)
-    })
+    // deepState is optional: hosts predating the deep-insights tier lack it.
+    if (deepState !== undefined) {
+      void deepState().then((result) => {
+        if (alive && result.ok) setDeepEnabled(result.value.enabled)
+      }).catch(() => {
+        if (alive) setDeepEnabled(false)
+      })
+    }
     return () => {
       alive = false
     }
@@ -151,6 +154,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
   }
 
   const toggleDeep = (): void => {
+    if (setDeepInsights === undefined) return
     void setDeepInsights(!deepEnabled).then((result) => {
       if (result.ok) setDeepEnabled(result.value.enabled)
     }).catch(() => {
