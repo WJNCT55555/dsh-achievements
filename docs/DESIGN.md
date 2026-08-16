@@ -107,7 +107,7 @@ Host 引擎注册 10 类事件监听器：
 
 | 事件 | 折叠进 | 成就 |
 |------|--------|------|
-| `tools/result` | tools、toolsUsed、writes、edits、streak、turnState | first-tool、tool-10/50/200、five-tools、streak-10、first-write、edit-25、marathon、that-works、self-ref、linguist |
+| `tools/result` | tools、toolsUsed、writes、edits、streak、turnState | first-tool、tool-10/50/200、five-tools、first-write、edit-25、marathon、that-works、self-ref、linguist |
 | `session/event` (`assistant/message`) | tokens（去重采样） | billionaire |
 | `agent/request-error` | turnState.error | phoenix |
 | `agent/error` | 清理 turnState | —（生命周期） |
@@ -121,7 +121,7 @@ Host 引擎注册 10 类事件监听器：
 | `loader/entry-init` | deepWhale（重扫） | deep-whale |
 | 构造时种子 | sessions（`agents.list()`） | first-session |
 
-### 完整成就目录（26 个）
+### 完整成就目录（25 个）
 
 | id | 名称 | 分类 | 稀有度 | 规则 |
 |----|------|------|--------|------|
@@ -132,7 +132,6 @@ Host 引擎注册 10 类事件监听器：
 | tool-50 | 工具达人 | toolsmith | rare | counter tools ≥ 50 |
 | tool-200 | 工具大师 | toolsmith | epic | counter tools ≥ 200 |
 | five-tools | 多面手 | toolsmith | rare | distinct toolsUsed ≥ 5 |
-| streak-10 | 行云流水 | toolsmith | rare | counter streak ≥ 10 |
 | first-write | 白纸作画 | filecraft | common | counter writes ≥ 1 |
 | edit-25 | 精雕细琢 | filecraft | rare | counter edits ≥ 25 |
 | linguist | 语言学家 | filecraft | rare | lang-count ≥ 3 |
@@ -276,7 +275,7 @@ AGPA 给隐藏成就配锁定前 `hint`（暗示不剧透）与解锁后 `tip`�
 
 | 版本 | 变更 |
 |------|------|
-| 0.1.0-rc.5+ | 本设计文档建立时快照：26 成就、双排序、phoenix/去重/回合隔离修复、联动成就 |
+| 0.1.0-rc.5+ | 本设计文档建立时快照：25 成就、双排序、phoenix/去重/回合隔离修复、联动成就；删除与「马拉松」语义重叠的「行云流水」（streak-10） |
 | 0.1.0-rc.5+ | 未来方向补充 hermes-achievements 借鉴条目（多档位 tiers / best_session / multi_condition / 模型类成就；正文正则扫描不采用） |
 
 ## 许可

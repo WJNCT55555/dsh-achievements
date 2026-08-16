@@ -88,7 +88,6 @@ const ACHIEVEMENTS: readonly AchievementDefinition[] = [
   { id: 'tool-50', name: '工具达人', desc: '累计调用 50 次工具', icon: '⚙️', category: 'toolsmith', rarity: 'rare', rule: { kind: 'counter', key: 'tools', target: 50 } },
   { id: 'tool-200', name: '工具大师', desc: '累计调用 200 次工具', icon: '🔩', category: 'toolsmith', rarity: 'epic', rule: { kind: 'counter', key: 'tools', target: 200 } },
   { id: 'five-tools', name: '多面手', desc: '使用过 5 种不同的工具', icon: '🧰', category: 'toolsmith', rarity: 'rare', rule: { kind: 'distinct', key: 'toolsUsed', target: 5 } },
-  { id: 'streak-10', name: '行云流水', desc: '连续 10 次工具调用全部成功', icon: '🔥', category: 'toolsmith', rarity: 'rare', rule: { kind: 'counter', key: 'streak', target: 10 } },
   { id: 'first-write', name: '白纸作画', desc: '第一次写入文件', icon: '📝', category: 'filecraft', rarity: 'common', rule: { kind: 'counter', key: 'writes', target: 1 } },
   { id: 'edit-25', name: '精雕细琢', desc: '累计编辑文件 25 次', icon: '✏️', category: 'filecraft', rarity: 'rare', rule: { kind: 'counter', key: 'edits', target: 25 } },
   { id: 'first-subagent', name: '指挥官', desc: '第一次派出子代理', icon: '🧑‍💼', category: 'orchestration', rarity: 'common', rule: { kind: 'counter', key: 'subagents', target: 1 } },
