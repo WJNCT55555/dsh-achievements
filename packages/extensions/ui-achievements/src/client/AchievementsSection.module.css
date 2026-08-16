@@ -258,26 +258,30 @@
   text-transform: uppercase;
 }
 
-/* StatBar: grid-line completion bar */
-.statBar {
+/* rarity bar: total-progress slider, unlocked segments tinted per rarity */
+.rarityBar {
   position: relative;
+  display: flex;
   overflow: hidden;
-  height: 8px;
+  height: 10px;
   border: 1px solid var(--retro-line-strong);
   background: #020403;
 }
 
-.statBar::after,
+.rarityBar::after,
 .groupProgress::after,
 .bar::after {
   content: none;
 }
 
-.statBarFill {
+.rarityBarSegment {
   height: 100%;
-  background: var(--retro-emerald);
-  box-shadow: 0 0 8px rgba(16, 185, 129, .5);
+  box-shadow: 0 0 6px rgba(16, 185, 129, .3);
   transition: width .35s ease;
+}
+
+.rarityBarSegment:first-child {
+  border-left: 0;
 }
 
 .groupProgress,
@@ -1154,7 +1158,7 @@
 @media (prefers-reduced-motion: reduce) {
   .loadingSpinner,
   .row,
-  .statBarFill,
+  .rarityBarSegment,
   .groupProgress div,
   .barFill { animation: none; transition: none; }
 }

@@ -290,8 +290,8 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, t
 
   // ── dashboard charts data ───────────────────────────────────────
   const rarityColors: Record<AchievementView['rarity'], string> = {
-    common: '#10b981',
-    rare: '#2dd4bf',
+    common: '#e8f5ef',
+    rare: '#60a5fa',
     epic: '#a78bfa',
     legendary: '#fbbf24',
   }
@@ -352,21 +352,19 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, t
           <div className={styles.stat}><strong>{snapshot.total}</strong><span>{t('stats.total')}</span></div>
           <div className={styles.stat}><strong>{remaining}</strong><span>{t('stats.remaining')}</span></div>
         </div>
-        <div className={styles.statBar} aria-hidden="true">
-          <div className={styles.statBarFill} style={{ width: `${completion}%` }} />
+        <div className={styles.rarityBar} role="img" aria-label={`${t('chart.rarity')}: ${unlocked}/${snapshot.total}`}>
+          {raritySlices.map(slice => (
+            <div
+              key={slice.label}
+              className={styles.rarityBarSegment}
+              style={{ width: `${(slice.value / snapshot.total) * 100}%`, background: slice.color }}
+              title={`${slice.label}: ${slice.value}`}
+            />
+          ))}
         </div>
       </section>
 
       <div className={styles.charts} role="group" aria-label={t('chart.title')}>
-        <section className={styles.chart} aria-labelledby="chart-rarity-title">
-          <h4 className={styles.chartBadge} id="chart-rarity-title">[{t('chart.rarity')}]</h4>
-          <div className={styles.chartBars}>
-            {raritySlices.map(slice => (
-              <HBar key={slice.label} label={slice.label} value={slice.value} max={snapshot.total} color={slice.color} />
-            ))}
-          </div>
-        </section>
-
         <section className={styles.chart} aria-labelledby="chart-category-title">
           <h4 className={styles.chartBadge} id="chart-category-title">[{t('chart.category')}]</h4>
           <Donut slices={catSlices} center={String(unlocked)} t={t} />
