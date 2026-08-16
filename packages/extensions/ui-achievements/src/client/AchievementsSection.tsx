@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import type { AchievementsSnapshot, AchievementView } from '@wjnct55555/dsh-achievements/types'
+import type { AchievementsSnapshot, AchievementView } from '@deepseek-ai/dsh-achievements/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { twemojiPath, TWEMOJI_BASE } from './twemoji.ts'
@@ -130,16 +130,21 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
   const [status, setStatus] = useState<StatusFilter>('all')
   const [deepEnabled, setDeepEnabled] = useState(false)
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null)
+  const [loadError, setLoadError] = useState<string | null>(null)
+  const [reloadToken, setReloadToken] = useState(0)
   useEffect(() => {
     let alive = true
-    void list().then((result) => {
-      if (alive && result.ok) setSnapshot(result.value)
+    setLoadError(null)
+    void Promise.resolve().then(list).then((result) => {
+      if (!alive) return
+      if (result.ok) setSnapshot(result.value)
+      else setLoadError(result.error.message)
     }).catch(() => {
-      if (alive) setSnapshot(null)
+      if (alive) setLoadError(t('loadError'))
     })
     // deepState is optional: hosts predating the deep-insights tier lack it.
     if (deepState !== undefined) {
-      void deepState().then((result) => {
+      void Promise.resolve().then(deepState).then((result) => {
         if (alive && result.ok) setDeepEnabled(result.value.enabled)
       }).catch(() => {
         if (alive) setDeepEnabled(false)
@@ -148,14 +153,26 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
     return () => {
       alive = false
     }
-  }, [list, deepState])
+  }, [list, deepState, reloadToken, t])
   if (snapshot === null) {
+    if (loadError !== null) {
+      return (
+        <div className={styles.loadFailure} role="alert">
+          <span className={styles.loadFailureIcon} aria-hidden="true">!</span>
+          <div>
+            <strong>{t('loadError')}</strong>
+            <p>{loadError}</p>
+          </div>
+          <button type="button" onClick={() => { setReloadToken(value => value + 1) }}>{t('retry')}</button>
+        </div>
+      )
+    }
     return <div className={styles.loading} role="status"><span className={styles.loadingSpinner} aria-hidden="true" />{t('loading')}</div>
   }
 
   const toggleDeep = (): void => {
     if (setDeepInsights === undefined) return
-    void setDeepInsights(!deepEnabled).then((result) => {
+    void Promise.resolve().then(() => setDeepInsights(!deepEnabled)).then((result) => {
       if (result.ok) setDeepEnabled(result.value.enabled)
     }).catch(() => {
       // The toggle is best-effort; keep the current state on failure.
@@ -194,29 +211,27 @@ export function AchievementsSection({ list, deepState, setDeepInsights, t }: Ach
   return (
     <div className={styles.section}>
       <section className={styles.hero} aria-labelledby="achievements-overview-title">
+        <span className={styles.heroBadge} aria-hidden="true">[{t('title')}]</span>
         <div className={styles.heroGlow} aria-hidden="true" />
         <div className={styles.heroTop}>
-          <div className={styles.heroIcon} aria-hidden="true">🏆</div>
+          <div className={styles.heroIcon} aria-hidden="true">&gt;_</div>
           <div className={styles.heroCopy}>
             <div className={styles.kicker}>{t('kicker')}</div>
             <h2 className={styles.heroTitle} id="achievements-overview-title">{t('title')}</h2>
             <p className={styles.heroSubtitle}>{t('subtitle')}</p>
           </div>
-          <div
-            className={styles.ring}
-            aria-label={`${completion}% ${t('complete')}`}
-          >
-            <svg className={styles.ringGraphic} viewBox="0 0 44 44" aria-hidden="true">
-              <circle className={styles.ringTrack} cx="22" cy="22" r="19" />
-              <circle className={styles.ringValue} cx="22" cy="22" r="19" pathLength="100" strokeDasharray={`${completion} 100`} />
-            </svg>
-            <div className={styles.ringInner}><strong>{completion}%</strong><span>{t('complete')}</span></div>
+          <div className={styles.heroPct} aria-label={`${completion}% ${t('complete')}`}>
+            <strong>{completion}%</strong>
+            <span>{t('complete')}</span>
           </div>
         </div>
         <div className={styles.stats}>
           <div className={styles.stat}><strong>{unlocked}</strong><span>{t('stats.unlocked')}</span></div>
           <div className={styles.stat}><strong>{snapshot.total}</strong><span>{t('stats.total')}</span></div>
           <div className={styles.stat}><strong>{remaining}</strong><span>{t('stats.remaining')}</span></div>
+        </div>
+        <div className={styles.statBar} aria-hidden="true">
+          <div className={styles.statBarFill} style={{ width: `${completion}%` }} />
         </div>
         <div className={styles.heroBar} aria-hidden="true"><div className={styles.heroBarFill} style={{ width: `${completion}%` }} /></div>
       </section>

@@ -1,9 +1,8 @@
 /*
- * Achievements gallery — retro terminal style.
- * Visual language derived from the reference UI: black CRT background,
- * emerald borders with corner brackets, `[TITLE]` floating badges, monospace
- * type, soft green glow, grid-line progress bars, and scanline hover.
- * Structure (class names) is unchanged; only the skin is replaced.
+ * Achievements gallery — retro terminal layout (reference: 可参考学习的UI.tsx).
+ * Structural skin, not just colors: right-angle containers, `[TITLE]` floating
+ * badges, full-row terminal menu (rail), StatBar completion bar, bracket
+ * buttons, grid-line progress bars, scanline hover.
  */
 
 .section {
@@ -19,7 +18,6 @@
   --retro-muted: #6ee7b7;
   --retro-faint: #4b8f76;
   --retro-amber: #fbbf24;
-  --retro-amber-deep: #92400e;
   --retro-glow: 0 0 15px rgba(16, 185, 129, .1);
   display: flex;
   flex-direction: column;
@@ -99,17 +97,31 @@
   background: var(--retro-emerald);
 }
 
-/* ── hero: retro container with corner brackets ────────────────── */
+/* ── hero: RetroContainer ───────────────────────────────────────── */
 
 .hero {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 14px;
-  padding: 22px 20px 18px;
+  padding: 26px 20px 18px;
   border: 1px solid var(--retro-emerald-deep);
-  background: rgba(0, 0, 0, .9);
+  background: rgba(0, 0, 0, .92);
   box-shadow: var(--retro-glow);
+}
+
+/* floating [TITLE] badge, straddling the top border */
+.heroBadge {
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  padding: 0 8px;
+  background: var(--retro-bg);
+  color: var(--retro-emerald);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .22em;
+  text-transform: uppercase;
 }
 
 /* four corner brackets */
@@ -152,7 +164,8 @@
   border: 1px solid var(--retro-line-strong);
   background: rgba(6, 78, 59, .25);
   color: var(--retro-emerald-dim);
-  font-size: 26px;
+  font-size: 22px;
+  font-weight: 700;
   box-shadow: inset 0 0 12px rgba(16, 185, 129, .12);
 }
 
@@ -191,61 +204,22 @@
   line-height: 1.5;
 }
 
-/* completion ring — terminal gauge */
-.ring {
-  position: relative;
-  display: grid;
-  place-items: center;
-  flex: none;
-  width: 76px;
-  height: 76px;
-}
-
-.ringGraphic {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  transform: rotate(-90deg);
-}
-
-.ringTrack,
-.ringValue {
-  fill: none;
-  stroke-width: 3;
-}
-
-.ringTrack {
-  stroke: var(--retro-emerald-deep);
-}
-
-.ringValue {
-  stroke: var(--retro-emerald);
-  stroke-linecap: butt;
-  transition: stroke-dasharray .35s ease;
-}
-
-.ringInner {
+/* completion percentage readout (replaces the ring) */
+.heroPct {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border: 1px solid var(--retro-line);
-  border-radius: 50%;
-  background: var(--retro-panel);
+  align-items: flex-end;
+  flex: none;
+  gap: 2px;
 }
 
-.ringInner strong {
+.heroPct strong {
   color: var(--retro-emerald-dim);
-  font-family: ui-monospace, monospace;
-  font-size: 16px;
-  line-height: 19px;
+  font-size: 22px;
   font-variant-numeric: tabular-nums;
 }
 
-.ringInner span {
+.heroPct span {
   color: var(--retro-faint);
   font-size: 8px;
   letter-spacing: .1em;
@@ -254,7 +228,6 @@
 
 /* stats strip — bracketed three-cell row */
 .stats {
-  position: relative;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 0;
@@ -276,7 +249,6 @@
 
 .stat strong {
   color: var(--retro-text);
-  font-family: ui-monospace, monospace;
   font-size: 16px;
   line-height: 20px;
   font-variant-numeric: tabular-nums;
@@ -294,26 +266,21 @@
   text-transform: uppercase;
 }
 
-/* progress bars with grid tick marks */
-.heroBar,
-.groupProgress,
-.bar {
+/* StatBar: grid-line completion bar */
+.statBar {
   position: relative;
   overflow: hidden;
-  height: 10px;
-  border: 1px solid var(--retro-line);
+  height: 12px;
+  border: 1px solid var(--retro-line-strong);
   background: #020403;
 }
 
-/* eleven grid lines over every bar (center line solid, rest faint) */
+.statBar::after,
 .heroBar::after,
 .groupProgress::after,
 .bar::after {
   position: absolute;
   inset: 0;
-  display: flex;
-  justify-content: space-between;
-  padding: 0 4px;
   content: '';
   background-image: repeating-linear-gradient(
     90deg,
@@ -323,8 +290,24 @@
   pointer-events: none;
 }
 
+.statBarFill {
+  height: 100%;
+  background: var(--retro-emerald);
+  box-shadow: 0 0 8px rgba(16, 185, 129, .5);
+  transition: width .35s ease;
+}
+
+.heroBar,
+.groupProgress,
+.bar {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--retro-line);
+  background: #020403;
+}
+
 .heroBar {
-  height: 10px;
+  height: 8px;
 }
 
 .heroBarFill,
@@ -338,7 +321,7 @@
 
 .groupProgress,
 .bar {
-  height: 7px;
+  height: 6px;
 }
 
 .groupProgress {
@@ -346,7 +329,7 @@
   margin-bottom: 13px;
 }
 
-/* ── toolbar ───────────────────────────────────────────────────── */
+/* ── toolbar: bracket buttons ───────────────────────────────────── */
 
 .toolbar {
   display: flex;
@@ -385,7 +368,6 @@
   gap: 6px;
 }
 
-/* segmented control — bracketed toggle */
 .segmented {
   display: inline-flex;
   gap: 2px;
@@ -457,11 +439,11 @@
   background: rgba(251, 191, 36, .08);
 }
 
-/* ── archive: rail + ledger split ──────────────────────────────── */
+/* ── archive: terminal menu (rail) + ledger ─────────────────────── */
 
 .archive {
   display: grid;
-  grid-template-columns: 190px minmax(0, 1fr);
+  grid-template-columns: 210px minmax(0, 1fr);
   min-height: 430px;
   border: 1px solid var(--retro-emerald-deep);
   background: var(--retro-panel);
@@ -512,14 +494,15 @@
   padding-top: 8px;
 }
 
+/* full-row terminal menu item (RetroButton) */
 .railItem {
   position: relative;
   display: grid;
-  grid-template-columns: 28px minmax(0, 1fr);
-  gap: 2px 8px;
+  grid-template-columns: 18px minmax(0, 1fr);
+  gap: 2px 6px;
   align-items: center;
   width: 100%;
-  padding: 8px 8px 7px;
+  padding: 9px 8px 8px;
   border: 1px solid transparent;
   background: transparent;
   color: var(--retro-faint);
@@ -529,14 +512,20 @@
   transition: background .14s ease, border-color .14s ease, color .14s ease;
 }
 
+.railItem::before {
+  content: '>';
+  color: transparent;
+  font-size: 11px;
+  transition: color .14s ease;
+}
+
 .railItem:hover {
   border-color: var(--retro-line);
   background: rgba(16, 185, 129, .06);
   color: var(--retro-text);
 }
 
-.railItem:hover .railIcon::before {
-  content: '> ';
+.railItem:hover::before {
   color: var(--retro-emerald);
 }
 
@@ -551,22 +540,12 @@
   color: var(--retro-text);
 }
 
-.railIcon {
-  display: inline-flex;
-  grid-row: 1 / span 2;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 30px;
-  border: 1px solid var(--retro-line);
-  background: #000;
+.railItemActive::before {
   color: var(--retro-emerald);
-  font-size: 12px;
 }
 
-.railItemActive .railIcon {
-  border-color: var(--retro-emerald);
-  color: var(--retro-emerald-dim);
+.railIcon {
+  display: none;
 }
 
 .railCopy {
@@ -583,6 +562,16 @@
   font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.railCopy strong::before {
+  content: '[';
+  color: var(--retro-emerald);
+}
+
+.railCopy strong::after {
+  content: ']';
+  color: var(--retro-emerald);
 }
 
 .railCopy small {
@@ -629,16 +618,7 @@
 }
 
 .groupIcon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex: none;
-  width: 34px;
-  height: 34px;
-  border: 1px solid var(--retro-line-strong);
-  background: rgba(6, 78, 59, .25);
-  color: var(--retro-emerald-dim);
-  font-size: 14px;
+  display: none;
 }
 
 .groupTitle {
@@ -688,7 +668,7 @@
   text-transform: uppercase;
 }
 
-/* ── rows: achievement cards ───────────────────────────────────── */
+/* ── rows: terminal entry lines ─────────────────────────────────── */
 
 .rows {
   display: flex;
@@ -702,7 +682,7 @@
   display: flex;
   align-items: flex-start;
   gap: 13px;
-  padding: 13px;
+  padding: 12px 13px;
   border: 1px solid var(--retro-line);
   background: var(--retro-card);
   box-shadow: 0 0 10px rgba(16, 185, 129, .05);
@@ -729,7 +709,6 @@
   transform: translateY(-1px);
 }
 
-/* scanline overlay on hover */
 .row:hover .main::after {
   opacity: 1;
 }
@@ -768,12 +747,12 @@
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 44px;
-  height: 46px;
+  width: 42px;
+  height: 44px;
   border: 1px solid var(--rarity-color);
   background: #000;
   color: var(--rarity-color);
-  font-size: 20px;
+  font-size: 19px;
   box-shadow: inset 0 0 10px rgba(16, 185, 129, .08);
 }
 
@@ -783,8 +762,8 @@
 }
 
 .iconImage {
-  width: 24px;
-  height: 24px;
+  width: 23px;
+  height: 23px;
   object-fit: contain;
 }
 
@@ -795,8 +774,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   border: 2px solid var(--retro-panel);
   border-radius: 50%;
   background: var(--retro-emerald);
@@ -932,7 +911,7 @@
 
   .railItem {
     flex: none;
-    width: 164px;
+    width: 170px;
   }
 
   .ledger {
@@ -941,21 +920,19 @@
 }
 
 @media (max-width: 620px) {
-  .hero { padding: 18px; }
-  .heroIcon { width: 46px; height: 46px; font-size: 22px; }
-  .ring { width: 62px; height: 62px; }
-  .ringInner { width: 46px; height: 46px; }
-  .ringInner strong { font-size: 14px; }
+  .hero { padding: 24px 16px 16px; }
+  .heroIcon { width: 44px; height: 44px; font-size: 19px; }
+  .heroPct strong { font-size: 18px; }
   .toolbar { align-items: flex-start; flex-direction: column; }
   .controls { justify-content: flex-start; }
   .segmented { max-width: 100%; }
-  .row { padding: 11px; }
+  .row { padding: 10px 11px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .loadingSpinner,
   .row,
-  .ringValue,
+  .statBarFill,
   .heroBarFill,
   .groupProgress div,
   .barFill { animation: none; transition: none; }
