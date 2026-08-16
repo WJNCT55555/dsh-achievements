@@ -105,43 +105,32 @@ function emptyCurrentMonthHeatmap() {
         })),
     };
 }
-/** GitHub-style contribution graph: weekday rows, week columns, square tinted cells. */
+/** Calendar-style activity grid: weekday header row, weeks as rows, square tinted cells. */
 function Heatmap({ data, status, error, t }) {
     const { year, month, days } = data;
     const countByDate = new Map(days.map(d => [d.date, d.count]));
     const first = new Date(year, month - 1, 1);
     const last = new Date(year, month, 0);
-    // Monday-first: anchor the grid at the Monday on/before the 1st.
+    // Monday-first: pad the leading blank cells before the 1st.
     const lead = (first.getDay() + 6) % 7;
-    const start = new Date(first);
-    start.setDate(first.getDate() - lead);
-    // ...and extend to the Sunday on/after the last day.
-    const trail = (last.getDay() + 6) % 7;
-    const end = new Date(last);
-    end.setDate(last.getDate() + (6 - trail));
-    // Bucket each day into week columns (Monday → Sunday).
-    const weeks = [];
-    let week = [];
-    const cursor = new Date(start);
-    for (; cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
-        const date = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
-        const current = cursor.getMonth() === month - 1;
-        week.push({ date, current, count: countByDate.get(date) ?? 0 });
-        if (week.length === 7) {
-            weeks.push(week);
-            week = [];
-        }
+    const cells = [];
+    for (let i = 0; i < lead; i++)
+        cells.push({ date: null, current: false, count: 0 });
+    for (let day = 1; day <= last.getDate(); day++) {
+        const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        cells.push({ date, current: true, count: countByDate.get(date) ?? 0 });
     }
-    if (week.length > 0)
-        weeks.push(week);
+    // Trailing blanks complete the final week row.
+    while (cells.length % 7 !== 0)
+        cells.push({ date: null, current: false, count: 0 });
     const max = Math.max(1, ...days.map(d => d.count));
     const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
-    return (_jsxs("div", { className: styles.heatmapWrap, children: [_jsxs("div", { className: styles.heatmapHeader, children: [_jsxs("span", { children: [year, " \u00B7 ", String(month).padStart(2, '0')] }), _jsx("span", { children: t('chart.heatmap') })] }), _jsxs("div", { className: styles.heatmapGrid, role: "img", "aria-label": `${t('chart.heatmap')}: ${year}-${month}`, children: [_jsx("div", { className: styles.heatmapWeekdays, "aria-hidden": "true", children: weekdays.map(wd => _jsx("span", { className: styles.heatmapWeekday, children: wd }, wd)) }), weeks.map((w, wi) => (_jsx("div", { className: styles.heatmapWeek, children: w.map((cell) => {
-                            if (!cell.current)
-                                return _jsx("span", { className: styles.heatmapCell, "data-outside": true, "aria-hidden": "true" }, cell.date);
-                            const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3));
-                            return (_jsx("span", { className: styles.heatmapCell, "data-level": level, title: `${cell.date}: ${cell.count}` }, cell.date));
-                        }) }, wi)))] }), _jsxs("div", { className: styles.heatmapLegend, children: [_jsx("span", { children: t('chart.empty') }), _jsx("span", { className: styles.heatmapLegendScale, children: [0, 1, 2, 3, 4].map(level => _jsx("i", { "data-level": level, "aria-hidden": "true" }, level)) }), _jsx("span", { children: t('chart.total') })] }), status !== 'ready' && _jsx("div", { className: styles.heatmapStatus, role: "status", title: error ?? undefined, children: t(status === 'loading' ? 'chart.loading' : status === 'missing' ? 'chart.unavailable' : 'chart.error') })] }));
+    return (_jsxs("div", { className: styles.heatmapWrap, children: [_jsxs("div", { className: styles.heatmapHeader, children: [_jsxs("span", { children: [year, " \u00B7 ", String(month).padStart(2, '0')] }), _jsx("span", { children: t('chart.heatmap') })] }), _jsxs("div", { className: styles.heatmapGrid, role: "img", "aria-label": `${t('chart.heatmap')}: ${year}-${month}`, children: [weekdays.map(wd => _jsx("span", { className: styles.heatmapWeekday, "aria-hidden": "true", children: wd }, wd)), cells.map((cell, index) => {
+                        if (!cell.current)
+                            return _jsx("span", { className: styles.heatmapCell, "data-outside": true, "aria-hidden": "true" }, `pad-${index}`);
+                        const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3));
+                        return (_jsx("span", { className: styles.heatmapCell, "data-level": level, title: `${cell.date}: ${cell.count}` }, cell.date));
+                    })] }), _jsxs("div", { className: styles.heatmapLegend, children: [_jsx("span", { children: t('chart.empty') }), _jsx("span", { className: styles.heatmapLegendScale, children: [0, 1, 2, 3, 4].map(level => _jsx("i", { "data-level": level, "aria-hidden": "true" }, level)) }), _jsx("span", { children: t('chart.total') })] }), status !== 'ready' && _jsx("div", { className: styles.heatmapStatus, role: "status", title: error ?? undefined, children: t(status === 'loading' ? 'chart.loading' : status === 'missing' ? 'chart.unavailable' : 'chart.error') })] }));
 }
 /** Full settings-section gallery over the achievements Remote namespace. */
 export function AchievementsSection({ list, deepState, setDeepInsights, rates, telemetryState, setTelemetry, clear, heatmap, t }) {
@@ -260,7 +249,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
     const doClear = () => {
         if (clear === undefined)
             return;
-        void Promise.resolve().then(clear).then((result) => {
+        void Promise.resolve().then(() => clear()).then((result) => {
             if (result.ok) {
                 setSnapshot(result.value);
                 setRatesData(null);

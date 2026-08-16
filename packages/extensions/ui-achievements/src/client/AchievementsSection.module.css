@@ -1267,39 +1267,27 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* GitHub-style contribution graph: weekday rows, week columns, square cells. */
+/* Calendar-style activity grid: weekday header row + week rows of square cells. */
 .heatmapGrid {
-  display: flex;
-  align-items: flex-start;
-  gap: 3px;
-  overflow-x: auto;
-}
-
-.heatmapWeekdays {
   display: grid;
-  grid-template-rows: repeat(7, var(--heatmap-cell, 15px));
-  gap: 2px;
-  margin-right: 2px;
+  grid-template-columns: repeat(7, var(--heatmap-cell, 17px));
+  justify-content: center;
+  gap: 3px;
 }
 
 .heatmapWeekday {
   display: grid;
   place-items: center;
+  height: var(--heatmap-cell, 17px);
   color: var(--retro-faint);
   font-size: 8px;
   letter-spacing: .08em;
   text-transform: uppercase;
 }
 
-.heatmapWeek {
-  display: grid;
-  grid-template-rows: repeat(7, var(--heatmap-cell, 15px));
-  gap: 2px;
-}
-
 .heatmapCell {
-  width: var(--heatmap-cell, 15px);
-  height: var(--heatmap-cell, 15px);
+  width: var(--heatmap-cell, 17px);
+  height: var(--heatmap-cell, 17px);
   box-sizing: border-box;
   border: 1px solid rgba(16, 185, 129, .12);
   background: #020403;
@@ -1338,7 +1326,7 @@
 
 /* Keep the square grid from ballooning the shared chart card height. */
 .chart:has(.heatmapGrid) .heatmapWrap {
-  --heatmap-cell: 15px;
+  --heatmap-cell: 17px;
 }
 
 .heatmapLegend {

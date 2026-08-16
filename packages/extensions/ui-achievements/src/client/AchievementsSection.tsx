@@ -215,7 +215,7 @@ function emptyCurrentMonthHeatmap(): AchievementsHeatmap {
 
 type HeatmapStatus = 'loading' | 'ready' | 'missing' | 'error'
 
-/** GitHub-style contribution graph: weekday rows, week columns, square tinted cells. */
+/** Calendar-style activity grid: weekday header row, weeks as rows, square tinted cells. */
 function Heatmap(
   { data, status, error, t }: {
     data: AchievementsHeatmap
@@ -228,28 +228,16 @@ function Heatmap(
   const countByDate = new Map(days.map(d => [d.date, d.count]))
   const first = new Date(year, month - 1, 1)
   const last = new Date(year, month, 0)
-  // Monday-first: anchor the grid at the Monday on/before the 1st.
+  // Monday-first: pad the leading blank cells before the 1st.
   const lead = (first.getDay() + 6) % 7
-  const start = new Date(first)
-  start.setDate(first.getDate() - lead)
-  // ...and extend to the Sunday on/after the last day.
-  const trail = (last.getDay() + 6) % 7
-  const end = new Date(last)
-  end.setDate(last.getDate() + (6 - trail))
-  // Bucket each day into week columns (Monday → Sunday).
-  const weeks: Array<Array<{ date: string; current: boolean; count: number }>> = []
-  let week: Array<{ date: string; current: boolean; count: number }> = []
-  const cursor = new Date(start)
-  for (; cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
-    const date = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`
-    const current = cursor.getMonth() === month - 1
-    week.push({ date, current, count: countByDate.get(date) ?? 0 })
-    if (week.length === 7) {
-      weeks.push(week)
-      week = []
-    }
+  const cells: Array<{ date: string | null; current: boolean; count: number }> = []
+  for (let i = 0; i < lead; i++) cells.push({ date: null, current: false, count: 0 })
+  for (let day = 1; day <= last.getDate(); day++) {
+    const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    cells.push({ date, current: true, count: countByDate.get(date) ?? 0 })
   }
-  if (week.length > 0) weeks.push(week)
+  // Trailing blanks complete the final week row.
+  while (cells.length % 7 !== 0) cells.push({ date: null, current: false, count: 0 })
   const max = Math.max(1, ...days.map(d => d.count))
   const weekdays = ['一', '二', '三', '四', '五', '六', '日']
   return (
@@ -259,25 +247,19 @@ function Heatmap(
         <span>{t('chart.heatmap')}</span>
       </div>
       <div className={styles.heatmapGrid} role="img" aria-label={`${t('chart.heatmap')}: ${year}-${month}`}>
-        <div className={styles.heatmapWeekdays} aria-hidden="true">
-          {weekdays.map(wd => <span key={wd} className={styles.heatmapWeekday}>{wd}</span>)}
-        </div>
-        {weeks.map((w, wi) => (
-          <div key={wi} className={styles.heatmapWeek}>
-            {w.map((cell) => {
-              if (!cell.current) return <span key={cell.date} className={styles.heatmapCell} data-outside aria-hidden="true" />
-              const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3))
-              return (
-                <span
-                  key={cell.date}
-                  className={styles.heatmapCell}
-                  data-level={level}
-                  title={`${cell.date}: ${cell.count}`}
-                />
-              )
-            })}
-          </div>
-        ))}
+        {weekdays.map(wd => <span key={wd} className={styles.heatmapWeekday} aria-hidden="true">{wd}</span>)}
+        {cells.map((cell, index) => {
+          if (!cell.current) return <span key={`pad-${index}`} className={styles.heatmapCell} data-outside aria-hidden="true" />
+          const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3))
+          return (
+            <span
+              key={cell.date}
+              className={styles.heatmapCell}
+              data-level={level}
+              title={`${cell.date}: ${cell.count}`}
+            />
+          )
+        })}
       </div>
       <div className={styles.heatmapLegend}>
         <span>{t('chart.empty')}</span>
@@ -402,7 +384,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
 
   const doClear = (): void => {
     if (clear === undefined) return
-    void Promise.resolve().then(clear).then((result) => {
+    void Promise.resolve().then(() => clear()).then((result) => {
       if (result.ok) {
         setSnapshot(result.value)
         setRatesData(null)
