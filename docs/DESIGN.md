@@ -273,13 +273,153 @@ AGPA 给隐藏成就配锁定前 `hint`（暗示不剧透）与解锁后 `tip`�
 
 ---
 
-## 10. 版本记录
+## 10. 成就扩充设计方案（候选，未实现）
+
+本节是一次成就要件扩充的**设计方案**：扩充 skill 类、token 类、联动（crossover）类，并新增 model、workflow、hidden 彩蛋等。设计约束与第 1 节一致——每个成就必须绑定至少一个**可观察的叶子信号**（事件名 + 字段），不读取消息正文 / 文件内容 / 错误详情 / 搜索结果。
+
+**信号速查表**（DSH 事件平面，均只读叶子标量）：
+
+| 信号 | 事件 / 服务 | 可读字段 |
+|------|-------------|----------|
+| 工具调用 | `tools/result` | `name`、`isError`、`arguments.file_path` |
+| 工具调用前置 | `tools/execute` / `tool/call`（session 事件） | `name` |
+| 模型路由 | `request/header`（session 事件） | `header.config.provider`、`header.config.model` |
+| token 用量 | `session/event` (`assistant/message`) | `usage.input/output/cacheRead/cacheWrite/reasoningTokens` |
+| skill 目录 | `skills/change` + `ctx.skills.list()` | 数量、`name` 列表 |
+| goal | `goal/changed` | `change.operation` |
+| 子代理 | `subagent/start` / `subagent/end` | `runId`、并发集合 |
+| workflow | `workflow/end` | `agentsStarted` |
+| preset | `agent-preset/selected` | preset id |
+| 用户消息 | `agent/inbox/inserted` | 仅取时间（hour） |
+| 计划模式 | `plan/mode`（session 事件） | `active` |
+| 审批 | `approval/asked` / `approval/decided`（session 事件） | `toolName`、`outcome` |
+| 压缩 | `compaction/end`（session 事件） | 事件存在性 |
+| 定时任务 | `schedule/change`（session 事件） | `operation` |
+| 反馈 | `feedback/record`（session 事件） | 事件存在性 |
+| 会话标题 | `session/title`（session 事件） | 事件存在性 |
+| 安装插件 | Loader entries | `entry.options.name` |
+
+### 11.1 skill 类扩充（现有引擎可直接实现）
+
+「图书管理员」只覆盖了数量维度。扩充同分类成就，转向**使用维度**（skill 被实际调用）与**深度维度**（同一 skill 反复使用）：
+
+| id | 名称 | 描述（梗） | 稀有度 | 规则 | 信号 |
+|----|------|-----------|--------|------|------|
+| `skill-hoarder` | 藏书万卷 | 可用的 skill 超过 300 个 | epic | counter `skills` ≥ 300 | `skills/change` 采样 |
+| `skill-sampler` | 博览群书 | 使用过 20 种不同的 skill | rare | distinct `skillsUsed` ≥ 20 | `tools/result` name ∈ skill 工具 + `skills/change` |
+| `skill-addict` | 人形锦囊 | 累计调用 skill 工具 100 次 | rare | counter `skillCalls` ≥ 100 | `tools/result` name ∈ skill 工具族 |
+| `skill-monogamy` | 一招鲜 | 同一个 skill 反复调用 50 次 | rare | counter `skillFav` ≥ 50（按 name 计最高） | `tools/result` skill 工具 + name 去重 |
+
+> **新信号**：`skills/change` 已注册；「skill 工具名族」需在构造时从 `ctx.skills.list()` 读取工具名集合（叶子标量），与 `tools/result.name` 比对。需要新增 `distinct-tool-family` 与 `max-counter` 两种规则变体。
+
+### 11.2 token 类扩充（现有引擎可直接实现）
+
+「亿万富翁」只跟踪总额。扩充为**分桶**与**单次峰值**，让 token 成就更有探索梯度：
+
+| id | 名称 | 描述（梗） | 稀有度 | 规则 | 信号 |
+|----|------|-----------|--------|------|------|
+| `token-bookworm` | 啃书虫 | 累计输出 100 万 token | rare | counter `outTokens` ≥ 1_000_000 | usage.outputTokens |
+| `cache-whisperer` | 缓存寻宝人 | 累计命中 500 万 cache-read token | epic | counter `cacheRead` ≥ 5_000_000 | usage.cacheReadTokens |
+| `context-bender` | 上下文折纸师 | 单次请求 context 超过 128K | epic | **peak** `maxInput` ≥ 131072 | usage.inputTokens 单事件峰值 |
+| `token-sprinter` | 冲量高手 | 单次请求输出超过 8K | rare | **peak** `maxOutput` ≥ 8192 | usage.outputTokens 单事件峰值 |
+| `reasoning-wizard` | 深思熟虑 | 累计推理 token 超 1000 万 | legendary | counter `reasoningTokens` ≥ 10_000_000 | usage.reasoningTokens |
+
+> **新规则**：`peak`（单事件字段峰值，非累计）。现有 `counter` 只支持累加，需新增 `{ kind: 'peak'; key; field }`。
+
+### 11.3 model 类（新增分类，高价值）
+
+DSH 是多 provider 架构，`request/header` 携带 provider/model 叶子标量。这是「模型猎手」类成就的天然土壤：
+
+| id | 名称 | 描述（梗） | 稀有度 | 规则 | 信号 |
+|----|------|-----------|--------|------|------|
+| `model-hop` | 模型蹦迪 | 用过 5 个不同的 model | common | distinct `models` ≥ 5 | request/header.config.model |
+| `provider-polyglot` | Provider 语言学家 | 用过 3 个不同的 provider | rare | distinct `providers` ≥ 3 | request/header.config.provider |
+| `local-model-pilgrim` | 本地模型朝圣者 | 用过 1 个本地 / 开源模型 | rare | distinct `localModels` ≥ 1 | model 名含 ollama / llama / local 等 |
+| `model-whale` | 模型百科全书 | 用过 10 个不同的 model | epic | distinct `models` ≥ 10 | request/header.config.model |
+| `deepseek-devotee` | 深度信徒 | 只用一个模型完成 100 个回合 | epic | counter `sameModelTurns` ≥ 100（**联动/彩蛋**：与 DSH 品牌呼应） | request/header.config.model 连续一致 |
+
+> **新信号**：监听 `session/event` 的 `request/header`（只读 `header.config.provider/model` 字符串）。distinct 规则已存在，直接复用。
+
+### 11.4 联动类扩充（现有引擎可直接实现 + 新检测源）
+
+「吾栖之肤」证明了 loader-entry 检测可行。扩充联动成就，覆盖 DSH 生态中的真实插件与周边：
+
+| id | 名称 | 描述（梗） | 稀有度 | 规则 | 信号 |
+|----|------|-----------|--------|------|------|
+| `dsh-native` | 原教旨主义者 | 安装了 5 个以上 DSH 官方 bundle 之外的插件 | rare | counter `extraPlugins` ≥ 5 | loader entries（非 `@deepseek-ai/dsh-*` 行） |
+| `crossover-twain` | 跨次元旅客 | 安装了 2 个联动来源插件 | epic | distinct `crossoverPlugins` ≥ 2 | loader entries 匹配联动白名单 |
+| `self-hosted` | 自托管狂人 | 通过本地 / 自建 profile 运行 DSH | common | flag | `ctx.get('loader')` 的 baseUrl 指向本地路径 |
+
+> **新信号**：扩展 `detectDeepWhale` 的 loader 扫描，返回所有非官方插件名集合（只读 `options.name` 字符串）。需要一个"外部插件清单"维护点（硬编码白名单或前缀排除），并加 `distinct-from-loader` 规则。
+
+### 11.5 workflow / 编排类扩充
+
+现有 only 2 个 workflow 成就。扩充编排叙事：
+
+| id | 名称 | 描述（梗） | 稀有度 | 规则 | 信号 |
+|----|------|-----------|--------|------|------|
+| `workflow-symphony` | 编排交响乐 | 累计运行 20 次 workflow | rare | counter `workflows` ≥ 20 | workflow/end |
+| `delegation-king` | 甩手掌柜 | 单次 workflow 派出 10 个子代理 | epic | **peak** `maxAgentsStarted` ≥ 10 | workflow/end.agentsStarted |
+| `subagent-army` | 千军万马 | 累计派出 100 个子代理 | epic | counter `subagents` ≥ 100 | subagent/end |
+
+### 11.6 行为 / 生活方式类扩充（现有引擎可直接实现）
+
+用 session 事件补足"习惯养成"维度，全部只读存在性与简单字段：
+
+| id | 名称 | 描述（梗） | 稀有度 | 规则 | 信号 |
+|----|------|-----------|--------|------|------|
+| `plan-before-act` | 先谋后动 | 进入计划模式 20 次 | rare | counter `planEntries` ≥ 20 | plan/mode active=true |
+| `permission-magnet` | 审批磁铁 | 累计触发 50 次工具审批 | rare | counter `approvalsAsked` ≥ 50 | approval/asked |
+| `voter` | 表决权持有人 | 累计拒绝 5 次工具调用 | rare | counter `approvalsRejected` ≥ 5 | approval/decided outcome=rejected |
+| `compactor` | 断舍离大师 | 触发 10 次上下文压缩 | rare | counter `compactions` ≥ 10 | compaction/end |
+| `scheduler` | 时间管理大师 | 创建过定时任务 | common | counter `schedulesCreated` ≥ 1 | schedule/change operation=create |
+| `critic` | 苛刻的读者 | 提交过 3 次反馈 | rare | counter `feedbacks` ≥ 3 | feedback/record |
+| `title-architect` | 起名大师 | 会话标题被 AI 起名 10 次 | rare | counter `titles` ≥ 10 | session/title |
+
+### 11.7 hidden 彩蛋类（有梗、可探索）
+
+隐藏成就是"探索的乐趣"。这些成就的名称/描述隐藏，解锁条件有梗但不泄露：
+
+| id | 名称（解锁后） | 描述（梗） | 稀有度 | 规则 | 信号 |
+|----|--------------|-----------|--------|------|------|
+| `phoenix-deep` | 涅槃重生·极 | 同回合连续 3 次请求错误后恢复并完成 | legendary | counter `recoveries` ≥ 3（同 turn） | agent/request-error + turn-stopping |
+| `that-works-v2` | 这也能行？·续 | 写出可运行程序并**在另一回合**运行它 | epic | **multi-condition**（跨 turn 记忆） | write(runnable) + 后续 shell |
+| `self-ref-v2` | 自我指涉·闭环 | 用成就工具查询自己 | rare | flag | `tools/result` name=`list_achievements` |
+| `self-ref-v3` | 观察者效应 | 查询成就进度 10 次 | rare | counter `selfQueries` ≥ 10 | list_achievements 调用 |
+| `tool-palette` | 工具箱收藏家 | 单回合使用 8 种不同工具 | epic | **peak** `maxDistinctToolsInTurn` ≥ 8 | tools/result + turnState |
+| `workflow-inception` | 梦中梦 | workflow 内派出子代理再跑 workflow | legendary | **multi-condition**（嵌套信号） | workflow/end + subagent/start 时序 |
+| `double-midnight` | 午夜双连 | 连续两天在凌晨 0-5 点工作 | legendary | counter `nightStreak` ≥ 2（跨天） | agent/inbox/inserted + 日期变化 |
+| `billionaire-v2` | 亿万富翁·彩蛋 | 单会话消耗超过 5000 万 token | epic | **peak** `maxSessionTokens` ≥ 50_000_000 | session/event usage 按 session 聚合 |
+| `easter-egg` | ？？？ | （保留位：留给未来的隐藏惊喜） | mythic | flag | 预留 |
+
+### 11.8 需要的新规则能力（汇总）
+
+| 能力 | 类型 | 说明 | 涉及成就 |
+|------|------|------|----------|
+| `peak` | 新规则 | 单事件字段峰值 / 单会话聚合峰值 | context-bender、token-sprinter、delegation-king、tool-palette、billionaire-v2 |
+| `multi-condition` | 新规则 | AND 语义 + 跨回合时序状态 | that-works-v2、workflow-inception |
+| `distinct-from-loader` | 新信号 | 外部插件清单（非官方） | dsh-native、crossover-twain |
+| `tool-family` | 新信号 | 按工具名前缀/集合归类（skill 工具族） | skill-sampler、skill-addict、skill-monogamy |
+| `night-streak` | 新状态 | 跨天连续凌晨工作 | double-midnight |
+| `model-route` | 新信号 | 监听 request/header 读 provider/model | model 类全部 |
+
+### 11.9 优先级建议
+
+1. **P0（现有引擎零改动，直接加成就）**：token 分桶（11.2 前两项）、workflow 计数（11.5）、行为类全部（11.6）、self-ref-v2/v3、skill-hoarder、model-hop/provider-polyglot。
+2. **P1（新增 `peak` 规则 + 小改监听）**：context-bender、token-sprinter、delegation-king、tool-palette、billionaire-v2。
+3. **P2（新增 loader 外部清单信号）**：dsh-native、crossover-twain。
+4. **P3（多条件时序状态机）**：that-works-v2、workflow-inception、double-midnight。
+
+---
+
+## 11. 版本记录
 
 | 版本 | 变更 |
 |------|------|
 | 0.1.0-rc.5+ | 本设计文档建立时快照：25 成就、双排序、phoenix/去重/回合隔离修复、联动成就；删除与「马拉松」语义重叠的「行云流水」（streak-10） |
 | 0.1.0-rc.5+ | 未来方向补充 hermes-achievements 借鉴条目（多档位 tiers / best_session / multi_condition / 模型类成就；正文正则扫描不采用） |
 | 0.1.0-rc.5+ | 新增 skill 分类与「图书管理员」成就（`ctx.skills.list()` ≥ 100）；成就数 26 |
+| 0.1.0-rc.5+ | 新增第 10 节「成就扩充设计方案」：skill/token/model/联动/workflow/行为/hidden 彩蛋共 30+ 候选成就、信号速查表、新规则能力与优先级（未实现，待决策） |
 
 ## 许可
 
