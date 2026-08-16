@@ -46,8 +46,8 @@
 .toast::before { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
 .toast::after { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
 
-.rarity-common { --toast-rarity: #34d399; }
-.rarity-rare { --toast-rarity: #2dd4bf; }
+.rarity-common { --toast-rarity: #ffffff; }
+.rarity-rare { --toast-rarity: #3b82f6; }
 .rarity-epic { --toast-rarity: #a78bfa; }
 .rarity-legendary { --toast-rarity: #fbbf24; }
 

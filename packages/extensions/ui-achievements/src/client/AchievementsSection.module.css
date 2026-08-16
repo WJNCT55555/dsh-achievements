@@ -546,9 +546,9 @@
 }
 
 .railItem[data-group='common'],
-.ledger[data-group='common'] { --group-color: #10b981; }
+.ledger[data-group='common'] { --group-color: #ffffff; }
 .railItem[data-group='rare'],
-.ledger[data-group='rare'] { --group-color: #2dd4bf; }
+.ledger[data-group='rare'] { --group-color: #3b82f6; }
 .railItem[data-group='epic'],
 .ledger[data-group='epic'] { --group-color: #a78bfa; }
 .railItem[data-group='legendary'],
@@ -759,8 +759,8 @@
   background: #06100c;
 }
 
-.rarity-common { --rarity-color: var(--retro-emerald); }
-.rarity-rare { --rarity-color: #2dd4bf; }
+.rarity-common { --rarity-color: #ffffff; }
+.rarity-rare { --rarity-color: #3b82f6; }
 .rarity-epic { --rarity-color: #a78bfa; }
 .rarity-legendary { --rarity-color: var(--retro-amber); }
 
@@ -800,8 +800,8 @@
 
 /* unlocked icon color per rarity: common white, rare blue,
    epic purple, legendary amber */
-[data-rarity="common"] .icon[data-unlocked="true"] { --icon-color: #e8f5ef; }
-[data-rarity="rare"] .icon[data-unlocked="true"] { --icon-color: #60a5fa; }
+[data-rarity="common"] .icon[data-unlocked="true"] { --icon-color: #ffffff; }
+[data-rarity="rare"] .icon[data-unlocked="true"] { --icon-color: #3b82f6; }
 [data-rarity="epic"] .icon[data-unlocked="true"] { --icon-color: #a78bfa; }
 [data-rarity="legendary"] .icon[data-unlocked="true"] { --icon-color: #fbbf24; }
 
@@ -891,8 +891,8 @@
   white-space: nowrap;
 }
 
-.badge-common { --badge-color: var(--retro-line-strong); color: var(--retro-emerald-dim); }
-.badge-rare { --badge-color: rgba(45, 212, 191, .6); color: #5eead4; }
+.badge-common { --badge-color: rgba(255, 255, 255, .55); color: #f0f4f8; }
+.badge-rare { --badge-color: rgba(59, 130, 246, .6); color: #93c5fd; }
 .badge-epic { --badge-color: rgba(167, 139, 250, .6); color: #c4b5fd; }
 .badge-legendary { --badge-color: rgba(251, 191, 36, .6); color: var(--retro-amber); }
 .badge-done { --badge-color: rgba(16, 185, 129, .6); color: var(--retro-emerald-dim); background: rgba(6, 78, 59, .3); }
