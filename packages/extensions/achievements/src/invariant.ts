@@ -1,13 +1,13 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-achievements`.
- * @module @deepseek-ai/dsh-achievements/invariant
+ * Package-owned invariant companion for `@wjnct55555/dsh-achievements`.
+ * @module @wjnct55555/dsh-achievements/invariant
  */
 
 /* jscpd:ignore-start */
 import type { Context } from '@deepseek-ai/cordis'
 import type { InvariantInstaller } from '@deepseek-ai/dsh-invariants'
 
-const PACKAGE_NAME = '@deepseek-ai/dsh-achievements'
+const PACKAGE_NAME = '@wjnct55555/dsh-achievements'
 
 /** Cordis companion plugin name. */
 export const name = 'achievements-invariant'

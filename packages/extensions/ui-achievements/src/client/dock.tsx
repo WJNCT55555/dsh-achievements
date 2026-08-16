@@ -26,10 +26,10 @@ export function DockReadout({ useSnapshot, t }: DockInjected & PropsLocale<'achi
   })
   return (
     <div className={styles.dock}>
-      {t('dock.summary', { unlocked: dock.unlocked, total: dock.total })}
-      {combo}
-      {' · '}
-      {next}
+      <span className={styles.icon} aria-hidden="true">🏆</span>
+      <span className={styles.summary}>{t('dock.summary', { unlocked: dock.unlocked, total: dock.total })}</span>
+      {combo && <span className={styles.combo}>{combo}</span>}
+      <span className={styles.next} title={next}>{next}</span>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 /**
- * Package-owned invariant companion for `@deepseek-ai/dsh-achievements`.
- * @module @deepseek-ai/dsh-achievements/invariant
+ * Package-owned invariant companion for `@wjnct55555/dsh-achievements`.
+ * @module @wjnct55555/dsh-achievements/invariant
  */
 import type { Context } from '@deepseek-ai/cordis';
 /** Cordis companion plugin name. */

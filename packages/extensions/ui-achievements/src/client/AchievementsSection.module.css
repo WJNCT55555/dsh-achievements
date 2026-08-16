@@ -941,6 +941,25 @@
   text-transform: uppercase;
 }
 
+.rateLine {
+  margin: 4px 0 0 15px;
+  color: var(--retro-faint);
+  font-size: 11px;
+  letter-spacing: .05em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Community unlock rate follows the rarity accent when the row is unlocked. */
+.rateLine[data-rarity='common'] { color: #fff; }
+.rateLine[data-rarity='rare'] { color: #3b82f6; }
+.rateLine[data-rarity='epic'] { color: #a78bfa; }
+.rateLine[data-rarity='legendary'] { color: #fbbf24; }
+
+.done .rateLine[data-rarity='common'] { color: rgba(255, 255, 255, .72); }
+.done .rateLine[data-rarity='rare'] { color: rgba(59, 130, 246, .75); }
+.done .rateLine[data-rarity='epic'] { color: rgba(167, 139, 250, .78); }
+.done .rateLine[data-rarity='legendary'] { color: rgba(251, 191, 36, .85); }
+
 .empty {
   padding: 24px;
   border: 1px dashed var(--retro-line-strong);

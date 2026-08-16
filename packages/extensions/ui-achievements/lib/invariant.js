@@ -1,9 +1,9 @@
 //#region lib/types/invariant.js
 /**
-* Package-owned invariant companion for `@deepseek-ai/dsh-client-ui-achievements`.
-* @module @deepseek-ai/dsh-client-ui-achievements/invariant
+* Package-owned invariant companion for `@wjnct55555/dsh-client-ui-achievements`.
+* @module @wjnct55555/dsh-client-ui-achievements/invariant
 */
-const PACKAGE_NAME = "@deepseek-ai/dsh-client-ui-achievements";
+const PACKAGE_NAME = "@wjnct55555/dsh-client-ui-achievements";
 /** Cordis companion plugin name. */
 const name = "client-ui-achievements-invariant";
 /** Service required before the companion can reserve package ownership. */

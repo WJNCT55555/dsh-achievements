@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import { AchievementsSection } from "./AchievementsSection.js";
 import styles from './gallery.module.css';
 /** The trophy-toggled gallery overlay (renders nothing while closed). */
-export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, stats, t }) {
+export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, stats, rates, telemetryState, setTelemetry, t }) {
     const open = useSnapshot(s => s.galleryOpen);
     useEffect(() => {
         if (!open)
@@ -22,6 +22,6 @@ export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepIns
     }, [close, open]);
     if (!open)
         return null;
-    return (_jsx("div", { className: styles.backdrop, onClick: close, children: _jsxs("div", { className: styles.panel, role: "dialog", "aria-modal": "true", "aria-labelledby": "achievements-gallery-title", onClick: (e) => { e.stopPropagation(); }, children: [_jsx("span", { className: styles.scanlines, "aria-hidden": "true" }), _jsxs("div", { className: styles.head, children: [_jsxs("div", { className: styles.heading, children: [_jsx("span", { className: styles.headingIcon, "aria-hidden": "true", children: "\uD83C\uDFC6" }), _jsxs("div", { children: [_jsx("span", { className: styles.kicker, children: t('kicker') }), _jsx("span", { className: styles.title, id: "achievements-gallery-title", children: t('title') })] })] }), _jsx("button", { type: "button", className: styles.close, onClick: close, "aria-label": t('gallery.close'), children: "\u00D7" })] }), _jsx(AchievementsSection, { list: list, ...deepState !== undefined ? { deepState } : {}, ...setDeepInsights !== undefined ? { setDeepInsights } : {}, ...stats !== undefined ? { stats } : {}, t: t })] }) }));
+    return (_jsx("div", { className: styles.backdrop, onClick: close, children: _jsxs("div", { className: styles.panel, role: "dialog", "aria-modal": "true", "aria-labelledby": "achievements-gallery-title", onClick: (e) => { e.stopPropagation(); }, children: [_jsx("span", { className: styles.scanlines, "aria-hidden": "true" }), _jsxs("div", { className: styles.head, children: [_jsxs("div", { className: styles.heading, children: [_jsx("span", { className: styles.headingIcon, "aria-hidden": "true", children: "\uD83C\uDFC6" }), _jsxs("div", { children: [_jsx("span", { className: styles.kicker, children: t('kicker') }), _jsx("span", { className: styles.title, id: "achievements-gallery-title", children: t('title') })] })] }), _jsx("button", { type: "button", className: styles.close, onClick: close, "aria-label": t('gallery.close'), children: "\u00D7" })] }), _jsx(AchievementsSection, { list: list, ...deepState !== undefined ? { deepState } : {}, ...setDeepInsights !== undefined ? { setDeepInsights } : {}, ...stats !== undefined ? { stats } : {}, ...rates !== undefined ? { rates } : {}, ...telemetryState !== undefined ? { telemetryState } : {}, ...setTelemetry !== undefined ? { setTelemetry } : {}, t: t })] }) }));
 }
 //# sourceMappingURL=gallery.js.map

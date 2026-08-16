@@ -31,9 +31,13 @@ function Toast({ toast, t, onDismiss }: {
   return (
     <>
       {celebratory && <Confetti />}
-      <div className={`${styles.toast} ${styles[`rarity-${toast.rarity}`]}`}>
-        <div className={styles.title}><span>{toast.icon}</span>{toast.name}</div>
-        <div className={styles.sub}>{t('toast.sub')} · {t(RARITY_LABEL[toast.rarity])}</div>
+      <div className={`${styles.toast} ${styles[`rarity-${toast.rarity}`]}`} role="status">
+        <div className={styles.icon}>{toast.icon}</div>
+        <div className={styles.copy}>
+          <div className={styles.eyebrow}>{t('toast.sub')}</div>
+          <div className={styles.title}>{toast.name}</div>
+          <div className={styles.sub}>{t(RARITY_LABEL[toast.rarity])}</div>
+        </div>
         <button type="button" className={styles.close} onClick={onDismiss} aria-label={t('toast.close')}>×</button>
       </div>
     </>
@@ -49,11 +53,11 @@ function Confetti() {
           key={i}
           className={styles.piece}
           style={{
-            left: `${Math.random() * 100}%`,
+            left: `${(i * 37) % 101}%`,
             background: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-            animationDelay: `${Math.random() * 0.6}s`,
-            animationDuration: `${2.4 + Math.random() * 1.6}s`,
-            transform: `rotate(${Math.floor(Math.random() * 360)}deg)`,
+            animationDelay: `${(i % 12) * 0.05}s`,
+            animationDuration: `${2.4 + (i % 9) * 0.16}s`,
+            transform: `rotate(${(i * 47) % 360}deg)`,
           }}
         />
       ))}

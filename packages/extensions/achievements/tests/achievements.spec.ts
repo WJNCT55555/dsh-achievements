@@ -148,7 +148,7 @@ describe('AchievementsService', () => {
     const ctx = new Context()
     ctx.provide('tools', { register: () => () => {} })
     ctx.provide('loader', { entries: () => [
-      { options: { name: '@deepseek-ai/dsh-achievements' } },
+      { options: { name: '@wjnct55555/dsh-achievements' } },
     ] })
     void makeService(ctx)
     const service = ctx.get('achievements') as unknown as { list: () => AchievementsSnapshot }
@@ -209,7 +209,7 @@ describe('AchievementsService', () => {
     await (svcA as unknown as { store: { flush: () => Promise<void> } }).store.flush()
     const second = new Context()
     second.provide('tools', { register: () => () => {} })
-    second.provide('loader', { entries: () => [{ options: { name: '@deepseek-ai/dsh-achievements' } }] })
+    second.provide('loader', { entries: () => [{ options: { name: '@wjnct55555/dsh-achievements' } }] })
     void new AchievementsService(second, { stateDir })
     await new Promise(resolve => setTimeout(resolve, 60))
     const service = second.get('achievements') as unknown as { list: () => AchievementsSnapshot }

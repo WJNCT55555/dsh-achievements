@@ -9,7 +9,7 @@
  * Writes are debounced so hot event paths never touch the disk; a final flush
  * happens on disposal. The file format carries a schema version and is
  * forward-tolerant: unknown keys are ignored on load.
- * @module @deepseek-ai/dsh-achievements/state
+ * @module @wjnct55555/dsh-achievements/state
  */
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname } from 'node:path';
@@ -39,12 +39,17 @@ export class AchievementStateStore {
             const record = parsed;
             if (record['schemaVersion'] !== STATE_SCHEMA_VERSION)
                 return this.empty();
+            const telemetryRaw = isRecord(record['telemetry']) ? record['telemetry'] : {};
             return {
                 schemaVersion: STATE_SCHEMA_VERSION,
                 counters: isRecord(record['counters']) ? record['counters'] : {},
                 distinct: isRecord(record['distinct']) ? record['distinct'] : {},
                 flags: Array.isArray(record['flags']) ? record['flags'] : [],
                 unlocked: isRecord(record['unlocked']) ? record['unlocked'] : {},
+                telemetry: {
+                    enabled: telemetryRaw['enabled'] === true,
+                    anonymousId: typeof telemetryRaw['anonymousId'] === 'string' ? telemetryRaw['anonymousId'] : '',
+                },
             };
         }
         catch {
@@ -101,6 +106,7 @@ export class AchievementStateStore {
             distinct: {},
             flags: [],
             unlocked: {},
+            telemetry: { enabled: false, anonymousId: '' },
         };
     }
 }

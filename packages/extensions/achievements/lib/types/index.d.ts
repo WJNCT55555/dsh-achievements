@@ -12,17 +12,18 @@
  *   user-questions UI) enables message-body regex matching and session-log
  *   history scanning for dedicated achievements. Deep tier matches bodies at
  *   runtime and persists only which achievement unlocked — never body text.
- * @module @deepseek-ai/dsh-achievements
+ * @module @wjnct55555/dsh-achievements
  */
 import type { Context } from '@deepseek-ai/cordis';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
 import { z } from 'zod';
-import type { AchievementsDock, AchievementsSnapshot, AchievementsStats, RecentUnlock } from './types.ts';
+import type { AchievementsDock, AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, RecentUnlock } from './types.ts';
 export type * from './types.ts';
-/** Config: the deep-insights opt-in and the state-file location. */
+/** Config: the deep-insights opt-in, the state-file location, and the anonymous telemetry endpoint. */
 export declare const Config: z.ZodObject<{
     deepInsights: z.ZodDefault<z.ZodBoolean>;
     stateDir: z.ZodOptional<z.ZodString>;
+    telemetryEndpoint: z.ZodOptional<z.ZodString>;
 }, z.core.$strip>;
 /** Achievements service: durable global observers, one-shot unlock queue, and read-only Remote surface. */
 export declare class AchievementsService extends TypertRemoteService {
@@ -37,6 +38,12 @@ export declare class AchievementsService extends TypertRemoteService {
     private readonly seenUsage;
     private readonly store;
     private deepInsights;
+    /** Anonymous telemetry: opt-in flag and per-install id (never anything else). */
+    private telemetryEnabled;
+    private anonymousId;
+    private readonly telemetryEndpoint;
+    /** Cached community unlock-rate sample; refreshed on a TTL. */
+    private ratesCache;
     constructor(ctx: Context, config?: Partial<z.infer<typeof Config>>);
     /** Restore persisted state, then run the first-run deep-insights opt-in when applicable. */
     private restore;
@@ -52,6 +59,17 @@ export declare class AchievementsService extends TypertRemoteService {
     };
     /** Remote surface: dashboard aggregates (top tools + token buckets). */
     stats(): AchievementsStats;
+    /** Remote surface: read the anonymous-telemetry opt-in and configured endpoint. */
+    telemetryState(): AchievementsTelemetry;
+    /** Remote surface: toggle anonymous telemetry (persisted). */
+    setTelemetry(enabled: boolean): AchievementsTelemetry;
+    /**
+     * Remote surface: community unlock rates. Fetches the anonymous sample from
+     * the configured endpoint, rounded per-achievement to whole percent, and
+     * caches it briefly. Returns null when telemetry is off, unconfigured, or
+     * the endpoint is unreachable — never throws into the gallery.
+     */
+    rates(): Promise<AchievementsRates | null>;
     /** The context this service was constructed with (retained for runtime wiring). */
     private ownCtx;
     /** Fold persisted state back into the in-memory containers. */
@@ -78,6 +96,13 @@ export declare class AchievementsService extends TypertRemoteService {
     private maxLangCount;
     private progressOf;
     private checkAll;
+    /**
+     * Fire-and-forget anonymous unlock report: the achievement id, its rarity,
+     * and this install's anonymous id — nothing else. Opt-in only (telemetry
+     * must be enabled AND an endpoint configured); network failures are ignored
+     * so telemetry can never affect normal use.
+     */
+    private reportUnlock;
     private turnFor;
     private seedSessions;
     /** Mark the dsh-deep-whale crossover achievement and count third-party plugins. */

@@ -18,8 +18,9 @@ export interface TrophyInjected {
 /** The sidebar footer trophy entry. */
 export function Trophy({ useSnapshot, toggle, wide, t }: TrophyInjected & SidebarFooterActionOwnerProps & PropsLocale<'achievements'>) {
   const newCount = useSnapshot(s => s.newCount)
+  const open = useSnapshot(s => s.galleryOpen)
   return (
-    <button type="button" className={styles.trophy} onClick={toggle} title={t('nav')}>
+    <button type="button" className={styles.trophy} onClick={toggle} title={t('nav')} aria-label={t('nav')} aria-pressed={open}>
       <span className={styles.icon}>🏆</span>
       {wide && <span className={styles.label}>{t('nav')}</span>}
       {newCount > 0 && <span className={styles.badge}>{newCount}</span>}

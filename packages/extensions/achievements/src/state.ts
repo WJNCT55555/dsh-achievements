@@ -9,7 +9,7 @@
  * Writes are debounced so hot event paths never touch the disk; a final flush
  * happens on disposal. The file format carries a schema version and is
  * forward-tolerant: unknown keys are ignored on load.
- * @module @deepseek-ai/dsh-achievements/state
+ * @module @wjnct55555/dsh-achievements/state
  */
 
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises'
@@ -30,6 +30,11 @@ export interface PersistedState {
   readonly distinct: Readonly<Record<string, readonly string[]>>
   readonly flags: readonly string[]
   readonly unlocked: Readonly<Record<string, number>>
+  /** Anonymous telemetry opt-in: whether unlocks are shared, plus the per-install id. */
+  readonly telemetry: {
+    readonly enabled: boolean
+    readonly anonymousId: string
+  }
 }
 
 /** A file-backed state store with debounced writes. */
@@ -50,12 +55,17 @@ export class AchievementStateStore {
       if (typeof parsed !== 'object' || parsed === null) return this.empty()
       const record = parsed as Record<string, unknown>
       if (record['schemaVersion'] !== STATE_SCHEMA_VERSION) return this.empty()
+      const telemetryRaw = isRecord(record['telemetry']) ? record['telemetry'] : {}
       return {
         schemaVersion: STATE_SCHEMA_VERSION,
         counters: isRecord(record['counters']) ? record['counters'] as Record<string, number> : {},
         distinct: isRecord(record['distinct']) ? record['distinct'] as Record<string, string[]> : {},
         flags: Array.isArray(record['flags']) ? record['flags'] as string[] : [],
         unlocked: isRecord(record['unlocked']) ? record['unlocked'] as Record<string, number> : {},
+        telemetry: {
+          enabled: telemetryRaw['enabled'] === true,
+          anonymousId: typeof telemetryRaw['anonymousId'] === 'string' ? telemetryRaw['anonymousId'] : '',
+        },
       }
     } catch {
       return this.empty()
@@ -112,6 +122,7 @@ export class AchievementStateStore {
       distinct: {},
       flags: [],
       unlocked: {},
+      telemetry: { enabled: false, anonymousId: '' },
     }
   }
 }

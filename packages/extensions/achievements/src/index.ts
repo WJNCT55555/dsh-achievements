@@ -12,11 +12,12 @@
  *   user-questions UI) enables message-body regex matching and session-log
  *   history scanning for dedicated achievements. Deep tier matches bodies at
  *   runtime and persists only which achievement unlocked — never body text.
- * @module @deepseek-ai/dsh-achievements
+ * @module @wjnct55555/dsh-achievements
  */
 
 import { join } from 'node:path'
 import { homedir } from 'node:os'
+import { randomUUID } from 'node:crypto'
 import type { Context } from '@deepseek-ai/cordis'
 import type { Agent } from '@deepseek-ai/dsh-agent'
 import type {} from '@deepseek-ai/dsh-agent-presets/types'
@@ -40,17 +41,25 @@ import { z } from 'zod'
 import { AchievementStateStore, type PersistedState } from './state.ts'
 import type {
   AchievementCategory, AchievementProgress, AchievementRarity, AchievementView,
-  AchievementsDock, AchievementsSnapshot, AchievementsStats, RecentUnlock,
+  AchievementsDock, AchievementsRates, AchievementsSnapshot, AchievementsStats,
+  AchievementsTelemetry, RecentUnlock,
 } from './types.ts'
 
 export type * from './types.ts'
 
-/** Config: the deep-insights opt-in and the state-file location. */
+/** Config: the deep-insights opt-in, the state-file location, and the anonymous telemetry endpoint. */
 export const Config = z.object({
   /** Enable message-body regex and session-history achievements (default OFF). */
   deepInsights: z.boolean().default(false),
   /** State directory; defaults to `~/.agent-achievements`. */
   stateDir: z.string().optional(),
+  /**
+   * Anonymous unlock-statistics endpoint base URL (no trailing slash), e.g.
+   * `https://dsh-achievements.example.workers.dev`. Empty (default) disables
+   * the anonymous telemetry entirely; the setting toggle only takes effect
+   * when an endpoint is configured here.
+   */
+  telemetryEndpoint: z.string().optional(),
 })
 
 /** Internal rule: a counter threshold, a distinct-set threshold, or a one-shot flag. */
@@ -92,6 +101,12 @@ const DEEP_INSIGHTS_QUESTION = {
     { label: '暂不启用', value: 'skip' },
   ],
 } as const
+
+/** Anonymous telemetry: how long a fetched unlock-rate sample stays cached. */
+const RATES_CACHE_MS = 10 * 60 * 1000
+
+/** Network timeout for anonymous telemetry calls (report + sample fetch). */
+const TELEMETRY_TIMEOUT_MS = 5000
 
 const LANG_BY_EXT: Readonly<Record<string, string>> = {
   '.ts': 'TypeScript', '.tsx': 'TypeScript',
@@ -231,6 +246,11 @@ function textOf(message: unknown): string {
   return ''
 }
 
+/** Narrow an unknown value to a plain object record. */
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
 /** Achievements service: durable global observers, one-shot unlock queue, and read-only Remote surface. */
 export class AchievementsService extends TypertRemoteService {
   static inject = ['tools']
@@ -245,11 +265,18 @@ export class AchievementsService extends TypertRemoteService {
   private readonly seenUsage = new Set<string>()
   private readonly store: AchievementStateStore
   private deepInsights: boolean
+  /** Anonymous telemetry: opt-in flag and per-install id (never anything else). */
+  private telemetryEnabled = false
+  private anonymousId: string = randomUUID()
+  private readonly telemetryEndpoint: string
+  /** Cached community unlock-rate sample; refreshed on a TTL. */
+  private ratesCache: { readonly at: number; readonly data: AchievementsRates } | null = null
 
   constructor(ctx: Context, config: Partial<z.infer<typeof Config>> = {}) {
     super(ctx, 'achievements')
     this.ownCtx = ctx
     this.deepInsights = config.deepInsights ?? false
+    this.telemetryEndpoint = config.telemetryEndpoint ?? ''
     const stateDir = config.stateDir ?? join(homedir(), '.agent-achievements')
     this.store = new AchievementStateStore(join(stateDir, 'state.json'))
     // Load before attaching listeners so persisted progress is present at seed time.
@@ -339,6 +366,58 @@ export class AchievementsService extends TypertRemoteService {
     }
   }
 
+  /** Remote surface: read the anonymous-telemetry opt-in and configured endpoint. */
+  @Remote('telemetryState')
+  telemetryState(): AchievementsTelemetry {
+    return { enabled: this.telemetryEnabled, endpoint: this.telemetryEndpoint }
+  }
+
+  /** Remote surface: toggle anonymous telemetry (persisted). */
+  @Remote('setTelemetry')
+  setTelemetry(enabled: boolean): AchievementsTelemetry {
+    this.telemetryEnabled = enabled
+    this.scheduleSave()
+    return this.telemetryState()
+  }
+
+  /**
+   * Remote surface: community unlock rates. Fetches the anonymous sample from
+   * the configured endpoint, rounded per-achievement to whole percent, and
+   * caches it briefly. Returns null when telemetry is off, unconfigured, or
+   * the endpoint is unreachable — never throws into the gallery.
+   */
+  @Remote('rates')
+  async rates(): Promise<AchievementsRates | null> {
+    if (!this.telemetryEnabled || this.telemetryEndpoint === '') return null
+    const now = Date.now()
+    if (this.ratesCache !== null && now - this.ratesCache.at < RATES_CACHE_MS) {
+      return this.ratesCache.data
+    }
+    try {
+      const response = await fetch(`${this.telemetryEndpoint}/stats`, {
+        signal: AbortSignal.timeout(TELEMETRY_TIMEOUT_MS),
+        headers: { accept: 'application/json' },
+      })
+      if (!response.ok) return null
+      const parsed: unknown = await response.json()
+      if (!isRecord(parsed)) return null
+      const users = typeof parsed['users'] === 'number' ? parsed['users'] : 0
+      const counts = isRecord(parsed['counts']) ? parsed['counts'] : {}
+      const pct: Record<string, number> = {}
+      if (users > 0) {
+        for (const [id, value] of Object.entries(counts)) {
+          if (typeof value === 'number') pct[id] = Math.round((value / users) * 100)
+        }
+      }
+      const data: AchievementsRates = { users, pct }
+      this.ratesCache = { at: now, data }
+      return data
+    } catch {
+      // Telemetry is best-effort: an unreachable endpoint never breaks the gallery.
+      return null
+    }
+  }
+
   /** The context this service was constructed with (retained for runtime wiring). */
   private ownCtx: Context | undefined
 
@@ -357,6 +436,8 @@ export class AchievementsService extends TypertRemoteService {
     for (const [id, at] of Object.entries(state.unlocked)) {
       if (typeof at === 'number') this.unlocked.set(id, at)
     }
+    this.telemetryEnabled = state.telemetry.enabled
+    if (state.telemetry.anonymousId !== '') this.anonymousId = state.telemetry.anonymousId
   }
 
   /** Snapshot current state for persistence (deep bodies never included). */
@@ -368,7 +449,14 @@ export class AchievementsService extends TypertRemoteService {
     const flags = [...this.flags]
     const unlocked: Record<string, number> = {}
     for (const [id, at] of this.unlocked) unlocked[id] = at
-    return { schemaVersion: 1, counters, distinct, flags, unlocked }
+    return {
+      schemaVersion: 1,
+      counters,
+      distinct,
+      flags,
+      unlocked,
+      telemetry: { enabled: this.telemetryEnabled, anonymousId: this.anonymousId },
+    }
   }
 
   private scheduleSave(): void {
@@ -498,9 +586,29 @@ export class AchievementsService extends TypertRemoteService {
       const at = Date.now()
       this.unlocked.set(a.id, at)
       this.unlockQueue.push({ id: a.id, name: a.name, rarity: a.rarity, icon: a.icon, at })
+      this.reportUnlock(a)
       changed = true
     }
     if (changed) this.scheduleSave()
+  }
+
+  /**
+   * Fire-and-forget anonymous unlock report: the achievement id, its rarity,
+   * and this install's anonymous id — nothing else. Opt-in only (telemetry
+   * must be enabled AND an endpoint configured); network failures are ignored
+   * so telemetry can never affect normal use.
+   */
+  private reportUnlock(a: AchievementDefinition): void {
+    if (!this.telemetryEnabled || this.telemetryEndpoint === '') return
+    const body = { achievementId: a.id, rarity: a.rarity, anonymousId: this.anonymousId }
+    void fetch(`${this.telemetryEndpoint}/unlock`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+      signal: AbortSignal.timeout(TELEMETRY_TIMEOUT_MS),
+    }).catch(() => {
+      // Telemetry is best-effort: a failed report is dropped silently.
+    })
   }
 
   private turnFor(agent: Agent | undefined): TurnState {

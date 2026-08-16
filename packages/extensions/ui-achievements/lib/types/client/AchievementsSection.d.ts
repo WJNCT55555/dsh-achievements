@@ -3,7 +3,7 @@
  * snapshot on mount through the inject face's Remote-backed `list` callback,
  * then renders a themed overview, progress groups, and rarity-aware cards.
  */
-import type { AchievementsSnapshot, AchievementsStats } from '@deepseek-ai/dsh-achievements/types';
+import type { AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry } from '@wjnct55555/dsh-achievements/types';
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots';
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol';
 /** Injected dependencies of {@link AchievementsSection} (slot `inject`). */
@@ -20,7 +20,13 @@ export interface AchievementsSectionInjected {
     }>>;
     /** Dashboard aggregates (tools + tokens); absent when the host predates it. */
     stats?: () => Promise<RemoteResult<AchievementsStats>>;
+    /** Community unlock rates; absent when the host predates telemetry. */
+    rates?: () => Promise<RemoteResult<AchievementsRates | null>>;
+    /** Read the anonymous-telemetry opt-in; absent when the host predates telemetry. */
+    telemetryState?: () => Promise<RemoteResult<AchievementsTelemetry>>;
+    /** Toggle anonymous telemetry; absent when the host predates telemetry. */
+    setTelemetry?: (enabled: boolean) => Promise<RemoteResult<AchievementsTelemetry>>;
 }
 /** Full settings-section gallery over the achievements Remote namespace. */
-export declare function AchievementsSection({ list, deepState, setDeepInsights, stats, t }: AchievementsSectionInjected & PropsLocale<'achievements'>): import("react").JSX.Element;
+export declare function AchievementsSection({ list, deepState, setDeepInsights, stats, rates, telemetryState, setTelemetry, t }: AchievementsSectionInjected & PropsLocale<'achievements'>): import("react").JSX.Element;
 //# sourceMappingURL=AchievementsSection.d.ts.map

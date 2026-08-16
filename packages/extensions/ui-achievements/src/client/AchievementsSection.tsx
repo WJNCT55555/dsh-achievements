@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import type { AchievementsSnapshot, AchievementsStats, AchievementView } from '@deepseek-ai/dsh-achievements/types'
+import type { AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, AchievementView } from '@wjnct55555/dsh-achievements/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { twemojiPath, TWEMOJI_BASE } from './twemoji.ts'
@@ -55,6 +55,12 @@ export interface AchievementsSectionInjected {
   setDeepInsights?: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
   /** Dashboard aggregates (tools + tokens); absent when the host predates it. */
   stats?: () => Promise<RemoteResult<AchievementsStats>>
+  /** Community unlock rates; absent when the host predates telemetry. */
+  rates?: () => Promise<RemoteResult<AchievementsRates | null>>
+  /** Read the anonymous-telemetry opt-in; absent when the host predates telemetry. */
+  telemetryState?: () => Promise<RemoteResult<AchievementsTelemetry>>
+  /** Toggle anonymous telemetry; absent when the host predates telemetry. */
+  setTelemetry?: (enabled: boolean) => Promise<RemoteResult<AchievementsTelemetry>>
 }
 
 /** Emoji icon via Twemoji CDN with a text fallback on load failure. */
@@ -75,7 +81,12 @@ function statusMatches(a: AchievementView, filter: StatusFilter): boolean {
 }
 
 /** One achievement card. */
-function Row({ a, t }: { a: AchievementView; t: (key: AchievementsKey) => string }) {
+function Row({ a, t, pct, hasRates }: {
+  a: AchievementView
+  t: (key: AchievementsKey, params?: Record<string, string | number>) => string
+  pct: number | undefined
+  hasRates: boolean
+}) {
   const hiddenLocked = a.hidden && !a.unlocked
   const deepLocked = a.deepLocked && !a.unlocked
   const name = hiddenLocked ? '？？？' : a.name
@@ -127,6 +138,9 @@ function Row({ a, t }: { a: AchievementView; t: (key: AchievementsKey) => string
         </div>
         {bar}
         {a.unlocked && <div className={styles.unlockedLine}><span>✓ {t('unlockedHint')}</span></div>}
+        {pct !== undefined
+          ? <div className={styles.rateLine} data-rarity={a.rarity}>{t('rate.users', { pct })}</div>
+          : hasRates && <div className={styles.rateLine} data-rarity={a.rarity}>{t('rate.noData')}</div>}
       </div>
     </article>
   )
@@ -195,9 +209,11 @@ function HBar({ label, value, max, color }: { label: string; value: number; max:
 }
 
 /** Full settings-section gallery over the achievements Remote namespace. */
-export function AchievementsSection({ list, deepState, setDeepInsights, stats, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
+export function AchievementsSection({ list, deepState, setDeepInsights, stats, rates, telemetryState, setTelemetry, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
   const [snapshot, setSnapshot] = useState<AchievementsSnapshot | null>(null)
   const [statsData, setStatsData] = useState<AchievementsStats | null>(null)
+  const [ratesData, setRatesData] = useState<AchievementsRates | null>(null)
+  const [telemetryEnabled, setTelemetryEnabled] = useState(false)
   const [mode, setMode] = useState<SortMode>('category')
   const [status, setStatus] = useState<StatusFilter>('all')
   const [deepEnabled, setDeepEnabled] = useState(false)
@@ -230,10 +246,25 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, t
         if (alive) setStatsData(null)
       })
     }
+    // telemetry face is optional: hosts predating it degrade to "off".
+    if (telemetryState !== undefined) {
+      void Promise.resolve().then(telemetryState).then((result) => {
+        if (alive && result.ok) setTelemetryEnabled(result.value.enabled)
+      }).catch(() => {
+        if (alive) setTelemetryEnabled(false)
+      })
+    }
+    if (rates !== undefined) {
+      void Promise.resolve().then(rates).then((result) => {
+        if (alive && result.ok) setRatesData(result.value)
+      }).catch(() => {
+        if (alive) setRatesData(null)
+      })
+    }
     return () => {
       alive = false
     }
-  }, [list, deepState, stats, reloadToken, t])
+  }, [list, deepState, stats, rates, telemetryState, reloadToken, t])
   if (snapshot === null) {
     if (loadError !== null) {
       return (
@@ -254,6 +285,15 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, t
     if (setDeepInsights === undefined) return
     void Promise.resolve().then(() => setDeepInsights(!deepEnabled)).then((result) => {
       if (result.ok) setDeepEnabled(result.value.enabled)
+    }).catch(() => {
+      // The toggle is best-effort; keep the current state on failure.
+    })
+  }
+
+  const toggleTelemetry = (): void => {
+    if (setTelemetry === undefined) return
+    void Promise.resolve().then(() => setTelemetry(!telemetryEnabled)).then((result) => {
+      if (result.ok) setTelemetryEnabled(result.value.enabled)
     }).catch(() => {
       // The toggle is best-effort; keep the current state on failure.
     })
@@ -290,8 +330,8 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, t
 
   // ── dashboard charts data ───────────────────────────────────────
   const rarityColors: Record<AchievementView['rarity'], string> = {
-    common: '#e8f5ef',
-    rare: '#60a5fa',
+    common: '#ffffff',
+    rare: '#3b82f6',
     epic: '#a78bfa',
     legendary: '#fbbf24',
   }
@@ -411,6 +451,11 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, t
           <button type="button" aria-pressed={deepEnabled} className={`${styles.deepBtn} ${deepEnabled ? styles.deepActive : ''}`} onClick={toggleDeep} title={t('settings.deepDesc')}>
             {t('settings.deepTitle')} · {deepEnabled ? t('settings.deepDisable') : t('settings.deepEnable')}
           </button>
+          {telemetryState !== undefined && setTelemetry !== undefined && (
+            <button type="button" aria-pressed={telemetryEnabled} className={`${styles.deepBtn} ${telemetryEnabled ? styles.deepActive : ''}`} onClick={toggleTelemetry} title={t('settings.telemetryDesc')}>
+              {t('settings.telemetryTitle')} · {telemetryEnabled ? t('settings.telemetryDisable') : t('settings.telemetryEnable')}
+            </button>
+          )}
         </div>
       </div>
 
@@ -460,7 +505,9 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, t
               </div>
             </div>
             <div className={styles.groupProgress} aria-hidden="true"><div style={{ width: `${activeGroup.groupCompletion}%` }} /></div>
-            <div className={styles.rows}>{activeGroup.items.map(a => <Row key={a.id} a={a} t={t} />)}</div>
+            <div className={styles.rows}>
+              {activeGroup.items.map(a => <Row key={a.id} a={a} t={t} pct={ratesData?.pct[a.id]} hasRates={ratesData !== null} />)}
+            </div>
           </section>
         </div>
       )}

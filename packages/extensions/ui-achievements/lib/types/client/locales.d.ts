@@ -52,6 +52,13 @@ export declare const zh: {
     'settings.deepDesc': string;
     'settings.deepEnable': string;
     'settings.deepDisable': string;
+    'settings.telemetryTitle': string;
+    'settings.telemetryDesc': string;
+    'settings.telemetryEnable': string;
+    'settings.telemetryDisable': string;
+    'settings.telemetryNoEndpoint': string;
+    'rate.users': string;
+    'rate.noData': string;
     'sort.label': string;
     'filter.label': string;
     'sort.byCategory': string;
@@ -122,6 +129,13 @@ export declare const en: {
     'settings.deepDesc': string;
     'settings.deepEnable': string;
     'settings.deepDisable': string;
+    'settings.telemetryTitle': string;
+    'settings.telemetryDesc': string;
+    'settings.telemetryEnable': string;
+    'settings.telemetryDisable': string;
+    'settings.telemetryNoEndpoint': string;
+    'rate.users': string;
+    'rate.noData': string;
     'sort.label': string;
     'filter.label': string;
     'sort.byCategory': string;

@@ -9,7 +9,7 @@
 | 包 | 目录 | 说明 |
 |---|---|---|
 | `@wjnct55555/dsh-achievements-bundle` | 仓库根 | 可安装 bundle：声明 `dsh.bundle` patch，挂载下面两个包 |
-| `@wjnct55555/dsh-achievements` | `packages/extensions/achievements/` | 宿主侧引擎：事件监听、计数、解锁队列、只读 Remote（`list` / `recent` / `dock` / `deepState` / `setDeepInsights`）与 `list_achievements` 工具 |
+| `@wjnct55555/dsh-achievements` | `packages/extensions/achievements/` | 宿主侧引擎：事件监听、计数、解锁队列、只读 Remote（`list` / `recent` / `dock` / `deepState` / `setDeepInsights` / `telemetryState` / `setTelemetry` / `rates` / `stats`）与 `list_achievements` 工具 |
 | `@wjnct55555/dsh-client-ui-achievements` | `packages/extensions/ui-achievements/` | 浏览器侧界面：设置页画廊、toast 堆栈、侧栏奖杯、输入坞读条、画廊浮层 |
 
 ## 设计文档
@@ -27,10 +27,22 @@
 
 ## 隐私
 
-**分层设计，零遥测、零上传。**
+**分层设计，默认零上传。**
 - **基础层（默认）**：监听器只读取叶子标量（工具名、成功标志、agent id、事件类型、文件路径、token 计数），从不读取消息正文、文件内容、错误详情或搜索结果。
 - **深度洞察层（opt-in，默认关闭）**：首次运行通过设置页询问，启用后允许对消息正文正则匹配与历史会话扫描，仅用于成就解锁；正文只在运行时匹配、**绝不落盘**。
-- **持久化**：只保存成就进度到本地 JSON（`~/.agent-achievements/state.json`），不含任何消息/文件内容。
+- **匿名统计（opt-in，默认关闭）**：为显示「约 x% 用户获得」，用户可在画廊设置中显式开启。开启后**仅上报**成就 id、稀有度与随机匿名安装标识（`POST {endpoint}/unlock`），**绝不包含**会话、工具、文件或内容数据；获得率通过 `GET {endpoint}/stats` 拉取并本地缓存。未配置 `telemetryEndpoint` 或未开启时**不发生任何网络请求**。免费后端参考实现见 [docs/telemetry-worker.js](docs/telemetry-worker.js)（Cloudflare Workers 免费层，零成本）。
+- **持久化**：只保存成就进度与匿名统计开关到本地 JSON（`~/.agent-achievements/state.json`），不含任何消息/文件内容。
+
+### 启用匿名统计
+
+```yaml
+# cordis.yml 中给插件配置统计端点（部署免费 Worker 后替换为你的地址）
+- plugin: @wjnct55555/dsh-achievements
+  config:
+    telemetryEndpoint: https://your-name.workers.dev
+```
+
+然后在成就画廊设置里打开「匿名统计」开关。开关状态会持久化，重启后保留。
 
 ## 构建与安装
 
@@ -66,7 +78,7 @@ pnpm --filter @wjnct55555/dsh-client-ui-achievements bundle  # 构建浏览器�
 pnpm exec vitest run packages/extensions/achievements/tests/achievements.spec.ts
 ```
 
-覆盖：会话播种、工具计数、连击重置、并发子代理、phoenix 恢复解锁、marathon 回合隔离、联动皮肤检测、token 按会话去重等 10 个用例。
+覆盖：会话播种、工具计数、连击重置、并发子代理、phoenix 恢复解锁、marathon 回合隔离、联动皮肤检测、token 按会话去重、匿名统计开关与上报等 27 个用例。
 
 ## 许可
 

@@ -4,7 +4,7 @@
  * snapshots. Free of host-side imports (cordis events, dsh-agent, the service)
  * so the `./types` subpath serves client aggregates without dragging the host
  * Context merge into a browser program.
- * @module @deepseek-ai/dsh-achievements/types
+ * @module @wjnct55555/dsh-achievements/types
  */
 
 /** Stable rarity tier, mapped to a visual treatment by the client. */
@@ -70,6 +70,26 @@ export interface AchievementsStats {
     readonly uncached: number
     readonly reasoning: number
   }
+}
+
+/**
+ * Community unlock rates served by the `rates` Remote: the anonymous sample
+ * size and each achievement's rounded unlock percentage. `pct` is keyed by
+ * achievement id; absent keys mean no unlock reported for that achievement.
+ */
+export interface AchievementsRates {
+  /** Distinct anonymous installs that reported at least one unlock. */
+  readonly users: number
+  /** Rounded unlock percentage (0-100) per achievement id. */
+  readonly pct: Readonly<Record<string, number>>
+}
+
+/** Anonymous-telemetry surface exposed by `telemetryState` / `setTelemetry`. */
+export interface AchievementsTelemetry {
+  /** Whether unlocks are shared with the configured endpoint. */
+  readonly enabled: boolean
+  /** The statistics endpoint base URL, or '' when unconfigured. */
+  readonly endpoint: string
 }
 
 /** One freshly unlocked achievement drained from the recent queue. */

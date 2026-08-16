@@ -3,24 +3,30 @@ import type {
   RemoteResult,
   TypertRemoteContribution,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { AchievementsDock, AchievementsSnapshot, AchievementsStats, RecentUnlock } from '@deepseek-ai/dsh-achievements/types'
+import type { AchievementsDock, AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, RecentUnlock } from '@wjnct55555/dsh-achievements/types'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$616368696576656d656e7473 {
     deepState: () => Promise<RemoteResult<{ enabled: boolean; }>>
     dock: () => Promise<RemoteResult<AchievementsDock>>
     list: () => Promise<RemoteResult<AchievementsSnapshot>>
+    rates: () => Promise<RemoteResult<AchievementsRates | null>>
     recent: () => Promise<RemoteResult<{ unlocks: RecentUnlock[]; }>>
     setDeepInsights: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean; }>>
+    setTelemetry: (enabled: boolean) => Promise<RemoteResult<AchievementsTelemetry>>
     stats: () => Promise<RemoteResult<AchievementsStats>>
+    telemetryState: () => Promise<RemoteResult<AchievementsTelemetry>>
   }
   interface TypertRemoteMap {
     'achievements/deepState': () => Promise<RemoteResult<{ enabled: boolean; }>>
     'achievements/dock': () => Promise<RemoteResult<AchievementsDock>>
     'achievements/list': () => Promise<RemoteResult<AchievementsSnapshot>>
+    'achievements/rates': () => Promise<RemoteResult<AchievementsRates | null>>
     'achievements/recent': () => Promise<RemoteResult<{ unlocks: RecentUnlock[]; }>>
     'achievements/setDeepInsights': (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean; }>>
+    'achievements/setTelemetry': (enabled: boolean) => Promise<RemoteResult<AchievementsTelemetry>>
     'achievements/stats': () => Promise<RemoteResult<AchievementsStats>>
+    'achievements/telemetryState': () => Promise<RemoteResult<AchievementsTelemetry>>
   }
   interface TypertRemoteNamespaceMap {
     'achievements': TypertRemoteNamespace$616368696576656d656e7473

@@ -1,11 +1,12 @@
 import { dirname, join } from "node:path";
 import { homedir } from "node:os";
+import { randomUUID } from "node:crypto";
 import { defineTool } from "@deepseek-ai/dsh-tools";
 import { Remote, TypertRemoteService } from "@deepseek-ai/dsh-typert-protocol";
 import { z } from "zod";
 import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
 /** Narrow a parsed JSON value to a plain object record. */
-function isRecord(value) {
+function isRecord$1(value) {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 /** A file-backed state store with debounced writes. */
@@ -26,12 +27,17 @@ var AchievementStateStore = class {
 			if (typeof parsed !== "object" || parsed === null) return this.empty();
 			const record = parsed;
 			if (record["schemaVersion"] !== 1) return this.empty();
+			const telemetryRaw = isRecord$1(record["telemetry"]) ? record["telemetry"] : {};
 			return {
 				schemaVersion: 1,
-				counters: isRecord(record["counters"]) ? record["counters"] : {},
-				distinct: isRecord(record["distinct"]) ? record["distinct"] : {},
+				counters: isRecord$1(record["counters"]) ? record["counters"] : {},
+				distinct: isRecord$1(record["distinct"]) ? record["distinct"] : {},
 				flags: Array.isArray(record["flags"]) ? record["flags"] : [],
-				unlocked: isRecord(record["unlocked"]) ? record["unlocked"] : {}
+				unlocked: isRecord$1(record["unlocked"]) ? record["unlocked"] : {},
+				telemetry: {
+					enabled: telemetryRaw["enabled"] === true,
+					anonymousId: typeof telemetryRaw["anonymousId"] === "string" ? telemetryRaw["anonymousId"] : ""
+				}
 			};
 		} catch {
 			return this.empty();
@@ -81,7 +87,11 @@ var AchievementStateStore = class {
 			counters: {},
 			distinct: {},
 			flags: [],
-			unlocked: {}
+			unlocked: {},
+			telemetry: {
+				enabled: false,
+				anonymousId: ""
+			}
 		};
 	}
 };
@@ -101,7 +111,7 @@ var AchievementStateStore = class {
 *   user-questions UI) enables message-body regex matching and session-log
 *   history scanning for dedicated achievements. Deep tier matches bodies at
 *   runtime and persists only which achievement unlocked — never body text.
-* @module @deepseek-ai/dsh-achievements
+* @module @wjnct55555/dsh-achievements
 */
 var __runInitializers = function(thisArg, initializers, value) {
 	var useValue = arguments.length > 2;
@@ -143,12 +153,19 @@ var __esDecorate = function(ctor, descriptorIn, decorators, contextIn, initializ
 	if (target) Object.defineProperty(target, contextIn.name, descriptor);
 	done = true;
 };
-/** Config: the deep-insights opt-in and the state-file location. */
+/** Config: the deep-insights opt-in, the state-file location, and the anonymous telemetry endpoint. */
 const Config = z.object({
 	/** Enable message-body regex and session-history achievements (default OFF). */
 	deepInsights: z.boolean().default(false),
 	/** State directory; defaults to `~/.agent-achievements`. */
-	stateDir: z.string().optional()
+	stateDir: z.string().optional(),
+	/**
+	* Anonymous unlock-statistics endpoint base URL (no trailing slash), e.g.
+	* `https://dsh-achievements.example.workers.dev`. Empty (default) disables
+	* the anonymous telemetry entirely; the setting toggle only takes effect
+	* when an endpoint is configured here.
+	*/
+	telemetryEndpoint: z.string().optional()
 });
 /** The deep-insights first-run question. */
 const DEEP_INSIGHTS_QUESTION = {
@@ -162,6 +179,10 @@ const DEEP_INSIGHTS_QUESTION = {
 		value: "skip"
 	}]
 };
+/** Anonymous telemetry: how long a fetched unlock-rate sample stays cached. */
+const RATES_CACHE_MS = 6e5;
+/** Network timeout for anonymous telemetry calls (report + sample fetch). */
+const TELEMETRY_TIMEOUT_MS = 5e3;
 const LANG_BY_EXT = {
 	".ts": "TypeScript",
 	".tsx": "TypeScript",
@@ -943,6 +964,10 @@ function textOf(message) {
 	}).join("\n");
 	return "";
 }
+/** Narrow an unknown value to a plain object record. */
+function isRecord(value) {
+	return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 /** Achievements service: durable global observers, one-shot unlock queue, and read-only Remote surface. */
 let AchievementsService = (() => {
 	let _classSuper = TypertRemoteService;
@@ -950,6 +975,9 @@ let AchievementsService = (() => {
 	let _deepState_decorators;
 	let _setDeepInsights_decorators;
 	let _stats_decorators;
+	let _telemetryState_decorators;
+	let _setTelemetry_decorators;
+	let _rates_decorators;
 	let _list_decorators;
 	let _recent_decorators;
 	let _dock_decorators;
@@ -959,6 +987,9 @@ let AchievementsService = (() => {
 			_deepState_decorators = [Remote("deepState")];
 			_setDeepInsights_decorators = [Remote("setDeepInsights")];
 			_stats_decorators = [Remote("stats")];
+			_telemetryState_decorators = [Remote("telemetryState")];
+			_setTelemetry_decorators = [Remote("setTelemetry")];
+			_rates_decorators = [Remote("rates")];
 			_list_decorators = [Remote("list")];
 			_recent_decorators = [Remote("recent")];
 			_dock_decorators = [Remote("dock")];
@@ -992,6 +1023,39 @@ let AchievementsService = (() => {
 				access: {
 					has: (obj) => "stats" in obj,
 					get: (obj) => obj.stats
+				},
+				metadata: _metadata
+			}, null, _instanceExtraInitializers);
+			__esDecorate(this, null, _telemetryState_decorators, {
+				kind: "method",
+				name: "telemetryState",
+				static: false,
+				private: false,
+				access: {
+					has: (obj) => "telemetryState" in obj,
+					get: (obj) => obj.telemetryState
+				},
+				metadata: _metadata
+			}, null, _instanceExtraInitializers);
+			__esDecorate(this, null, _setTelemetry_decorators, {
+				kind: "method",
+				name: "setTelemetry",
+				static: false,
+				private: false,
+				access: {
+					has: (obj) => "setTelemetry" in obj,
+					get: (obj) => obj.setTelemetry
+				},
+				metadata: _metadata
+			}, null, _instanceExtraInitializers);
+			__esDecorate(this, null, _rates_decorators, {
+				kind: "method",
+				name: "rates",
+				static: false,
+				private: false,
+				access: {
+					has: (obj) => "rates" in obj,
+					get: (obj) => obj.rates
 				},
 				metadata: _metadata
 			}, null, _instanceExtraInitializers);
@@ -1046,10 +1110,17 @@ let AchievementsService = (() => {
 		seenUsage = /* @__PURE__ */ new Set();
 		store;
 		deepInsights;
+		/** Anonymous telemetry: opt-in flag and per-install id (never anything else). */
+		telemetryEnabled = false;
+		anonymousId = randomUUID();
+		telemetryEndpoint;
+		/** Cached community unlock-rate sample; refreshed on a TTL. */
+		ratesCache = null;
 		constructor(ctx, config = {}) {
 			super(ctx, "achievements");
 			this.ownCtx = ctx;
 			this.deepInsights = config.deepInsights ?? false;
+			this.telemetryEndpoint = config.telemetryEndpoint ?? "";
 			const stateDir = config.stateDir ?? join(homedir(), ".agent-achievements");
 			this.store = new AchievementStateStore(join(stateDir, "state.json"));
 			this.restore(ctx);
@@ -1127,6 +1198,56 @@ let AchievementsService = (() => {
 				}
 			};
 		}
+		/** Remote surface: read the anonymous-telemetry opt-in and configured endpoint. */
+		telemetryState() {
+			return {
+				enabled: this.telemetryEnabled,
+				endpoint: this.telemetryEndpoint
+			};
+		}
+		/** Remote surface: toggle anonymous telemetry (persisted). */
+		setTelemetry(enabled) {
+			this.telemetryEnabled = enabled;
+			this.scheduleSave();
+			return this.telemetryState();
+		}
+		/**
+		* Remote surface: community unlock rates. Fetches the anonymous sample from
+		* the configured endpoint, rounded per-achievement to whole percent, and
+		* caches it briefly. Returns null when telemetry is off, unconfigured, or
+		* the endpoint is unreachable — never throws into the gallery.
+		*/
+		async rates() {
+			if (!this.telemetryEnabled || this.telemetryEndpoint === "") return null;
+			const now = Date.now();
+			if (this.ratesCache !== null && now - this.ratesCache.at < RATES_CACHE_MS) return this.ratesCache.data;
+			try {
+				const response = await fetch(`${this.telemetryEndpoint}/stats`, {
+					signal: AbortSignal.timeout(TELEMETRY_TIMEOUT_MS),
+					headers: { accept: "application/json" }
+				});
+				if (!response.ok) return null;
+				const parsed = await response.json();
+				if (!isRecord(parsed)) return null;
+				const users = typeof parsed["users"] === "number" ? parsed["users"] : 0;
+				const counts = isRecord(parsed["counts"]) ? parsed["counts"] : {};
+				const pct = {};
+				if (users > 0) {
+					for (const [id, value] of Object.entries(counts)) if (typeof value === "number") pct[id] = Math.round(value / users * 100);
+				}
+				const data = {
+					users,
+					pct
+				};
+				this.ratesCache = {
+					at: now,
+					data
+				};
+				return data;
+			} catch {
+				return null;
+			}
+		}
 		/** The context this service was constructed with (retained for runtime wiring). */
 		ownCtx;
 		/** Fold persisted state back into the in-memory containers. */
@@ -1140,6 +1261,8 @@ let AchievementsService = (() => {
 			}
 			for (const flag of state.flags) if (typeof flag === "string") this.flags.add(flag);
 			for (const [id, at] of Object.entries(state.unlocked)) if (typeof at === "number") this.unlocked.set(id, at);
+			this.telemetryEnabled = state.telemetry.enabled;
+			if (state.telemetry.anonymousId !== "") this.anonymousId = state.telemetry.anonymousId;
 		}
 		/** Snapshot current state for persistence (deep bodies never included). */
 		snapshot() {
@@ -1155,7 +1278,11 @@ let AchievementsService = (() => {
 				counters,
 				distinct,
 				flags,
-				unlocked
+				unlocked,
+				telemetry: {
+					enabled: this.telemetryEnabled,
+					anonymousId: this.anonymousId
+				}
 			};
 		}
 		scheduleSave() {
@@ -1291,9 +1418,30 @@ let AchievementsService = (() => {
 					icon: a.icon,
 					at
 				});
+				this.reportUnlock(a);
 				changed = true;
 			}
 			if (changed) this.scheduleSave();
+		}
+		/**
+		* Fire-and-forget anonymous unlock report: the achievement id, its rarity,
+		* and this install's anonymous id — nothing else. Opt-in only (telemetry
+		* must be enabled AND an endpoint configured); network failures are ignored
+		* so telemetry can never affect normal use.
+		*/
+		reportUnlock(a) {
+			if (!this.telemetryEnabled || this.telemetryEndpoint === "") return;
+			const body = {
+				achievementId: a.id,
+				rarity: a.rarity,
+				anonymousId: this.anonymousId
+			};
+			fetch(`${this.telemetryEndpoint}/unlock`, {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify(body),
+				signal: AbortSignal.timeout(TELEMETRY_TIMEOUT_MS)
+			}).catch(() => {});
 		}
 		turnFor(agent) {
 			const key = this.agentKey(agent);
