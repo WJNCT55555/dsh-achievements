@@ -1,0 +1,68 @@
+/** `achievements` namespace dictionaries: gallery copy. */
+
+/** Simplified Chinese dictionary (the key-set source of truth). */
+export const zh = {
+  'nav': '成就',
+  'title': '成就',
+  'loading': '加载中…',
+  'hidden': '隐藏成就，达成后揭晓',
+  'hiddenDesc': '隐藏',
+  'done': '✓ 已达成',
+  'todo': '未达成',
+  'progress': '进度',
+  'rarity.common': '普通',
+  'rarity.rare': '稀有',
+  'rarity.epic': '史诗',
+  'rarity.legendary': '传说',
+  'cat.getting-started': '启程',
+  'cat.toolsmith': '工具大师',
+  'cat.filecraft': '文件工匠',
+  'cat.orchestration': '编排',
+  'cat.goals': '目标',
+  'cat.crossover': '联动',
+  'cat.hidden': '隐藏',
+  'sort.byCategory': '按分类',
+  'sort.byRarity': '按难度',
+  'toast.sub': '解锁成就',
+  'toast.close': '关闭',
+  'gallery.close': '关闭',
+  'dock.summary': '🏆 {unlocked}/{total}',
+  'dock.combo': ' · 🔥 连击 x{count}',
+  'dock.next': '下一项：{name} {current}/{target}',
+  'dock.complete': '全部达成！',
+} satisfies Record<string, string>
+
+/** The achievements namespace key union. */
+export type AchievementsKey = keyof typeof zh
+
+/** English dictionary, checked complete against the zh key set. */
+export const en = {
+  'nav': 'Achievements',
+  'title': 'Achievements',
+  'loading': 'Loading…',
+  'hidden': 'Hidden achievement, revealed on unlock',
+  'hiddenDesc': 'Hidden',
+  'done': '✓ Unlocked',
+  'todo': 'Locked',
+  'progress': 'Progress',
+  'rarity.common': 'Common',
+  'rarity.rare': 'Rare',
+  'rarity.epic': 'Epic',
+  'rarity.legendary': 'Legendary',
+  'cat.getting-started': 'Getting started',
+  'cat.toolsmith': 'Toolsmith',
+  'cat.filecraft': 'Filecraft',
+  'cat.orchestration': 'Orchestration',
+  'cat.goals': 'Goals',
+  'cat.crossover': 'Crossover',
+  'cat.hidden': 'Hidden',
+  'sort.byCategory': 'By category',
+  'sort.byRarity': 'By rarity',
+  'toast.sub': 'Achievement unlocked',
+  'toast.close': 'Dismiss',
+  'gallery.close': 'Close',
+  'dock.summary': '🏆 {unlocked}/{total}',
+  'dock.combo': ' · 🔥 Streak x{count}',
+  'dock.next': 'Next: {name} {current}/{target}',
+  'dock.complete': 'All done!',
+} satisfies Record<AchievementsKey, string>

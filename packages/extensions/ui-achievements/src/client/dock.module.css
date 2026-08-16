@@ -1,0 +1,5 @@
+/* Achievements dock readout: ambient composer progress strip. */
+.dock {
+  font-size: 11px;
+  opacity: 0.6;
+}

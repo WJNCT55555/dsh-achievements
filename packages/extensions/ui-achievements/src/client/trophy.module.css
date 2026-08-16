@@ -1,0 +1,39 @@
+/* Achievements trophy: sidebar footer action with unread badge. */
+.trophy {
+  position: relative;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px;
+  font-size: 16px;
+}
+
+.icon {
+  font-size: 16px;
+}
+
+.label {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+.badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  color: #1a1a1a;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 16px;
+  height: 16px;
+  line-height: 16px;
+  text-align: center;
+  padding: 0 4px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+}

@@ -1,0 +1,111 @@
+/* Achievements toast stack + confetti burst. */
+.stack {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.toast {
+  pointer-events: auto;
+  position: relative;
+  border-radius: 12px;
+  padding: 10px 36px 10px 12px;
+  min-width: 210px;
+  max-width: 320px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  font-size: 13px;
+  animation: pop 0.25s ease;
+  color: #eef;
+}
+
+.rarity-common {
+  background: linear-gradient(135deg, rgba(30, 32, 40, 0.97), rgba(20, 22, 28, 0.97));
+  border: 1px solid rgba(148, 163, 184, 0.35);
+}
+
+.rarity-rare {
+  background: linear-gradient(135deg, rgba(23, 37, 58, 0.98), rgba(15, 23, 42, 0.98));
+  border: 1px solid rgba(96, 165, 250, 0.55);
+}
+
+.rarity-epic {
+  background: linear-gradient(135deg, rgba(34, 26, 56, 0.98), rgba(24, 18, 40, 0.98));
+  border: 1px solid rgba(167, 139, 250, 0.6);
+}
+
+.rarity-legendary {
+  background: linear-gradient(135deg, rgba(46, 34, 12, 0.98), rgba(32, 23, 8, 0.98));
+  border: 1px solid rgba(251, 191, 36, 0.65);
+}
+
+.title {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sub {
+  font-size: 11px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
+
+.close {
+  position: absolute;
+  top: 6px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #aab;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 70;
+  overflow: hidden;
+}
+
+.piece {
+  position: absolute;
+  top: -14px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.95;
+  animation-name: fall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: forwards;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(105vh) rotate(720deg);
+    opacity: 0.4;
+  }
+}
+
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

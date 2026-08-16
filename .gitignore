@@ -1,0 +1,10 @@
+# Build outputs
+lib/
+node_modules/
+*.tsbuildinfo
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

@@ -1,0 +1,54 @@
+/* Achievements gallery overlay: trophy-toggled backdrop + panel. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 60;
+  backdrop-filter: blur(2px);
+}
+
+.panel {
+  pointer-events: auto;
+  background: linear-gradient(180deg, rgba(30, 32, 42, 0.99), rgba(22, 24, 32, 0.99));
+  color: #e8eaf0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  width: min(680px, calc(100vw - 48px));
+  max-height: 84vh;
+  overflow: auto;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.6);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.close {
+  background: none;
+  border: none;
+  color: #aab;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.close:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
