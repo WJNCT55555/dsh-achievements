@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import type { AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, AchievementView } from '@wjnct55555/dsh-achievements/types'
+import type { AchievementsRates, AchievementsSnapshot, AchievementsTelemetry, AchievementView } from '@wjnct55555/dsh-achievements/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { twemojiPath, TWEMOJI_BASE } from './twemoji.ts'
@@ -53,8 +53,6 @@ export interface AchievementsSectionInjected {
   deepState?: () => Promise<RemoteResult<{ enabled: boolean }>>
   /** Toggle the deep-insights opt-in; absent when the host predates it. */
   setDeepInsights?: (enabled: boolean) => Promise<RemoteResult<{ enabled: boolean }>>
-  /** Dashboard aggregates (tools + tokens); absent when the host predates it. */
-  stats?: () => Promise<RemoteResult<AchievementsStats>>
   /** Community unlock rates; absent when the host predates telemetry. */
   rates?: () => Promise<RemoteResult<AchievementsRates | null>>
   /** Read the anonymous-telemetry opt-in; absent when the host predates telemetry. */
@@ -195,24 +193,9 @@ function Donut({ slices, center, t }: { slices: readonly DonutSlice[]; center: s
   )
 }
 
-/** Horizontal terminal bar row (label + filled bar + value). */
-function HBar({ label, value, max, color }: { label: string; value: number; max: number; color: string }) {
-  const width = max > 0 ? Math.round((value / max) * 100) : 0
-  return (
-    <div className={styles.hbarRow}>
-      <span className={styles.hbarLabel} title={label}>{label}</span>
-      <div className={styles.hbarTrack} aria-hidden="true">
-        <div className={styles.hbarFill} style={{ width: `${width}%`, background: color }} />
-      </div>
-      <span className={styles.hbarValue}>{value}</span>
-    </div>
-  )
-}
-
 /** Full settings-section gallery over the achievements Remote namespace. */
-export function AchievementsSection({ list, deepState, setDeepInsights, stats, rates, telemetryState, setTelemetry, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
+export function AchievementsSection({ list, deepState, setDeepInsights, rates, telemetryState, setTelemetry, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
   const [snapshot, setSnapshot] = useState<AchievementsSnapshot | null>(null)
-  const [statsData, setStatsData] = useState<AchievementsStats | null>(null)
   const [ratesData, setRatesData] = useState<AchievementsRates | null>(null)
   const [telemetryEnabled, setTelemetryEnabled] = useState(false)
   const [mode, setMode] = useState<SortMode>('category')
@@ -240,14 +223,6 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, r
         if (alive) setDeepEnabled(false)
       })
     }
-    // stats is optional: hosts predating the dashboard aggregates lack it.
-    if (stats !== undefined) {
-      void Promise.resolve().then(stats).then((result) => {
-        if (alive && result.ok) setStatsData(result.value)
-      }).catch(() => {
-        if (alive) setStatsData(null)
-      })
-    }
     // telemetry face is optional: hosts predating it degrade to "off".
     if (telemetryState !== undefined) {
       void Promise.resolve().then(telemetryState).then((result) => {
@@ -266,7 +241,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, r
     return () => {
       alive = false
     }
-  }, [list, deepState, stats, rates, telemetryState, reloadToken, t])
+  }, [list, deepState, rates, telemetryState, reloadToken, t])
   if (snapshot === null) {
     if (loadError !== null) {
       return (
@@ -361,16 +336,6 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, r
       value: snapshot.achievements.filter(a => a.category === cat && a.unlocked).length,
       color: catColors[cat],
     }))
-  const tokenBuckets: DonutSlice[] = (statsData?.tokens
-    ? [
-      { label: t('chart.tokens.output'), value: statsData.tokens.output, color: '#10b981' },
-      { label: t('chart.tokens.cache'), value: statsData.tokens.cacheRead, color: '#2dd4bf' },
-      { label: t('chart.tokens.uncached'), value: statsData.tokens.uncached, color: '#a78bfa' },
-      { label: t('chart.tokens.reasoning'), value: statsData.tokens.reasoning, color: '#fbbf24' },
-    ]
-    : [])
-  const toolMax = (statsData?.tools[0]?.count ?? 0)
-  const toolBars = statsData?.tools ?? []
 
   return (
     <div className={styles.section}>
@@ -413,28 +378,6 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, r
             <span className={styles.chartFold} aria-hidden="true">{collapsed['category'] ? '[+]' : '[−]'}</span>
           </button>
           {!collapsed['category'] && <Donut slices={catSlices} center={String(unlocked)} t={t} />}
-        </section>
-
-        <section className={styles.chart} aria-labelledby="chart-tokens-title">
-          <button type="button" className={styles.chartHead} aria-expanded={!collapsed['tokens']} onClick={() => { setCollapsed(prev => ({ ...prev, tokens: !prev['tokens'] })) }}>
-            <h4 className={styles.chartBadge} id="chart-tokens-title">[{t('chart.tokens')}]</h4>
-            <span className={styles.chartFold} aria-hidden="true">{collapsed['tokens'] ? '[+]' : '[−]'}</span>
-          </button>
-          {!collapsed['tokens'] && (tokenBuckets.length > 0
-            ? <Donut slices={tokenBuckets} center={String(Math.round(tokenBuckets.reduce((s, x) => s + x.value, 0)))} t={t} />
-            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>)}
-        </section>
-
-        <section className={styles.chart} aria-labelledby="chart-tools-title">
-          <button type="button" className={styles.chartHead} aria-expanded={!collapsed['tools']} onClick={() => { setCollapsed(prev => ({ ...prev, tools: !prev['tools'] })) }}>
-            <h4 className={styles.chartBadge} id="chart-tools-title">[{t('chart.tools')}]</h4>
-            <span className={styles.chartFold} aria-hidden="true">{collapsed['tools'] ? '[+]' : '[−]'}</span>
-          </button>
-          {!collapsed['tools'] && (toolBars.length > 0
-            ? <div className={styles.chartBars}>{toolBars.map(tool => (
-              <HBar key={tool.name} label={tool.name} value={tool.count} max={toolMax} color="#10b981" />
-            ))}</div>
-            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>)}
         </section>
       </div>
 

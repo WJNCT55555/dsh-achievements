@@ -30,12 +30,11 @@ export function apply(ctx) {
     const useSnapshot = bindSnapshotSelector(store.store);
     const t = ctx.locale.bind(NS);
     const list = () => ctx.remote.achievements.list();
-    // The deep-insights / stats / telemetry Remote methods may be absent on hosts
+    // The deep-insights / telemetry Remote methods may be absent on hosts
     // that predate them; keep the plugin applyable so the gallery still opens there.
     const deepRemote = ctx.remote.achievements;
     const deepState = deepRemote.deepState;
     const setDeepInsights = deepRemote.setDeepInsights;
-    const stats = deepRemote.stats;
     const rates = deepRemote.rates;
     const telemetryState = deepRemote.telemetryState;
     const setTelemetry = deepRemote.setTelemetry;
@@ -57,7 +56,6 @@ export function apply(ctx) {
         list,
         ...deepState !== undefined ? { deepState } : {},
         ...setDeepInsights !== undefined ? { setDeepInsights } : {},
-        ...stats !== undefined ? { stats } : {},
         ...rates !== undefined ? { rates } : {},
         ...telemetryState !== undefined ? { telemetryState } : {},
         ...setTelemetry !== undefined ? { setTelemetry } : {},
@@ -88,7 +86,6 @@ export function apply(ctx) {
             list,
             ...deepState !== undefined ? { deepState } : {},
             ...setDeepInsights !== undefined ? { setDeepInsights } : {},
-            ...stats !== undefined ? { stats } : {},
             ...rates !== undefined ? { rates } : {},
             ...telemetryState !== undefined ? { telemetryState } : {},
             ...setTelemetry !== undefined ? { setTelemetry } : {},

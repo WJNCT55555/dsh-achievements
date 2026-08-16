@@ -19,7 +19,7 @@ export interface GalleryOverlayInjected extends AchievementsSectionInjected {
 }
 
 /** The trophy-toggled gallery overlay (renders nothing while closed). */
-export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, stats, rates, telemetryState, setTelemetry, t }: GalleryOverlayInjected & PropsLocale<'achievements'>) {
+export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepInsights, rates, telemetryState, setTelemetry, t }: GalleryOverlayInjected & PropsLocale<'achievements'>) {
   const open = useSnapshot(s => s.galleryOpen)
   useEffect(() => {
     if (!open) return
@@ -45,7 +45,6 @@ export function GalleryOverlay({ useSnapshot, close, list, deepState, setDeepIns
           list={list}
           {...deepState !== undefined ? { deepState } : {}}
           {...setDeepInsights !== undefined ? { setDeepInsights } : {}}
-          {...stats !== undefined ? { stats } : {}}
           {...rates !== undefined ? { rates } : {}}
           {...telemetryState !== undefined ? { telemetryState } : {}}
           {...setTelemetry !== undefined ? { setTelemetry } : {}}

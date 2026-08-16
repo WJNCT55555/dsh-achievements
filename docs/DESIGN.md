@@ -454,10 +454,11 @@ DSH 是多 provider 架构，`request/header` 携带 provider/model 叶子标量
 | 0.1.0-rc.5+ | 亿万富翁 target 提升至 1 万亿 token；新增「百发百中」（累计缓存命中率 > 99%，hidden）；修复 token 类成就 checkAll 回归；成就数 51 |
 | 0.1.0 | **可安装化发布**：子包改名 `@wjnct55555/dsh-achievements` / `@wjnct55555/dsh-client-ui-achievements`，根新增 bundle 包 `@wjnct55555/dsh-achievements-bundle`（`dsh.bundle` patch），lib 产物随仓库提交；`dsh plugin --profile web add @wjnct55555/dsh-achievements-bundle` 即装 |
 | 0.1.0+ | **复古终端重设计**：hero `[TITLE]` 徽章、直角黑框四角括号、终端菜单 rail、StatBar 完成条、方括号按钮、网格刻度进度条、扫描线 hover |
-| 0.1.0+ | **数据仪表盘**：分类进度与 Token 分桶中空环形图、工具排行横向条形；稀有度分布改为按稀有度着色的分段滑条 |
+| 0.1.0+ | **数据仪表盘**：分类进度中空环形图（可折叠）；稀有度分布改为按稀有度着色的分段滑条 |
 | 0.1.0+ | **稀有度配色统一**：普通 #ffffff / 稀有 #3b82f6 / 史诗 #a78bfa / 传说 #fbbf24，贯穿图标、行、角标、分组条、进度条与 toast |
 | 0.1.0+ | **匿名统计（opt-in，默认关闭）**：`telemetryEndpoint` 配置 + 画廊「匿名统计」开关；解锁仅上报成就 id/稀有度/随机匿名安装 id（`POST /unlock`，静默失败），获得率经 `GET /stats` 拉取缓存后按行显示「约 x% 用户获得」；免费后端参考 `docs/telemetry-worker.js`（Cloudflare Workers 免费层） |
-| 0.1.0+ | **图表可折叠 + donut 中心孔收窄**：分类进度 / token 分桶 / 工具排行三张图表加方括号折叠头（`[−]`/`[+]`）；环形图 stroke 加粗至 5px、半径增至 17.4，中心孔更小；README 嵌入画廊截图（`assets/`） |
+| 0.1.0+ | **图表可折叠 + donut 中心孔收窄**：分类进度图表加方括号折叠头（`[−]`/`[+]`）；环形图 stroke 加粗至 5px、半径增至 17.4，中心孔更小；README 嵌入画廊截图（`assets/`） |
+| 0.1.0+ | **移除 token 分桶与工具排行图表**：数据仪表盘仅保留分类进度 donut（`stats` Remote 数据源仍保留，供未来复用） |
 
 ## 许可
 
