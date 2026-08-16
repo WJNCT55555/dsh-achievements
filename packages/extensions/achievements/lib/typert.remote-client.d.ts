@@ -3,12 +3,14 @@ import type {
   RemoteResult,
   TypertRemoteContribution,
 } from '@deepseek-ai/dsh-typert-protocol'
-import type { AchievementsDock, AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, RecentUnlock } from '@wjnct55555/dsh-achievements/types'
+import type { AchievementsDock, AchievementsHeatmap, AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, RecentUnlock } from '@wjnct55555/dsh-achievements/types'
 
 declare module '@deepseek-ai/dsh-typert-protocol' {
   interface TypertRemoteNamespace$616368696576656d656e7473 {
+    clear: () => Promise<RemoteResult<AchievementsSnapshot>>
     deepState: () => Promise<RemoteResult<{ enabled: boolean; }>>
     dock: () => Promise<RemoteResult<AchievementsDock>>
+    heatmap: () => Promise<RemoteResult<AchievementsHeatmap>>
     list: () => Promise<RemoteResult<AchievementsSnapshot>>
     rates: () => Promise<RemoteResult<AchievementsRates | null>>
     recent: () => Promise<RemoteResult<{ unlocks: RecentUnlock[]; }>>
@@ -18,8 +20,10 @@ declare module '@deepseek-ai/dsh-typert-protocol' {
     telemetryState: () => Promise<RemoteResult<AchievementsTelemetry>>
   }
   interface TypertRemoteMap {
+    'achievements/clear': () => Promise<RemoteResult<AchievementsSnapshot>>
     'achievements/deepState': () => Promise<RemoteResult<{ enabled: boolean; }>>
     'achievements/dock': () => Promise<RemoteResult<AchievementsDock>>
+    'achievements/heatmap': () => Promise<RemoteResult<AchievementsHeatmap>>
     'achievements/list': () => Promise<RemoteResult<AchievementsSnapshot>>
     'achievements/rates': () => Promise<RemoteResult<AchievementsRates | null>>
     'achievements/recent': () => Promise<RemoteResult<{ unlocks: RecentUnlock[]; }>>

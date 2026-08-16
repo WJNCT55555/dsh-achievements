@@ -13,6 +13,7 @@ export declare const zh: {
     'chart.title': string;
     'chart.rarity': string;
     'chart.category': string;
+    'chart.heatmap': string;
     'chart.total': string;
     'chart.empty': string;
     'stats.unlocked': string;
@@ -51,6 +52,12 @@ export declare const zh: {
     'settings.telemetryEnable': string;
     'settings.telemetryDisable': string;
     'settings.telemetryNoEndpoint': string;
+    'settings.clearTitle': string;
+    'settings.clearDesc': string;
+    'settings.clearAsk': string;
+    'settings.clearAskDesc': string;
+    'settings.clearConfirm': string;
+    'settings.clearCancel': string;
     'rate.users': string;
     'rate.noData': string;
     'sort.label': string;
@@ -84,6 +91,7 @@ export declare const en: {
     'chart.title': string;
     'chart.rarity': string;
     'chart.category': string;
+    'chart.heatmap': string;
     'chart.total': string;
     'chart.empty': string;
     'stats.unlocked': string;
@@ -122,6 +130,12 @@ export declare const en: {
     'settings.telemetryEnable': string;
     'settings.telemetryDisable': string;
     'settings.telemetryNoEndpoint': string;
+    'settings.clearTitle': string;
+    'settings.clearDesc': string;
+    'settings.clearAsk': string;
+    'settings.clearAskDesc': string;
+    'settings.clearConfirm': string;
+    'settings.clearCancel': string;
     'rate.users': string;
     'rate.noData': string;
     'sort.label': string;

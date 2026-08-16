@@ -427,6 +427,98 @@
   background: rgba(153, 27, 27, .48);
 }
 
+/* clear-records button: solid danger red so it stands apart from toggles. */
+.clearBtn {
+  min-height: 26px;
+  padding: 2px 10px;
+  border: 1px solid #dc2626;
+  background: #7f1d1d;
+  color: #fecaca;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: .05em;
+  white-space: nowrap;
+  text-transform: uppercase;
+  transition: background .14s ease, color .14s ease, border-color .14s ease, box-shadow .14s ease;
+}
+
+.clearBtn:hover {
+  color: #fff;
+  border-color: #ef4444;
+  background: #991b1b;
+  box-shadow: 0 0 10px rgba(239, 68, 68, .35);
+}
+
+.clearBtn:focus-visible {
+  outline: 1px solid #ef4444;
+  outline-offset: 1px;
+}
+
+/* clear confirmation dialog: modal backdrop + bordered terminal panel. */
+.clearDialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, .72);
+}
+
+.clearPanel {
+  position: relative;
+  width: min(380px, calc(100vw - 48px));
+  padding: 22px 18px 18px;
+  border: 2px solid var(--retro-emerald-deep);
+  background: #000;
+  box-shadow: 0 0 24px rgba(16, 185, 129, .15);
+}
+
+.clearPanelTitle {
+  display: inline-block;
+  margin: 0 0 10px;
+  padding: 0 7px;
+  background: #000;
+  color: #f87171;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.clearPanelDesc {
+  margin: 0 0 16px;
+  color: var(--retro-faint);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.clearPanelActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.clearCancel {
+  min-height: 26px;
+  padding: 2px 12px;
+  border: 1px solid var(--retro-line-strong);
+  background: transparent;
+  color: var(--retro-faint);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  transition: background .14s ease, color .14s ease, border-color .14s ease;
+}
+
+.clearCancel:hover {
+  color: var(--retro-text);
+  border-color: var(--retro-emerald);
+  background: rgba(16, 185, 129, .1);
+}
+
 /* ── archive: terminal menu (rail) + ledger ─────────────────────── */
 
 .archive {
@@ -1151,6 +1243,114 @@
   font-size: 10px;
   text-align: center;
 }
+
+/* ── current-month activity heatmap ─────────────────────────────── */
+
+.heatmapWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.heatmapHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  color: var(--retro-faint);
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.heatmapHeader span:first-child {
+  color: var(--retro-emerald-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+.heatmapGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 3px;
+}
+
+.heatmapWeekday {
+  color: var(--retro-faint);
+  font-size: 9px;
+  letter-spacing: .1em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.heatmapCell {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  border: 1px solid rgba(16, 185, 129, .12);
+  background: #020403;
+  color: var(--retro-faint);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+
+.heatmapCell:hover {
+  border-color: var(--retro-emerald);
+  color: var(--retro-text);
+}
+
+.heatmapCell[data-level='1'] {
+  border-color: rgba(16, 185, 129, .35);
+  background: rgba(16, 185, 129, .16);
+  color: var(--retro-emerald-dim);
+}
+
+.heatmapCell[data-level='2'] {
+  border-color: rgba(16, 185, 129, .55);
+  background: rgba(16, 185, 129, .34);
+  color: var(--retro-text);
+}
+
+.heatmapCell[data-level='3'] {
+  border-color: rgba(16, 185, 129, .75);
+  background: rgba(16, 185, 129, .58);
+  color: #020403;
+}
+
+.heatmapCell[data-level='4'] {
+  border-color: #10b981;
+  background: #10b981;
+  color: #020403;
+  box-shadow: 0 0 8px rgba(16, 185, 129, .5);
+}
+
+.heatmapLegend {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  color: var(--retro-faint);
+  font-size: 9px;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.heatmapLegendScale {
+  display: inline-flex;
+  gap: 2px;
+}
+
+.heatmapLegendScale i {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border: 1px solid rgba(16, 185, 129, .12);
+  background: #020403;
+}
+
+.heatmapLegendScale i[data-level='1'] { background: rgba(16, 185, 129, .16); }
+.heatmapLegendScale i[data-level='2'] { background: rgba(16, 185, 129, .34); }
+.heatmapLegendScale i[data-level='3'] { background: rgba(16, 185, 129, .58); }
+.heatmapLegendScale i[data-level='4'] { background: #10b981; }
 
 @keyframes spin {
   to { transform: rotate(360deg); }

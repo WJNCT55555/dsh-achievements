@@ -459,6 +459,8 @@ DSH 是多 provider 架构，`request/header` 携带 provider/model 叶子标量
 | 0.1.0+ | **匿名统计（opt-in，默认关闭）**：`telemetryEndpoint` 配置 + 画廊「匿名统计」开关；解锁仅上报成就 id/稀有度/随机匿名安装 id（`POST /unlock`，静默失败），获得率经 `GET /stats` 拉取缓存后按行显示「约 x% 用户获得」；免费后端参考 `docs/telemetry-worker.js`（Cloudflare Workers 免费层） |
 | 0.1.0+ | **图表可折叠 + donut 中心孔收窄**：分类进度图表加方括号折叠头（`[−]`/`[+]`）；环形图 stroke 加粗至 5px、半径增至 17.4，中心孔更小；README 嵌入画廊截图（`assets/`） |
 | 0.1.0+ | **移除 token 分桶与工具排行图表**：数据仪表盘仅保留分类进度 donut（`stats` Remote 数据源仍保留，供未来复用） |
+| 0.1.0+ | **清除成就记录 + 开关文案简化**：红色「清除成就记录」按钮带确认弹窗（`clear` Remote，保留匿名统计开关）；深度洞察/匿名统计开关文案简化为「启用/关闭」 |
+| 0.1.0+ | **当月活动日历热力图**：按日记录工具调用与解锁（`activity:YYYY-MM-DD` 计数器），`heatmap` Remote 返回当月网格；画廊新增周一开头的强度色阶日历卡片 |
 
 ## 许可
 

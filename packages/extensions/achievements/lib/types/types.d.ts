@@ -76,6 +76,22 @@ export interface AchievementsTelemetry {
     /** The statistics endpoint base URL, or '' when unconfigured. */
     readonly endpoint: string;
 }
+/** One calendar day's activity level for the current-month heatmap. */
+export interface HeatmapDay {
+    /** `YYYY-MM-DD` calendar date. */
+    readonly date: string;
+    /** Count of activity events (tool calls + unlocks) on that day. */
+    readonly count: number;
+}
+/** Current-month activity heatmap served by the `heatmap` Remote. */
+export interface AchievementsHeatmap {
+    /** The calendar month being summarized (1-12). */
+    readonly month: number;
+    /** The four-digit year. */
+    readonly year: number;
+    /** Days already observed in this month, ascending by date. */
+    readonly days: readonly HeatmapDay[];
+}
 /** One freshly unlocked achievement drained from the recent queue. */
 export interface RecentUnlock {
     readonly id: string;

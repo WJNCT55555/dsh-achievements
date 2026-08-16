@@ -17,7 +17,7 @@
 import type { Context } from '@deepseek-ai/cordis';
 import { TypertRemoteService } from '@deepseek-ai/dsh-typert-protocol';
 import { z } from 'zod';
-import type { AchievementsDock, AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, RecentUnlock } from './types.ts';
+import type { AchievementsDock, AchievementsHeatmap, AchievementsRates, AchievementsSnapshot, AchievementsStats, AchievementsTelemetry, RecentUnlock } from './types.ts';
 export type * from './types.ts';
 /** Config: the deep-insights opt-in, the state-file location, and the anonymous telemetry endpoint. */
 export declare const Config: z.ZodObject<{
@@ -59,6 +59,17 @@ export declare class AchievementsService extends TypertRemoteService {
     };
     /** Remote surface: dashboard aggregates (top tools + token buckets). */
     stats(): AchievementsStats;
+    /**
+     * Remote surface: wipe every counter, distinct set, flag, and unlock so the
+     * collection starts fresh. The telemetry opt-in (and its anonymous id) is
+     * preserved — only achievement progress is cleared. Persists immediately and
+     * returns the fresh snapshot for the gallery.
+     */
+    clear(): AchievementsSnapshot;
+    /** Remote surface: current-month activity heatmap (leaf counts per day). */
+    heatmap(): AchievementsHeatmap;
+    /** Record one activity event (tool call or unlock) for the current day. */
+    private bumpActivity;
     /** Remote surface: read the anonymous-telemetry opt-in and configured endpoint. */
     telemetryState(): AchievementsTelemetry;
     /** Remote surface: toggle anonymous telemetry (persisted). */

@@ -225,6 +225,8 @@ let AchievementsService = (() => {
     let _deepState_decorators;
     let _setDeepInsights_decorators;
     let _stats_decorators;
+    let _clear_decorators;
+    let _heatmap_decorators;
     let _telemetryState_decorators;
     let _setTelemetry_decorators;
     let _rates_decorators;
@@ -237,6 +239,8 @@ let AchievementsService = (() => {
             _deepState_decorators = [Remote('deepState')];
             _setDeepInsights_decorators = [Remote('setDeepInsights')];
             _stats_decorators = [Remote('stats')];
+            _clear_decorators = [Remote('clear')];
+            _heatmap_decorators = [Remote('heatmap')];
             _telemetryState_decorators = [Remote('telemetryState')];
             _setTelemetry_decorators = [Remote('setTelemetry')];
             _rates_decorators = [Remote('rates')];
@@ -246,6 +250,8 @@ let AchievementsService = (() => {
             __esDecorate(this, null, _deepState_decorators, { kind: "method", name: "deepState", static: false, private: false, access: { has: obj => "deepState" in obj, get: obj => obj.deepState }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _setDeepInsights_decorators, { kind: "method", name: "setDeepInsights", static: false, private: false, access: { has: obj => "setDeepInsights" in obj, get: obj => obj.setDeepInsights }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _stats_decorators, { kind: "method", name: "stats", static: false, private: false, access: { has: obj => "stats" in obj, get: obj => obj.stats }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _clear_decorators, { kind: "method", name: "clear", static: false, private: false, access: { has: obj => "clear" in obj, get: obj => obj.clear }, metadata: _metadata }, null, _instanceExtraInitializers);
+            __esDecorate(this, null, _heatmap_decorators, { kind: "method", name: "heatmap", static: false, private: false, access: { has: obj => "heatmap" in obj, get: obj => obj.heatmap }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _telemetryState_decorators, { kind: "method", name: "telemetryState", static: false, private: false, access: { has: obj => "telemetryState" in obj, get: obj => obj.telemetryState }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _setTelemetry_decorators, { kind: "method", name: "setTelemetry", static: false, private: false, access: { has: obj => "setTelemetry" in obj, get: obj => obj.setTelemetry }, metadata: _metadata }, null, _instanceExtraInitializers);
             __esDecorate(this, null, _rates_decorators, { kind: "method", name: "rates", static: false, private: false, access: { has: obj => "rates" in obj, get: obj => obj.rates }, metadata: _metadata }, null, _instanceExtraInitializers);
@@ -362,6 +368,44 @@ let AchievementsService = (() => {
                     reasoning: this.counters.get('reasoningTokens') ?? 0,
                 },
             };
+        }
+        /**
+         * Remote surface: wipe every counter, distinct set, flag, and unlock so the
+         * collection starts fresh. The telemetry opt-in (and its anonymous id) is
+         * preserved — only achievement progress is cleared. Persists immediately and
+         * returns the fresh snapshot for the gallery.
+         */
+        clear() {
+            this.counters.clear();
+            this.distinct.clear();
+            this.flags.clear();
+            this.unlocked.clear();
+            this.unlockQueue.splice(0);
+            this.turnState.clear();
+            this.activeSubagents.clear();
+            this.seenUsage.clear();
+            this.ratesCache = null;
+            this.scheduleSave();
+            return this.list();
+        }
+        /** Remote surface: current-month activity heatmap (leaf counts per day). */
+        heatmap() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth() + 1;
+            const daysInMonth = new Date(year, month, 0).getDate();
+            const days = [];
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                days.push({ date, count: this.counters.get(`activity:${date}`) ?? 0 });
+            }
+            return { month, year, days };
+        }
+        /** Record one activity event (tool call or unlock) for the current day. */
+        bumpActivity() {
+            const now = new Date();
+            const key = `activity:${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            this.bump(key);
         }
         /** Remote surface: read the anonymous-telemetry opt-in and configured endpoint. */
         telemetryState() {
@@ -587,6 +631,7 @@ let AchievementsService = (() => {
                 this.unlocked.set(a.id, at);
                 this.unlockQueue.push({ id: a.id, name: a.name, rarity: a.rarity, icon: a.icon, at });
                 this.reportUnlock(a);
+                this.bumpActivity();
                 changed = true;
             }
             if (changed)
@@ -658,6 +703,7 @@ let AchievementsService = (() => {
                 const name = exec.name;
                 this.bump('tools');
                 this.addDistinct('toolsUsed', name);
+                this.bumpActivity();
                 // Per-tool counts power the dashboard top-tools chart (leaf scalar).
                 this.bump(`tool:${name}`);
                 if (name === 'write')

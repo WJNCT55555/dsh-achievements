@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import type { AchievementsRates, AchievementsSnapshot, AchievementsTelemetry, AchievementView } from '@wjnct55555/dsh-achievements/types'
+import type { AchievementsHeatmap, AchievementsRates, AchievementsSnapshot, AchievementsTelemetry, AchievementView } from '@wjnct55555/dsh-achievements/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { twemojiPath, TWEMOJI_BASE } from './twemoji.ts'
@@ -59,6 +59,10 @@ export interface AchievementsSectionInjected {
   telemetryState?: () => Promise<RemoteResult<AchievementsTelemetry>>
   /** Toggle anonymous telemetry; absent when the host predates telemetry. */
   setTelemetry?: (enabled: boolean) => Promise<RemoteResult<AchievementsTelemetry>>
+  /** Wipe all progress; absent when the host predates it. */
+  clear?: () => Promise<RemoteResult<AchievementsSnapshot>>
+  /** Current-month activity heatmap; absent when the host predates it. */
+  heatmap?: () => Promise<RemoteResult<AchievementsHeatmap>>
 }
 
 /** Emoji icon via Twemoji CDN with a text fallback on load failure. */
@@ -193,11 +197,63 @@ function Donut({ slices, center, t }: { slices: readonly DonutSlice[]; center: s
   )
 }
 
+/** Current-month activity heatmap: a Monday-first calendar grid tinted by daily count. */
+function Heatmap({ data, t }: { data: AchievementsHeatmap; t: (key: AchievementsKey) => string }) {
+  const { year, month, days } = data
+  const countByDate = new Map(days.map(d => [d.date, d.count]))
+  const first = new Date(year, month - 1, 1)
+  // Monday-first weekday (0 = Monday).
+  const lead = (first.getDay() + 6) % 7
+  const daysInMonth = new Date(year, month, 0).getDate()
+  const cells: Array<{ date: string | null; day: number; count: number }> = []
+  for (let i = 0; i < lead; i++) cells.push({ date: null, day: 0, count: 0 })
+  for (let day = 1; day <= daysInMonth; day++) {
+    const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+    cells.push({ date, day, count: countByDate.get(date) ?? 0 })
+  }
+  const max = Math.max(1, ...days.map(d => d.count))
+  const weekdays = ['一', '二', '三', '四', '五', '六', '日']
+  return (
+    <div className={styles.heatmapWrap}>
+      <div className={styles.heatmapHeader}>
+        <span>{year} · {String(month).padStart(2, '0')}</span>
+        <span>{t('chart.heatmap')}</span>
+      </div>
+      <div className={styles.heatmapGrid} role="img" aria-label={`${t('chart.heatmap')}: ${year}-${month}`}>
+        {weekdays.map(wd => <span key={wd} className={styles.heatmapWeekday} aria-hidden="true">{wd}</span>)}
+        {cells.map((cell, index) => {
+          if (cell.date === null) return <span key={`pad-${index}`} className={styles.heatmapCell} aria-hidden="true" />
+          const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3))
+          return (
+            <span
+              key={cell.date}
+              className={styles.heatmapCell}
+              data-level={level}
+              title={`${cell.date}: ${cell.count}`}
+            >
+              {cell.day}
+            </span>
+          )
+        })}
+      </div>
+      <div className={styles.heatmapLegend}>
+        <span>{t('chart.empty')}</span>
+        <span className={styles.heatmapLegendScale}>
+          {[0, 1, 2, 3, 4].map(level => <i key={level} data-level={level} aria-hidden="true" />)}
+        </span>
+        <span>{t('chart.total')}</span>
+      </div>
+    </div>
+  )
+}
+
 /** Full settings-section gallery over the achievements Remote namespace. */
-export function AchievementsSection({ list, deepState, setDeepInsights, rates, telemetryState, setTelemetry, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
+export function AchievementsSection({ list, deepState, setDeepInsights, rates, telemetryState, setTelemetry, clear, heatmap, t }: AchievementsSectionInjected & PropsLocale<'achievements'>) {
   const [snapshot, setSnapshot] = useState<AchievementsSnapshot | null>(null)
   const [ratesData, setRatesData] = useState<AchievementsRates | null>(null)
+  const [heatmapData, setHeatmapData] = useState<AchievementsHeatmap | null>(null)
   const [telemetryEnabled, setTelemetryEnabled] = useState(false)
+  const [confirmClear, setConfirmClear] = useState(false)
   const [mode, setMode] = useState<SortMode>('category')
   const [status, setStatus] = useState<StatusFilter>('all')
   const [deepEnabled, setDeepEnabled] = useState(false)
@@ -238,10 +294,18 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
         if (alive) setRatesData(null)
       })
     }
+    // heatmap is optional: hosts predating it degrade to an empty chart.
+    if (heatmap !== undefined) {
+      void Promise.resolve().then(heatmap).then((result) => {
+        if (alive && result.ok) setHeatmapData(result.value)
+      }).catch(() => {
+        if (alive) setHeatmapData(null)
+      })
+    }
     return () => {
       alive = false
     }
-  }, [list, deepState, rates, telemetryState, reloadToken, t])
+  }, [list, deepState, rates, telemetryState, heatmap, reloadToken, t])
   if (snapshot === null) {
     if (loadError !== null) {
       return (
@@ -273,6 +337,20 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
       if (result.ok) setTelemetryEnabled(result.value.enabled)
     }).catch(() => {
       // The toggle is best-effort; keep the current state on failure.
+    })
+  }
+
+  const doClear = (): void => {
+    if (clear === undefined) return
+    void Promise.resolve().then(clear).then((result) => {
+      if (result.ok) {
+        setSnapshot(result.value)
+        setRatesData(null)
+        setConfirmClear(false)
+      }
+    }).catch(() => {
+      // Clearing is best-effort; keep the current state on failure.
+      setConfirmClear(false)
     })
   }
 
@@ -379,6 +457,16 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
           </button>
           {!collapsed['category'] && <Donut slices={catSlices} center={String(unlocked)} t={t} />}
         </section>
+
+        {heatmapData !== null && heatmap !== undefined && (
+          <section className={styles.chart} aria-labelledby="chart-heatmap-title">
+            <button type="button" className={styles.chartHead} aria-expanded={!collapsed['heatmap']} onClick={() => { setCollapsed(prev => ({ ...prev, heatmap: !prev['heatmap'] })) }}>
+              <h4 className={styles.chartBadge} id="chart-heatmap-title">[{t('chart.heatmap')}]</h4>
+              <span className={styles.chartFold} aria-hidden="true">{collapsed['heatmap'] ? '[+]' : '[−]'}</span>
+            </button>
+            {!collapsed['heatmap'] && <Heatmap data={heatmapData} t={t} />}
+          </section>
+        )}
       </div>
 
       <div className={styles.toolbar}>
@@ -403,15 +491,33 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
             ))}
           </div>
           <button type="button" aria-pressed={deepEnabled} className={`${styles.deepBtn} ${deepEnabled ? styles.deepActive : ''}`} onClick={toggleDeep} title={t('settings.deepDesc')}>
-            {t('settings.deepTitle')} · {deepEnabled ? t('settings.deepDisable') : t('settings.deepEnable')}
+            {deepEnabled ? t('settings.deepDisable') : t('settings.deepEnable')}
           </button>
           {telemetryState !== undefined && setTelemetry !== undefined && (
             <button type="button" aria-pressed={telemetryEnabled} className={`${styles.deepBtn} ${telemetryEnabled ? styles.deepActive : ''}`} onClick={toggleTelemetry} title={t('settings.telemetryDesc')}>
-              {t('settings.telemetryTitle')} · {telemetryEnabled ? t('settings.telemetryDisable') : t('settings.telemetryEnable')}
+              {telemetryEnabled ? t('settings.telemetryDisable') : t('settings.telemetryEnable')}
+            </button>
+          )}
+          {clear !== undefined && (
+            <button type="button" className={styles.clearBtn} onClick={() => { setConfirmClear(true) }} title={t('settings.clearDesc')}>
+              {t('settings.clearTitle')}
             </button>
           )}
         </div>
       </div>
+
+      {confirmClear && clear !== undefined && (
+        <div className={styles.clearDialog} role="alertdialog" aria-modal="true" aria-labelledby="achievements-clear-title" onClick={() => { setConfirmClear(false) }}>
+          <div className={styles.clearPanel} onClick={(e) => { e.stopPropagation() }}>
+            <span className={styles.clearPanelTitle} id="achievements-clear-title">[{t('settings.clearAsk')}]</span>
+            <p className={styles.clearPanelDesc}>{t('settings.clearAskDesc')}</p>
+            <div className={styles.clearPanelActions}>
+              <button type="button" className={styles.clearBtn} onClick={doClear}>{t('settings.clearConfirm')}</button>
+              <button type="button" className={styles.clearCancel} onClick={() => { setConfirmClear(false) }}>{t('settings.clearCancel')}</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {activeGroup && (
         <div className={styles.archive}>

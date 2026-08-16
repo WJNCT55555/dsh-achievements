@@ -41,8 +41,8 @@ import { z } from 'zod'
 import { AchievementStateStore, type PersistedState } from './state.ts'
 import type {
   AchievementCategory, AchievementProgress, AchievementRarity, AchievementView,
-  AchievementsDock, AchievementsRates, AchievementsSnapshot, AchievementsStats,
-  AchievementsTelemetry, RecentUnlock,
+  AchievementsDock, AchievementsHeatmap, AchievementsRates, AchievementsSnapshot,
+  AchievementsStats, AchievementsTelemetry, HeatmapDay, RecentUnlock,
 } from './types.ts'
 
 export type * from './types.ts'
@@ -366,6 +366,49 @@ export class AchievementsService extends TypertRemoteService {
     }
   }
 
+  /**
+   * Remote surface: wipe every counter, distinct set, flag, and unlock so the
+   * collection starts fresh. The telemetry opt-in (and its anonymous id) is
+   * preserved — only achievement progress is cleared. Persists immediately and
+   * returns the fresh snapshot for the gallery.
+   */
+  @Remote('clear')
+  clear(): AchievementsSnapshot {
+    this.counters.clear()
+    this.distinct.clear()
+    this.flags.clear()
+    this.unlocked.clear()
+    this.unlockQueue.splice(0)
+    this.turnState.clear()
+    this.activeSubagents.clear()
+    this.seenUsage.clear()
+    this.ratesCache = null
+    this.scheduleSave()
+    return this.list()
+  }
+
+  /** Remote surface: current-month activity heatmap (leaf counts per day). */
+  @Remote('heatmap')
+  heatmap(): AchievementsHeatmap {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = now.getMonth() + 1
+    const daysInMonth = new Date(year, month, 0).getDate()
+    const days: HeatmapDay[] = []
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+      days.push({ date, count: this.counters.get(`activity:${date}`) ?? 0 })
+    }
+    return { month, year, days }
+  }
+
+  /** Record one activity event (tool call or unlock) for the current day. */
+  private bumpActivity(): void {
+    const now = new Date()
+    const key = `activity:${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`
+    this.bump(key)
+  }
+
   /** Remote surface: read the anonymous-telemetry opt-in and configured endpoint. */
   @Remote('telemetryState')
   telemetryState(): AchievementsTelemetry {
@@ -587,6 +630,7 @@ export class AchievementsService extends TypertRemoteService {
       this.unlocked.set(a.id, at)
       this.unlockQueue.push({ id: a.id, name: a.name, rarity: a.rarity, icon: a.icon, at })
       this.reportUnlock(a)
+      this.bumpActivity()
       changed = true
     }
     if (changed) this.scheduleSave()
@@ -653,6 +697,7 @@ export class AchievementsService extends TypertRemoteService {
       const name = exec.name
       this.bump('tools')
       this.addDistinct('toolsUsed', name)
+      this.bumpActivity()
       // Per-tool counts power the dashboard top-tools chart (leaf scalar).
       this.bump(`tool:${name}`)
       if (name === 'write') this.bump('writes')

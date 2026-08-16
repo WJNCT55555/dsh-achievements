@@ -19,7 +19,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
 import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type { AchievementsRates, AchievementsSnapshot, AchievementsTelemetry } from '@wjnct55555/dsh-achievements/types'
+import type { AchievementsHeatmap, AchievementsRates, AchievementsSnapshot, AchievementsTelemetry } from '@wjnct55555/dsh-achievements/types'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
 import { AchievementsSection, type AchievementsSectionInjected } from './AchievementsSection.tsx'
@@ -61,7 +61,7 @@ export function apply(ctx: ClientContext): void {
   const useSnapshot = bindSnapshotSelector(store.store)
   const t = ctx.locale.bind(NS)
   const list = (): Promise<RemoteResult<AchievementsSnapshot>> => ctx.remote.achievements.list()
-  // The deep-insights / telemetry Remote methods may be absent on hosts
+  // The deep-insights / telemetry / clear Remote methods may be absent on hosts
   // that predate them; keep the plugin applyable so the gallery still opens there.
   const deepRemote = (ctx.remote.achievements as unknown as {
     deepState?: () => Promise<RemoteResult<{ enabled: boolean }>>
@@ -69,12 +69,16 @@ export function apply(ctx: ClientContext): void {
     rates?: () => Promise<RemoteResult<AchievementsRates | null>>
     telemetryState?: () => Promise<RemoteResult<AchievementsTelemetry>>
     setTelemetry?: (enabled: boolean) => Promise<RemoteResult<AchievementsTelemetry>>
+    clear?: () => Promise<RemoteResult<AchievementsSnapshot>>
+    heatmap?: () => Promise<RemoteResult<AchievementsHeatmap>>
   })
   const deepState = deepRemote.deepState
   const setDeepInsights = deepRemote.setDeepInsights
   const rates = deepRemote.rates
   const telemetryState = deepRemote.telemetryState
   const setTelemetry = deepRemote.setTelemetry
+  const clear = deepRemote.clear
+  const heatmap = deepRemote.heatmap
 
   const poll = async (): Promise<void> => {
     const recent = await ctx.remote.achievements.recent()
@@ -98,6 +102,8 @@ export function apply(ctx: ClientContext): void {
     ...rates !== undefined ? { rates } : {},
     ...telemetryState !== undefined ? { telemetryState } : {},
     ...setTelemetry !== undefined ? { setTelemetry } : {},
+    ...clear !== undefined ? { clear } : {},
+    ...heatmap !== undefined ? { heatmap } : {},
   })
 
   ctx.slots.inject('settings.section', () => ctx.slots.register({
@@ -131,6 +137,8 @@ export function apply(ctx: ClientContext): void {
       ...rates !== undefined ? { rates } : {},
       ...telemetryState !== undefined ? { telemetryState } : {},
       ...setTelemetry !== undefined ? { setTelemetry } : {},
+      ...clear !== undefined ? { clear } : {},
+      ...heatmap !== undefined ? { heatmap } : {},
     }),
   }, GalleryOverlay))
 
