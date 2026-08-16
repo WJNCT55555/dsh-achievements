@@ -1012,6 +1012,46 @@
   text-transform: uppercase;
 }
 
+/* Collapsible chart header: the badge becomes a click target with a fold marker. */
+.chartHead {
+  position: absolute;
+  top: -9px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+}
+
+.chartHead .chartBadge {
+  position: static;
+  padding: 0 7px;
+}
+
+.chartFold {
+  color: var(--retro-faint);
+  font-size: 9px;
+  letter-spacing: .08em;
+}
+
+.chartHead:hover .chartFold {
+  color: var(--retro-emerald);
+}
+
+.chartBody {
+  transition: opacity .18s ease;
+}
+
+.chartBodyCollapsed {
+  opacity: .45;
+}
+
 .chartBars {
   display: flex;
   flex-direction: column;
@@ -1071,12 +1111,12 @@
 .donutTrack {
   fill: none;
   stroke: rgba(16, 185, 129, .14);
-  stroke-width: 4;
+  stroke-width: 5;
 }
 
 .donutSlice {
   fill: none;
-  stroke-width: 4;
+  stroke-width: 5;
 }
 
 .donutCenter {

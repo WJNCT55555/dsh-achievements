@@ -163,7 +163,8 @@ function Donut({ slices, center, t }: { slices: readonly DonutSlice[]; center: s
       </div>
     )
   }
-  const radius = 15.9
+  // Larger radius with a thicker stroke leaves a smaller center hole.
+  const radius = 17.4
   const circumference = 2 * Math.PI * radius
   let offset = 0
   return (
@@ -218,6 +219,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, r
   const [status, setStatus] = useState<StatusFilter>('all')
   const [deepEnabled, setDeepEnabled] = useState(false)
   const [activeGroupId, setActiveGroupId] = useState<string | null>(null)
+  const [collapsed, setCollapsed] = useState<Record<string, boolean>>({})
   const [loadError, setLoadError] = useState<string | null>(null)
   const [reloadToken, setReloadToken] = useState(0)
   useEffect(() => {
@@ -406,24 +408,33 @@ export function AchievementsSection({ list, deepState, setDeepInsights, stats, r
 
       <div className={styles.charts} role="group" aria-label={t('chart.title')}>
         <section className={styles.chart} aria-labelledby="chart-category-title">
-          <h4 className={styles.chartBadge} id="chart-category-title">[{t('chart.category')}]</h4>
-          <Donut slices={catSlices} center={String(unlocked)} t={t} />
+          <button type="button" className={styles.chartHead} aria-expanded={!collapsed['category']} onClick={() => { setCollapsed(prev => ({ ...prev, category: !prev['category'] })) }}>
+            <h4 className={styles.chartBadge} id="chart-category-title">[{t('chart.category')}]</h4>
+            <span className={styles.chartFold} aria-hidden="true">{collapsed['category'] ? '[+]' : '[−]'}</span>
+          </button>
+          {!collapsed['category'] && <Donut slices={catSlices} center={String(unlocked)} t={t} />}
         </section>
 
         <section className={styles.chart} aria-labelledby="chart-tokens-title">
-          <h4 className={styles.chartBadge} id="chart-tokens-title">[{t('chart.tokens')}]</h4>
-          {tokenBuckets.length > 0
+          <button type="button" className={styles.chartHead} aria-expanded={!collapsed['tokens']} onClick={() => { setCollapsed(prev => ({ ...prev, tokens: !prev['tokens'] })) }}>
+            <h4 className={styles.chartBadge} id="chart-tokens-title">[{t('chart.tokens')}]</h4>
+            <span className={styles.chartFold} aria-hidden="true">{collapsed['tokens'] ? '[+]' : '[−]'}</span>
+          </button>
+          {!collapsed['tokens'] && (tokenBuckets.length > 0
             ? <Donut slices={tokenBuckets} center={String(Math.round(tokenBuckets.reduce((s, x) => s + x.value, 0)))} t={t} />
-            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>}
+            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>)}
         </section>
 
         <section className={styles.chart} aria-labelledby="chart-tools-title">
-          <h4 className={styles.chartBadge} id="chart-tools-title">[{t('chart.tools')}]</h4>
-          {toolBars.length > 0
+          <button type="button" className={styles.chartHead} aria-expanded={!collapsed['tools']} onClick={() => { setCollapsed(prev => ({ ...prev, tools: !prev['tools'] })) }}>
+            <h4 className={styles.chartBadge} id="chart-tools-title">[{t('chart.tools')}]</h4>
+            <span className={styles.chartFold} aria-hidden="true">{collapsed['tools'] ? '[+]' : '[−]'}</span>
+          </button>
+          {!collapsed['tools'] && (toolBars.length > 0
             ? <div className={styles.chartBars}>{toolBars.map(tool => (
               <HBar key={tool.name} label={tool.name} value={tool.count} max={toolMax} color="#10b981" />
             ))}</div>
-            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>}
+            : <div className={styles.chartEmpty}>{t('chart.empty')}</div>)}
         </section>
       </div>
 

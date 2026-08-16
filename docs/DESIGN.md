@@ -125,7 +125,7 @@ Host 引擎注册的事件监听器（基础层）：
 | 构造时种子 | sessions（`agents.list()`） | first-session |
 | `session/event` (`user/message` + `assistant/message`，深度层) | deepSorry、deepCodeHeavy、deepQuestion | deep-sorry、deep-code-heavy、deep-question |
 
-### 完整成就目录（51 个）
+### 完整成就目录（52 个）
 
 | id | 名称 | 分类 | 稀有度 | 规则 | 深度 |
 |----|------|------|--------|------|------|
@@ -457,6 +457,7 @@ DSH 是多 provider 架构，`request/header` 携带 provider/model 叶子标量
 | 0.1.0+ | **数据仪表盘**：分类进度与 Token 分桶中空环形图、工具排行横向条形；稀有度分布改为按稀有度着色的分段滑条 |
 | 0.1.0+ | **稀有度配色统一**：普通 #ffffff / 稀有 #3b82f6 / 史诗 #a78bfa / 传说 #fbbf24，贯穿图标、行、角标、分组条、进度条与 toast |
 | 0.1.0+ | **匿名统计（opt-in，默认关闭）**：`telemetryEndpoint` 配置 + 画廊「匿名统计」开关；解锁仅上报成就 id/稀有度/随机匿名安装 id（`POST /unlock`，静默失败），获得率经 `GET /stats` 拉取缓存后按行显示「约 x% 用户获得」；免费后端参考 `docs/telemetry-worker.js`（Cloudflare Workers 免费层） |
+| 0.1.0+ | **图表可折叠 + donut 中心孔收窄**：分类进度 / token 分桶 / 工具排行三张图表加方括号折叠头（`[−]`/`[+]`）；环形图 stroke 加粗至 5px、半径增至 17.4，中心孔更小；README 嵌入画廊截图（`assets/`） |
 
 ## 许可
 
