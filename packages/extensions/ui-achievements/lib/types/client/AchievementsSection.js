@@ -105,28 +105,43 @@ function emptyCurrentMonthHeatmap() {
         })),
     };
 }
-function Heatmap({ data, status, t }) {
+/** GitHub-style contribution graph: weekday rows, week columns, square tinted cells. */
+function Heatmap({ data, status, error, t }) {
     const { year, month, days } = data;
     const countByDate = new Map(days.map(d => [d.date, d.count]));
     const first = new Date(year, month - 1, 1);
-    // Monday-first weekday (0 = Monday).
+    const last = new Date(year, month, 0);
+    // Monday-first: anchor the grid at the Monday on/before the 1st.
     const lead = (first.getDay() + 6) % 7;
-    const daysInMonth = new Date(year, month, 0).getDate();
-    const cells = [];
-    for (let i = 0; i < lead; i++)
-        cells.push({ date: null, day: 0, count: 0 });
-    for (let day = 1; day <= daysInMonth; day++) {
-        const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-        cells.push({ date, day, count: countByDate.get(date) ?? 0 });
+    const start = new Date(first);
+    start.setDate(first.getDate() - lead);
+    // ...and extend to the Sunday on/after the last day.
+    const trail = (last.getDay() + 6) % 7;
+    const end = new Date(last);
+    end.setDate(last.getDate() + (6 - trail));
+    // Bucket each day into week columns (Monday → Sunday).
+    const weeks = [];
+    let week = [];
+    const cursor = new Date(start);
+    for (; cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
+        const date = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`;
+        const current = cursor.getMonth() === month - 1;
+        week.push({ date, current, count: countByDate.get(date) ?? 0 });
+        if (week.length === 7) {
+            weeks.push(week);
+            week = [];
+        }
     }
+    if (week.length > 0)
+        weeks.push(week);
     const max = Math.max(1, ...days.map(d => d.count));
     const weekdays = ['一', '二', '三', '四', '五', '六', '日'];
-    return (_jsxs("div", { className: styles.heatmapWrap, children: [_jsxs("div", { className: styles.heatmapHeader, children: [_jsxs("span", { children: [year, " \u00B7 ", String(month).padStart(2, '0')] }), _jsx("span", { children: t('chart.heatmap') })] }), _jsxs("div", { className: styles.heatmapGrid, role: "img", "aria-label": `${t('chart.heatmap')}: ${year}-${month}`, children: [weekdays.map(wd => _jsx("span", { className: styles.heatmapWeekday, "aria-hidden": "true", children: wd }, wd)), cells.map((cell, index) => {
-                        if (cell.date === null)
-                            return _jsx("span", { className: styles.heatmapCell, "aria-hidden": "true" }, `pad-${index}`);
-                        const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3));
-                        return (_jsx("span", { className: styles.heatmapCell, "data-level": level, title: `${cell.date}: ${cell.count}`, children: cell.day }, cell.date));
-                    })] }), _jsxs("div", { className: styles.heatmapLegend, children: [_jsx("span", { children: t('chart.empty') }), _jsx("span", { className: styles.heatmapLegendScale, children: [0, 1, 2, 3, 4].map(level => _jsx("i", { "data-level": level, "aria-hidden": "true" }, level)) }), _jsx("span", { children: t('chart.total') })] }), status !== 'ready' && _jsx("div", { className: styles.heatmapStatus, role: "status", children: t(status === 'loading' ? 'chart.loading' : status === 'missing' ? 'chart.unavailable' : 'chart.error') })] }));
+    return (_jsxs("div", { className: styles.heatmapWrap, children: [_jsxs("div", { className: styles.heatmapHeader, children: [_jsxs("span", { children: [year, " \u00B7 ", String(month).padStart(2, '0')] }), _jsx("span", { children: t('chart.heatmap') })] }), _jsxs("div", { className: styles.heatmapGrid, role: "img", "aria-label": `${t('chart.heatmap')}: ${year}-${month}`, children: [_jsx("div", { className: styles.heatmapWeekdays, "aria-hidden": "true", children: weekdays.map(wd => _jsx("span", { className: styles.heatmapWeekday, children: wd }, wd)) }), weeks.map((w, wi) => (_jsx("div", { className: styles.heatmapWeek, children: w.map((cell) => {
+                            if (!cell.current)
+                                return _jsx("span", { className: styles.heatmapCell, "data-outside": true, "aria-hidden": "true" }, cell.date);
+                            const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3));
+                            return (_jsx("span", { className: styles.heatmapCell, "data-level": level, title: `${cell.date}: ${cell.count}` }, cell.date));
+                        }) }, wi)))] }), _jsxs("div", { className: styles.heatmapLegend, children: [_jsx("span", { children: t('chart.empty') }), _jsx("span", { className: styles.heatmapLegendScale, children: [0, 1, 2, 3, 4].map(level => _jsx("i", { "data-level": level, "aria-hidden": "true" }, level)) }), _jsx("span", { children: t('chart.total') })] }), status !== 'ready' && _jsx("div", { className: styles.heatmapStatus, role: "status", title: error ?? undefined, children: t(status === 'loading' ? 'chart.loading' : status === 'missing' ? 'chart.unavailable' : 'chart.error') })] }));
 }
 /** Full settings-section gallery over the achievements Remote namespace. */
 export function AchievementsSection({ list, deepState, setDeepInsights, rates, telemetryState, setTelemetry, clear, heatmap, t }) {
@@ -134,6 +149,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
     const [ratesData, setRatesData] = useState(null);
     const [heatmapData, setHeatmapData] = useState(() => emptyCurrentMonthHeatmap());
     const [heatmapStatus, setHeatmapStatus] = useState('loading');
+    const [heatmapError, setHeatmapError] = useState(null);
     const [telemetryEnabled, setTelemetryEnabled] = useState(false);
     const [confirmClear, setConfirmClear] = useState(false);
     const [mode, setMode] = useState('category');
@@ -146,7 +162,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
     useEffect(() => {
         let alive = true;
         setLoadError(null);
-        void Promise.resolve().then(list).then((result) => {
+        void Promise.resolve().then(() => list()).then((result) => {
             if (!alive)
                 return;
             if (result.ok)
@@ -159,7 +175,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
         });
         // deepState is optional: hosts predating the deep-insights tier lack it.
         if (deepState !== undefined) {
-            void Promise.resolve().then(deepState).then((result) => {
+            void Promise.resolve().then(() => deepState()).then((result) => {
                 if (alive && result.ok)
                     setDeepEnabled(result.value.enabled);
             }).catch(() => {
@@ -169,7 +185,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
         }
         // telemetry face is optional: hosts predating it degrade to "off".
         if (telemetryState !== undefined) {
-            void Promise.resolve().then(telemetryState).then((result) => {
+            void Promise.resolve().then(() => telemetryState()).then((result) => {
                 if (alive && result.ok)
                     setTelemetryEnabled(result.value.enabled);
             }).catch(() => {
@@ -178,7 +194,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
             });
         }
         if (rates !== undefined) {
-            void Promise.resolve().then(rates).then((result) => {
+            void Promise.resolve().then(() => rates()).then((result) => {
                 if (alive && result.ok)
                     setRatesData(result.value);
             }).catch(() => {
@@ -192,19 +208,23 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
             setHeatmapStatus('missing');
         }
         else {
-            void Promise.resolve().then(heatmap).then((result) => {
+            void Promise.resolve().then(() => heatmap()).then((result) => {
                 if (!alive)
                     return;
                 if (result.ok) {
                     setHeatmapData(result.value);
                     setHeatmapStatus('ready');
+                    setHeatmapError(null);
                 }
                 else {
                     setHeatmapStatus('error');
+                    setHeatmapError(result.error.message);
                 }
-            }).catch(() => {
-                if (alive)
+            }).catch((error) => {
+                if (alive) {
                     setHeatmapStatus('error');
+                    setHeatmapError(error instanceof Error ? error.message : String(error));
+                }
             });
         }
         return () => {
@@ -310,7 +330,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
         value: snapshot.achievements.filter(a => a.category === cat && a.unlocked).length,
         color: catColors[cat],
     }));
-    return (_jsxs("div", { className: styles.section, children: [_jsxs("section", { className: styles.hero, "aria-labelledby": "achievements-overview-title", children: [_jsxs("span", { className: styles.heroBadge, "aria-hidden": "true", children: ["[", t('title'), "]"] }), _jsx("div", { className: styles.heroGlow, "aria-hidden": "true" }), _jsxs("div", { className: styles.heroTop, children: [_jsx("div", { className: styles.heroIcon, "aria-hidden": "true", children: ">_" }), _jsxs("div", { className: styles.heroCopy, children: [_jsx("div", { className: styles.kicker, children: t('kicker') }), _jsx("h2", { className: styles.heroTitle, id: "achievements-overview-title", children: t('title') }), _jsx("p", { className: styles.heroSubtitle, children: t('subtitle') })] }), _jsxs("div", { className: styles.heroPct, "aria-label": `${completion}% ${t('complete')}`, children: [_jsxs("strong", { children: [completion, "%"] }), _jsx("span", { children: t('complete') })] })] }), _jsxs("div", { className: styles.stats, children: [_jsxs("div", { className: styles.stat, children: [_jsx("strong", { children: unlocked }), _jsx("span", { children: t('stats.unlocked') })] }), _jsxs("div", { className: styles.stat, children: [_jsx("strong", { children: snapshot.total }), _jsx("span", { children: t('stats.total') })] }), _jsxs("div", { className: styles.stat, children: [_jsx("strong", { children: remaining }), _jsx("span", { children: t('stats.remaining') })] })] }), _jsx("div", { className: styles.rarityBar, role: "img", "aria-label": `${t('chart.rarity')}: ${unlocked}/${snapshot.total}`, children: raritySlices.map(slice => (_jsx("div", { className: styles.rarityBarSegment, style: { width: `${(slice.value / snapshot.total) * 100}%`, background: slice.color }, title: `${slice.label}: ${slice.value}` }, slice.label))) })] }), _jsxs("div", { className: styles.charts, role: "group", "aria-label": t('chart.title'), children: [_jsxs("section", { className: styles.chart, "aria-labelledby": "chart-category-title", children: [_jsxs("button", { type: "button", className: styles.chartHead, "aria-expanded": !collapsed['category'], onClick: () => { setCollapsed(prev => ({ ...prev, category: !prev['category'] })); }, children: [_jsxs("h4", { className: styles.chartBadge, id: "chart-category-title", children: ["[", t('chart.category'), "]"] }), _jsx("span", { className: styles.chartFold, "aria-hidden": "true", children: collapsed['category'] ? '[+]' : '[−]' })] }), !collapsed['category'] && _jsx(Donut, { slices: catSlices, center: String(unlocked), t: t })] }), _jsxs("section", { className: styles.chart, "aria-labelledby": "chart-heatmap-title", children: [_jsxs("button", { type: "button", className: styles.chartHead, "aria-expanded": !collapsed['heatmap'], onClick: () => { setCollapsed(prev => ({ ...prev, heatmap: !prev['heatmap'] })); }, children: [_jsxs("h4", { className: styles.chartBadge, id: "chart-heatmap-title", children: ["[", t('chart.heatmap'), "]"] }), _jsx("span", { className: styles.chartFold, "aria-hidden": "true", children: collapsed['heatmap'] ? '[+]' : '[−]' })] }), !collapsed['heatmap'] && _jsx(Heatmap, { data: heatmapData, status: heatmapStatus, t: t })] })] }), _jsxs("div", { className: styles.toolbar, children: [_jsxs("div", { className: styles.toolbarCopy, children: [_jsx("span", { className: styles.toolbarLabel, children: t('browse') }), _jsx("span", { className: styles.toolbarCount, children: t('visibleCount', { count: visibleCount }) })] }), _jsxs("div", { className: styles.controls, children: [_jsxs("div", { className: styles.segmented, role: "tablist", "aria-label": t('sort.label'), children: [_jsx("button", { type: "button", role: "tab", "aria-selected": mode === 'category', className: `${styles.sortBtn} ${mode === 'category' ? styles.sortActive : ''}`, onClick: () => { setMode('category'); }, children: t('sort.byCategory') }), _jsx("button", { type: "button", role: "tab", "aria-selected": mode === 'rarity', className: `${styles.sortBtn} ${mode === 'rarity' ? styles.sortActive : ''}`, onClick: () => { setMode('rarity'); }, children: t('sort.byRarity') })] }), _jsx("div", { className: styles.segmented, role: "group", "aria-label": t('filter.label'), children: ['all', 'unlocked', 'locked'].map(value => (_jsx("button", { type: "button", "aria-pressed": status === value, className: `${styles.filterBtn} ${status === value ? styles.filterActive : ''}`, onClick: () => { setStatus(value); }, children: t(`filter.${value}`) }, value))) }), _jsx("button", { type: "button", "aria-pressed": deepEnabled, className: `${styles.deepBtn} ${deepEnabled ? styles.deepActive : ''}`, onClick: toggleDeep, title: t('settings.deepDesc'), children: deepEnabled ? t('settings.deepDisable') : t('settings.deepEnable') }), telemetryState !== undefined && setTelemetry !== undefined && (_jsx("button", { type: "button", "aria-pressed": telemetryEnabled, className: `${styles.deepBtn} ${telemetryEnabled ? styles.deepActive : ''}`, onClick: toggleTelemetry, title: t('settings.telemetryDesc'), children: telemetryEnabled ? t('settings.telemetryDisable') : t('settings.telemetryEnable') })), clear !== undefined && (_jsx("button", { type: "button", className: styles.clearBtn, onClick: () => { setConfirmClear(true); }, title: t('settings.clearDesc'), children: t('settings.clearTitle') }))] })] }), confirmClear && clear !== undefined && (_jsx("div", { className: styles.clearDialog, role: "alertdialog", "aria-modal": "true", "aria-labelledby": "achievements-clear-title", onClick: () => { setConfirmClear(false); }, children: _jsxs("div", { className: styles.clearPanel, onClick: (e) => { e.stopPropagation(); }, children: [_jsxs("span", { className: styles.clearPanelTitle, id: "achievements-clear-title", children: ["[", t('settings.clearAsk'), "]"] }), _jsx("p", { className: styles.clearPanelDesc, children: t('settings.clearAskDesc') }), _jsxs("div", { className: styles.clearPanelActions, children: [_jsx("button", { type: "button", className: styles.clearBtn, onClick: doClear, children: t('settings.clearConfirm') }), _jsx("button", { type: "button", className: styles.clearCancel, onClick: () => { setConfirmClear(false); }, children: t('settings.clearCancel') })] })] }) })), activeGroup && (_jsxs("div", { className: styles.archive, children: [_jsxs("nav", { className: styles.rail, "aria-label": mode === 'category' ? t('sort.byCategory') : t('sort.byRarity'), children: [_jsxs("div", { className: styles.railHeader, children: [_jsx("span", { className: styles.railTitle, children: mode === 'category' ? t('sort.byCategory') : t('sort.byRarity') }), _jsx("span", { className: styles.railCount, children: visibleGroups.length })] }), _jsx("div", { className: styles.railList, children: visibleGroups.map((group) => {
+    return (_jsxs("div", { className: styles.section, children: [_jsxs("section", { className: styles.hero, "aria-labelledby": "achievements-overview-title", children: [_jsxs("span", { className: styles.heroBadge, "aria-hidden": "true", children: ["[", t('title'), "]"] }), _jsx("div", { className: styles.heroGlow, "aria-hidden": "true" }), _jsxs("div", { className: styles.heroTop, children: [_jsx("div", { className: styles.heroIcon, "aria-hidden": "true", children: ">_" }), _jsxs("div", { className: styles.heroCopy, children: [_jsx("div", { className: styles.kicker, children: t('kicker') }), _jsx("h2", { className: styles.heroTitle, id: "achievements-overview-title", children: t('title') }), _jsx("p", { className: styles.heroSubtitle, children: t('subtitle') })] }), _jsxs("div", { className: styles.heroPct, "aria-label": `${completion}% ${t('complete')}`, children: [_jsxs("strong", { children: [completion, "%"] }), _jsx("span", { children: t('complete') })] })] }), _jsxs("div", { className: styles.stats, children: [_jsxs("div", { className: styles.stat, children: [_jsx("strong", { children: unlocked }), _jsx("span", { children: t('stats.unlocked') })] }), _jsxs("div", { className: styles.stat, children: [_jsx("strong", { children: snapshot.total }), _jsx("span", { children: t('stats.total') })] }), _jsxs("div", { className: styles.stat, children: [_jsx("strong", { children: remaining }), _jsx("span", { children: t('stats.remaining') })] })] }), _jsx("div", { className: styles.rarityBar, role: "img", "aria-label": `${t('chart.rarity')}: ${unlocked}/${snapshot.total}`, children: raritySlices.map(slice => (_jsx("div", { className: styles.rarityBarSegment, style: { width: `${(slice.value / snapshot.total) * 100}%`, background: slice.color }, title: `${slice.label}: ${slice.value}` }, slice.label))) })] }), _jsxs("div", { className: styles.charts, role: "group", "aria-label": t('chart.title'), children: [_jsxs("section", { className: styles.chart, "aria-labelledby": "chart-category-title", children: [_jsxs("button", { type: "button", className: styles.chartHead, "aria-expanded": !collapsed['category'], onClick: () => { setCollapsed(prev => ({ ...prev, category: !prev['category'] })); }, children: [_jsxs("h4", { className: styles.chartBadge, id: "chart-category-title", children: ["[", t('chart.category'), "]"] }), _jsx("span", { className: styles.chartFold, "aria-hidden": "true", children: collapsed['category'] ? '[+]' : '[−]' })] }), !collapsed['category'] && _jsx(Donut, { slices: catSlices, center: String(unlocked), t: t })] }), _jsxs("section", { className: styles.chart, "aria-labelledby": "chart-heatmap-title", children: [_jsxs("button", { type: "button", className: styles.chartHead, "aria-expanded": !collapsed['heatmap'], onClick: () => { setCollapsed(prev => ({ ...prev, heatmap: !prev['heatmap'] })); }, children: [_jsxs("h4", { className: styles.chartBadge, id: "chart-heatmap-title", children: ["[", t('chart.heatmap'), "]"] }), _jsx("span", { className: styles.chartFold, "aria-hidden": "true", children: collapsed['heatmap'] ? '[+]' : '[−]' })] }), !collapsed['heatmap'] && _jsx(Heatmap, { data: heatmapData, status: heatmapStatus, error: heatmapError, t: t })] })] }), _jsxs("div", { className: styles.toolbar, children: [_jsxs("div", { className: styles.toolbarCopy, children: [_jsx("span", { className: styles.toolbarLabel, children: t('browse') }), _jsx("span", { className: styles.toolbarCount, children: t('visibleCount', { count: visibleCount }) })] }), _jsxs("div", { className: styles.controls, children: [_jsxs("div", { className: styles.segmented, role: "tablist", "aria-label": t('sort.label'), children: [_jsx("button", { type: "button", role: "tab", "aria-selected": mode === 'category', className: `${styles.sortBtn} ${mode === 'category' ? styles.sortActive : ''}`, onClick: () => { setMode('category'); }, children: t('sort.byCategory') }), _jsx("button", { type: "button", role: "tab", "aria-selected": mode === 'rarity', className: `${styles.sortBtn} ${mode === 'rarity' ? styles.sortActive : ''}`, onClick: () => { setMode('rarity'); }, children: t('sort.byRarity') })] }), _jsx("div", { className: styles.segmented, role: "group", "aria-label": t('filter.label'), children: ['all', 'unlocked', 'locked'].map(value => (_jsx("button", { type: "button", "aria-pressed": status === value, className: `${styles.filterBtn} ${status === value ? styles.filterActive : ''}`, onClick: () => { setStatus(value); }, children: t(`filter.${value}`) }, value))) }), _jsx("button", { type: "button", "aria-pressed": deepEnabled, className: `${styles.deepBtn} ${deepEnabled ? styles.deepActive : ''}`, onClick: toggleDeep, title: t('settings.deepDesc'), children: deepEnabled ? t('settings.deepDisable') : t('settings.deepEnable') }), telemetryState !== undefined && setTelemetry !== undefined && (_jsx("button", { type: "button", "aria-pressed": telemetryEnabled, className: `${styles.deepBtn} ${telemetryEnabled ? styles.deepActive : ''}`, onClick: toggleTelemetry, title: t('settings.telemetryDesc'), children: telemetryEnabled ? t('settings.telemetryDisable') : t('settings.telemetryEnable') })), clear !== undefined && (_jsx("button", { type: "button", className: styles.clearBtn, onClick: () => { setConfirmClear(true); }, title: t('settings.clearDesc'), children: t('settings.clearTitle') }))] })] }), confirmClear && clear !== undefined && (_jsx("div", { className: styles.clearDialog, role: "alertdialog", "aria-modal": "true", "aria-labelledby": "achievements-clear-title", onClick: () => { setConfirmClear(false); }, children: _jsxs("div", { className: styles.clearPanel, onClick: (e) => { e.stopPropagation(); }, children: [_jsxs("span", { className: styles.clearPanelTitle, id: "achievements-clear-title", children: ["[", t('settings.clearAsk'), "]"] }), _jsx("p", { className: styles.clearPanelDesc, children: t('settings.clearAskDesc') }), _jsxs("div", { className: styles.clearPanelActions, children: [_jsx("button", { type: "button", className: styles.clearBtn, onClick: doClear, children: t('settings.clearConfirm') }), _jsx("button", { type: "button", className: styles.clearCancel, onClick: () => { setConfirmClear(false); }, children: t('settings.clearCancel') })] })] }) })), activeGroup && (_jsxs("div", { className: styles.archive, children: [_jsxs("nav", { className: styles.rail, "aria-label": mode === 'category' ? t('sort.byCategory') : t('sort.byRarity'), children: [_jsxs("div", { className: styles.railHeader, children: [_jsx("span", { className: styles.railTitle, children: mode === 'category' ? t('sort.byCategory') : t('sort.byRarity') }), _jsx("span", { className: styles.railCount, children: visibleGroups.length })] }), _jsx("div", { className: styles.railList, children: visibleGroups.map((group) => {
                                     const active = group.id === activeGroup.id;
                                     return (_jsxs("button", { type: "button", className: `${styles.railItem} ${active ? styles.railItemActive : ''}`, "data-group": group.id, "aria-current": active ? 'page' : undefined, onClick: () => { setActiveGroupId(group.id); }, children: [_jsx("span", { className: styles.railIcon, "aria-hidden": "true", children: group.icon }), _jsxs("span", { className: styles.railCopy, children: [_jsx("strong", { children: group.label }), _jsxs("small", { children: [group.groupUnlocked, " / ", group.all.length] })] }), _jsx("span", { className: styles.railMeter, "aria-hidden": "true", children: _jsx("span", { style: { width: `${group.groupCompletion}%` } }) })] }, group.id));
                                 }) })] }), _jsxs("section", { className: styles.ledger, "data-group": activeGroup.id, "aria-labelledby": `achievement-group-${activeGroup.id}`, children: [_jsxs("div", { className: styles.ledgerHeader, children: [_jsxs("div", { className: styles.groupHeading, children: [_jsx("span", { className: styles.groupIcon, "aria-hidden": "true", children: activeGroup.icon }), _jsxs("div", { children: [_jsx("h3", { className: styles.groupTitle, id: `achievement-group-${activeGroup.id}`, children: activeGroup.label }), _jsxs("span", { className: styles.groupMeta, children: [activeGroup.groupUnlocked, " / ", activeGroup.all.length, " ", t('stats.unlocked')] })] })] }), _jsxs("div", { className: styles.ledgerCompletion, children: [_jsxs("strong", { children: [activeGroup.groupCompletion, "%"] }), _jsx("span", { children: t('complete') })] })] }), _jsx("div", { className: styles.groupProgress, "aria-hidden": "true", children: _jsx("div", { style: { width: `${activeGroup.groupCompletion}%` } }) }), _jsx("div", { className: styles.rows, children: activeGroup.items.map(a => _jsx(Row, { a: a, t: t, pct: ratesData?.pct[a.id], hasRates: ratesData !== null }, a.id)) })] })] })), visibleCount === 0 && _jsx("div", { className: styles.empty, children: t('empty') })] }));

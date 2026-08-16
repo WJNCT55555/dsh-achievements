@@ -215,19 +215,41 @@ function emptyCurrentMonthHeatmap(): AchievementsHeatmap {
 
 type HeatmapStatus = 'loading' | 'ready' | 'missing' | 'error'
 
-function Heatmap({ data, status, t }: { data: AchievementsHeatmap; status: HeatmapStatus; t: (key: AchievementsKey) => string }) {
+/** GitHub-style contribution graph: weekday rows, week columns, square tinted cells. */
+function Heatmap(
+  { data, status, error, t }: {
+    data: AchievementsHeatmap
+    status: HeatmapStatus
+    error: string | null
+    t: (key: AchievementsKey) => string
+  },
+) {
   const { year, month, days } = data
   const countByDate = new Map(days.map(d => [d.date, d.count]))
   const first = new Date(year, month - 1, 1)
-  // Monday-first weekday (0 = Monday).
+  const last = new Date(year, month, 0)
+  // Monday-first: anchor the grid at the Monday on/before the 1st.
   const lead = (first.getDay() + 6) % 7
-  const daysInMonth = new Date(year, month, 0).getDate()
-  const cells: Array<{ date: string | null; day: number; count: number }> = []
-  for (let i = 0; i < lead; i++) cells.push({ date: null, day: 0, count: 0 })
-  for (let day = 1; day <= daysInMonth; day++) {
-    const date = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`
-    cells.push({ date, day, count: countByDate.get(date) ?? 0 })
+  const start = new Date(first)
+  start.setDate(first.getDate() - lead)
+  // ...and extend to the Sunday on/after the last day.
+  const trail = (last.getDay() + 6) % 7
+  const end = new Date(last)
+  end.setDate(last.getDate() + (6 - trail))
+  // Bucket each day into week columns (Monday → Sunday).
+  const weeks: Array<Array<{ date: string; current: boolean; count: number }>> = []
+  let week: Array<{ date: string; current: boolean; count: number }> = []
+  const cursor = new Date(start)
+  for (; cursor <= end; cursor.setDate(cursor.getDate() + 1)) {
+    const date = `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, '0')}-${String(cursor.getDate()).padStart(2, '0')}`
+    const current = cursor.getMonth() === month - 1
+    week.push({ date, current, count: countByDate.get(date) ?? 0 })
+    if (week.length === 7) {
+      weeks.push(week)
+      week = []
+    }
   }
+  if (week.length > 0) weeks.push(week)
   const max = Math.max(1, ...days.map(d => d.count))
   const weekdays = ['一', '二', '三', '四', '五', '六', '日']
   return (
@@ -237,21 +259,25 @@ function Heatmap({ data, status, t }: { data: AchievementsHeatmap; status: Heatm
         <span>{t('chart.heatmap')}</span>
       </div>
       <div className={styles.heatmapGrid} role="img" aria-label={`${t('chart.heatmap')}: ${year}-${month}`}>
-        {weekdays.map(wd => <span key={wd} className={styles.heatmapWeekday} aria-hidden="true">{wd}</span>)}
-        {cells.map((cell, index) => {
-          if (cell.date === null) return <span key={`pad-${index}`} className={styles.heatmapCell} aria-hidden="true" />
-          const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3))
-          return (
-            <span
-              key={cell.date}
-              className={styles.heatmapCell}
-              data-level={level}
-              title={`${cell.date}: ${cell.count}`}
-            >
-              {cell.day}
-            </span>
-          )
-        })}
+        <div className={styles.heatmapWeekdays} aria-hidden="true">
+          {weekdays.map(wd => <span key={wd} className={styles.heatmapWeekday}>{wd}</span>)}
+        </div>
+        {weeks.map((w, wi) => (
+          <div key={wi} className={styles.heatmapWeek}>
+            {w.map((cell) => {
+              if (!cell.current) return <span key={cell.date} className={styles.heatmapCell} data-outside aria-hidden="true" />
+              const level = cell.count === 0 ? 0 : Math.min(4, 1 + Math.round((cell.count / max) * 3))
+              return (
+                <span
+                  key={cell.date}
+                  className={styles.heatmapCell}
+                  data-level={level}
+                  title={`${cell.date}: ${cell.count}`}
+                />
+              )
+            })}
+          </div>
+        ))}
       </div>
       <div className={styles.heatmapLegend}>
         <span>{t('chart.empty')}</span>
@@ -260,7 +286,7 @@ function Heatmap({ data, status, t }: { data: AchievementsHeatmap; status: Heatm
         </span>
         <span>{t('chart.total')}</span>
       </div>
-      {status !== 'ready' && <div className={styles.heatmapStatus} role="status">{t(status === 'loading' ? 'chart.loading' : status === 'missing' ? 'chart.unavailable' : 'chart.error')}</div>}
+      {status !== 'ready' && <div className={styles.heatmapStatus} role="status" title={error ?? undefined}>{t(status === 'loading' ? 'chart.loading' : status === 'missing' ? 'chart.unavailable' : 'chart.error')}</div>}
     </div>
   )
 }
@@ -271,6 +297,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
   const [ratesData, setRatesData] = useState<AchievementsRates | null>(null)
   const [heatmapData, setHeatmapData] = useState<AchievementsHeatmap>(() => emptyCurrentMonthHeatmap())
   const [heatmapStatus, setHeatmapStatus] = useState<HeatmapStatus>('loading')
+  const [heatmapError, setHeatmapError] = useState<string | null>(null)
   const [telemetryEnabled, setTelemetryEnabled] = useState(false)
   const [confirmClear, setConfirmClear] = useState(false)
   const [mode, setMode] = useState<SortMode>('category')
@@ -283,7 +310,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
   useEffect(() => {
     let alive = true
     setLoadError(null)
-    void Promise.resolve().then(list).then((result) => {
+    void Promise.resolve().then(() => list()).then((result) => {
       if (!alive) return
       if (result.ok) setSnapshot(result.value)
       else setLoadError(result.error.message)
@@ -292,7 +319,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
     })
     // deepState is optional: hosts predating the deep-insights tier lack it.
     if (deepState !== undefined) {
-      void Promise.resolve().then(deepState).then((result) => {
+      void Promise.resolve().then(() => deepState()).then((result) => {
         if (alive && result.ok) setDeepEnabled(result.value.enabled)
       }).catch(() => {
         if (alive) setDeepEnabled(false)
@@ -300,14 +327,14 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
     }
     // telemetry face is optional: hosts predating it degrade to "off".
     if (telemetryState !== undefined) {
-      void Promise.resolve().then(telemetryState).then((result) => {
+      void Promise.resolve().then(() => telemetryState()).then((result) => {
         if (alive && result.ok) setTelemetryEnabled(result.value.enabled)
       }).catch(() => {
         if (alive) setTelemetryEnabled(false)
       })
     }
     if (rates !== undefined) {
-      void Promise.resolve().then(rates).then((result) => {
+      void Promise.resolve().then(() => rates()).then((result) => {
         if (alive && result.ok) setRatesData(result.value)
       }).catch(() => {
         if (alive) setRatesData(null)
@@ -318,16 +345,21 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
     if (heatmap === undefined) {
       setHeatmapStatus('missing')
     } else {
-      void Promise.resolve().then(heatmap).then((result) => {
+      void Promise.resolve().then(() => heatmap()).then((result) => {
         if (!alive) return
         if (result.ok) {
           setHeatmapData(result.value)
           setHeatmapStatus('ready')
+          setHeatmapError(null)
         } else {
           setHeatmapStatus('error')
+          setHeatmapError(result.error.message)
         }
-      }).catch(() => {
-        if (alive) setHeatmapStatus('error')
+      }).catch((error: unknown) => {
+        if (alive) {
+          setHeatmapStatus('error')
+          setHeatmapError(error instanceof Error ? error.message : String(error))
+        }
       })
     }
     return () => {
@@ -491,7 +523,7 @@ export function AchievementsSection({ list, deepState, setDeepInsights, rates, t
             <h4 className={styles.chartBadge} id="chart-heatmap-title">[{t('chart.heatmap')}]</h4>
             <span className={styles.chartFold} aria-hidden="true">{collapsed['heatmap'] ? '[+]' : '[−]'}</span>
           </button>
-          {!collapsed['heatmap'] && <Heatmap data={heatmapData} status={heatmapStatus} t={t} />}
+          {!collapsed['heatmap'] && <Heatmap data={heatmapData} status={heatmapStatus} error={heatmapError} t={t} />}
         </section>
       </div>
 
