@@ -11,6 +11,10 @@
 | `@deepseek-ai/dsh-achievements` | `packages/extensions/achievements/` | 宿主侧引擎：事件监听、计数、解锁队列、只读 Remote（`list` / `recent` / `dock`）与 `list_achievements` 工具 |
 | `@deepseek-ai/dsh-client-ui-achievements` | `packages/extensions/ui-achievements/` | 浏览器侧界面：设置页画廊、toast 堆栈、侧栏奖杯、输入坞读条、画廊浮层 |
 
+## 设计文档
+
+架构、规则引擎、26 个成就目录、客户端数据流与未来演进方向（参考 AGPA 的可达性审计 / 规则扩展 / hint-tip 引导等候选）见 **[docs/DESIGN.md](docs/DESIGN.md)**。
+
 ## 功能
 
 - **26 个成就**，分 `启程 / 工具大师 / 文件工匠 / 编排 / 目标 / 联动 / 隐藏` 七类，稀有度覆盖 `普通 → 稀有 → 史诗 → 传说`。
