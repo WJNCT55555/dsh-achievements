@@ -254,6 +254,22 @@ AGPA 给隐藏成就配锁定前 `hint`（暗示不剧透）与解锁后 `tip`�
 - **电池检测 / 4 个月热力图 / XP 等级** — 需采集更多环境数据，超出最小窥探与成就范畴。
 - **遥测开关** — 本插件承诺零遥测，不留后门。
 
+### 9.7 多档位与单会话峰值（参考 hermes-achievements）
+
+[hermes-achievements](https://github.com/PCinkusz/hermes-achievements)（Hermes 成就引擎）及其 [desktop 插件](https://github.com/asimons81/hermes-desktop-achievements) 提供第二类设计参考：**离线扫描历史会话 + 分档深度**。它本身读取消息正文做正则匹配（`ERROR_RE`/`PORT_RE`…），这与本插件「从不读取消息正文」的承诺**直接冲突，不采用**；但其**分档与指标形态**值得借鉴：
+
+| 设计 | 含义 | 本插件可行性 |
+|------|------|-------------|
+| `tiers` 多档位 | 每个成就 5 档（Copper → Silver → Gold → Diamond → Olympian），解锁变升档 | 中高 —— 把 `tool-10/50/200` 这类隐含分档推广为统一分层规则，每个成就带升级进度与档位徽章 |
+| `best_session` 指标 | 单会话峰值：max tool calls / max files touched / max distinct tools | 高 —— `turnState` 已跟踪回合内工具数，可加「单回合/单会话峰值」类成就（如「单回合 10 工具」marathon 的升档版） |
+| `multi_condition` 成就 | 多条件同时满足（如 terminal + file + web 全达标） | 中 —— 扩展 `Rule` 支持条件组合（AND 语义） |
+| `discovered` 三态 | 未达成但已发现 → 显示进度；secret 隐藏到首个信号 | 高 —— 现有 `progress` + `hidden` 已覆盖，可形式化为统一三态 |
+| 模型 / provider 类成就 | 多模型、多 provider、本地模型 | 高 —— `assistant/message` 的 `source` 携带 provider/model **叶子标量**，可安全实现「模型猎手」「Provider 多面手」类 |
+
+**与 AGPA 的关系**：AGPA 是「事件驱动 + 通用条件类型」（广度），hermes 是「历史扫描 + 分档」（深度）。两者正交：`tiers` 分档可作为规则引擎的横向扩展，与 9.1 自动化审计、9.2 新规则类型互不冲突。
+
+**明确不采用**：读取消息正文正则匹配（错误文本、端口冲突、安装命令…）——违反最小窥探承诺；DSH 中错误信号改用 `tools/result` 的 `isError` 标志与 `agent/error` 事件（已有 phoenix 先例）。持久化历史扫描同样不采用，除非未来决策放开「零持久化」。
+
 ---
 
 ## 10. 版本记录
@@ -261,6 +277,7 @@ AGPA 给隐藏成就配锁定前 `hint`（暗示不剧透）与解锁后 `tip`�
 | 版本 | 变更 |
 |------|------|
 | 0.1.0-rc.5+ | 本设计文档建立时快照：26 成就、双排序、phoenix/去重/回合隔离修复、联动成就 |
+| 0.1.0-rc.5+ | 未来方向补充 hermes-achievements 借鉴条目（多档位 tiers / best_session / multi_condition / 模型类成就；正文正则扫描不采用） |
 
 ## 许可
 
