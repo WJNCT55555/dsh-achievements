@@ -4,7 +4,7 @@
  * layer is click-through, so only the cards opt back into pointer events.
  */
 
-import type { AchievementRarity } from '@deepseek-ai/dsh-achievements/types'
+import type { AchievementRarity } from '@wjnct55555/dsh-achievements/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { SnapshotSelectorHook } from '@deepseek-ai/dsh-client-ui-slots'
 import type { AchievementsKey } from './locales.ts'

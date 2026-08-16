@@ -1,0 +1,1 @@
+{"version":3,"file":"typert.remote-client.d.ts","names":["deepState","dock","list","recent","setDeepInsights"],"sources":["../src/index.ts"],"sourcesContent":[null],"mappings":";;;;;;;;;IA+SEA,S;IAwFAC,I;IAhBAC,I;IAUAC,M;IA5EAC,e;;;IANAJ,wB;IAwFAC,mB;IAhBAC,mB;IAUAC,qB;IA5EAC,8B","ignoreList":[]}

@@ -4,12 +4,13 @@
 
 ## 组成
 
-本仓库是 DSH 正式两包结构的源码快照：
+本仓库发布为三个 npm 包（bundle + 两个子包）：
 
 | 包 | 目录 | 说明 |
 |---|---|---|
-| `@deepseek-ai/dsh-achievements` | `packages/extensions/achievements/` | 宿主侧引擎：事件监听、计数、解锁队列、只读 Remote（`list` / `recent` / `dock`）与 `list_achievements` 工具 |
-| `@deepseek-ai/dsh-client-ui-achievements` | `packages/extensions/ui-achievements/` | 浏览器侧界面：设置页画廊、toast 堆栈、侧栏奖杯、输入坞读条、画廊浮层 |
+| `@wjnct55555/dsh-achievements-bundle` | 仓库根 | 可安装 bundle：声明 `dsh.bundle` patch，挂载下面两个包 |
+| `@wjnct55555/dsh-achievements` | `packages/extensions/achievements/` | 宿主侧引擎：事件监听、计数、解锁队列、只读 Remote（`list` / `recent` / `dock` / `deepState` / `setDeepInsights`）与 `list_achievements` 工具 |
+| `@wjnct55555/dsh-client-ui-achievements` | `packages/extensions/ui-achievements/` | 浏览器侧界面：设置页画廊、toast 堆栈、侧栏奖杯、输入坞读条、画廊浮层 |
 
 ## 设计文档
 
@@ -33,17 +34,31 @@
 
 ## 构建与安装
 
-本包面向 DSH monorepo 内的 `packages/extensions/` 工作区，依赖 `@deepseek-ai/cordis`、`dsh-typert-protocol`、`dsh-tools` 等 workspace 包。在 DSH checkout 中：
+### 安装（推荐：npm）
 
 ```sh
-# 放入 packages/extensions/ 后注册到 tsconfig 与 web-app bundle
+dsh plugin --profile web add @wjnct55555/dsh-achievements-bundle
+```
+
+### 安装（git 方式）
+
+```sh
+git clone https://github.com/WJNCT55555/dsh-achievements
+dsh plugin --profile web add ../dsh-achievements
+```
+
+### 从源码构建
+
+三个包由 DSH 工作区构建（`lib/` 产物已随仓库提供；需重新构建时在 DSH checkout 中放入 `packages/extensions/`）：
+
+```sh
 pnpm install --offline
 pnpm exec tsc -b packages/extensions/achievements packages/extensions/ui-achievements
 pnpm exec tsdown --env.DSH_BUILD_FACE host   # 生成宿主侧 Typert 工件
-pnpm --filter @deepseek-ai/dsh-client-ui-achievements bundle  # 构建浏览器侧
+pnpm --filter @wjnct55555/dsh-client-ui-achievements bundle  # 构建浏览器侧
 ```
 
-宿主侧依赖 `@deepseek-ai/cordis-plugin-loader` 读取 Loader 条目以检测联动皮肤。浏览器侧无需额外安装，挂载于 `settings.section`、`shell.overlay`、`sidebar.footer.action`、`conversation.composer.dock` 四个槽位。
+宿主侧依赖 `@deepseek-ai/cordis-plugin-loader` 读取 Loader 条目以检测联动皮肤。浏览器侧挂载于 `settings.section`、`shell.overlay`、`sidebar.footer.action`、`conversation.composer.dock` 四个槽位。
 
 ## 测试
 

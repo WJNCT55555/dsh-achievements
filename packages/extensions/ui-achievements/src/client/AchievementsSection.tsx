@@ -5,7 +5,7 @@
  */
 
 import { useEffect, useState } from 'react'
-import type { AchievementsSnapshot, AchievementView } from '@deepseek-ai/dsh-achievements/types'
+import type { AchievementsSnapshot, AchievementView } from '@wjnct55555/dsh-achievements/types'
 import type { PropsLocale } from '@deepseek-ai/dsh-client-ui-slots'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { twemojiPath, TWEMOJI_BASE } from './twemoji.ts'

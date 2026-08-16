@@ -7,7 +7,7 @@
 
 import { createSnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
 import type { SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
-import type { AchievementsDock, RecentUnlock } from '@deepseek-ai/dsh-achievements/types'
+import type { AchievementsDock, RecentUnlock } from '@wjnct55555/dsh-achievements/types'
 
 /** Toast retention window before a card auto-dismisses. */
 const TOAST_TTL_MS = 7000

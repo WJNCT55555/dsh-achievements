@@ -19,7 +19,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
 import type {} from '@deepseek-ai/dsh-client-locale/client'
-import type { AchievementsSnapshot } from '@deepseek-ai/dsh-achievements/types'
+import type { AchievementsSnapshot } from '@wjnct55555/dsh-achievements/types'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import { bindSnapshotSelector } from '@deepseek-ai/dsh-client-web-react'
 import { AchievementsSection, type AchievementsSectionInjected } from './AchievementsSection.tsx'

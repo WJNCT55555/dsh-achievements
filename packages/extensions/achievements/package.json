@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-achievements",
+  "name": "@wjnct55555/dsh-achievements",
   "description": "Global achievements engine for the DeepSeek Harness: event-driven counters, one-shot unlock queue, and a read-only list_achievements tool",
-  "version": "0.1.0-rc.5",
+  "version": "0.1.0",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/WJNCT55555/dsh-achievements.git",
     "directory": "packages/extensions/achievements"
   },
   "type": "module",
@@ -48,46 +48,33 @@
     "lib/typert.remote-client.d.ts"
   ],
   "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "achievements",
+    "gamification"
+  ],
   "dependencies": {
     "zod": "^4.4.3"
   },
   "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-command-feedback": "workspace:^",
-    "@deepseek-ai/dsh-compaction": "workspace:^",
-    "@deepseek-ai/dsh-goal": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-plan-mode": "workspace:^",
-    "@deepseek-ai/dsh-schedule": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-title": "workspace:^",
-    "@deepseek-ai/dsh-skill": "workspace:^",
-    "@deepseek-ai/dsh-subagent": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
-    "@deepseek-ai/dsh-user-approval": "workspace:^",
-    "@deepseek-ai/dsh-workflow": "workspace:^"
-  },
-  "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/cordis-plugin-loader": "workspace:^",
-    "@deepseek-ai/dsh-agent": "workspace:^",
-    "@deepseek-ai/dsh-command-feedback": "workspace:^",
-    "@deepseek-ai/dsh-compaction": "workspace:^",
-    "@deepseek-ai/dsh-goal": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-loader-smoke": "workspace:^",
-    "@deepseek-ai/dsh-plan-mode": "workspace:^",
-    "@deepseek-ai/dsh-schedule": "workspace:^",
-    "@deepseek-ai/dsh-session": "workspace:^",
-    "@deepseek-ai/dsh-session-title": "workspace:^",
-    "@deepseek-ai/dsh-skill": "workspace:^",
-    "@deepseek-ai/dsh-subagent": "workspace:^",
-    "@deepseek-ai/dsh-tools": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
-    "@deepseek-ai/dsh-user-approval": "workspace:^",
-    "@deepseek-ai/dsh-workflow": "workspace:^"
+    "@deepseek-ai/cordis": ">=0.1.0-rc.5",
+    "@deepseek-ai/cordis-plugin-loader": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-agent": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-command-feedback": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-compaction": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-goal": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-invariants": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-plan-mode": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-schedule": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-session": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-session-title": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-skill": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-subagent": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-tools": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-typert-protocol": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-user-approval": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-workflow": ">=0.1.0-rc.5"
   }
 }

@@ -1,13 +1,13 @@
 {
-  "name": "@deepseek-ai/dsh-client-ui-achievements",
+  "name": "@wjnct55555/dsh-client-ui-achievements",
   "description": "Achievements gallery settings section with rarity styling, Twemoji icons, and progress bars",
-  "version": "0.1.0-rc.5",
+  "version": "0.1.0",
   "publishConfig": {
     "access": "public"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/deepseek-ai/deepseek-harness.git",
+    "url": "git+https://github.com/WJNCT55555/dsh-achievements.git",
     "directory": "packages/extensions/ui-achievements"
   },
   "type": "module",
@@ -50,44 +50,33 @@
     "watch": "tsdown --watch"
   },
   "license": "MIT",
-  "peerDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-achievements": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-settings": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-sidebar": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-layout": "workspace:^",
-    "@deepseek-ai/dsh-client-web-react": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
-    "react": "^18.2.0"
-  },
-  "devDependencies": {
-    "@deepseek-ai/cordis": "workspace:^",
-    "@deepseek-ai/dsh-api-remotes": "workspace:^",
-    "@deepseek-ai/dsh-achievements": "workspace:^",
-    "@deepseek-ai/dsh-client-locale": "workspace:^",
-    "@deepseek-ai/dsh-client-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-test-runtime": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-slots": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-settings": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-sidebar": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-conversation": "workspace:^",
-    "@deepseek-ai/dsh-client-ui-layout": "workspace:^",
-    "@deepseek-ai/dsh-client-web-react": "workspace:^",
-    "@deepseek-ai/dsh-invariants": "workspace:^",
-    "@deepseek-ai/dsh-typert-protocol": "workspace:^",
-    "@types/react": "~18.3.1",
-    "react": "^18.2.0"
-  },
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "achievements",
+    "gamification"
+  ],
   "files": [
     "lib/index.js",
     "lib/invariant.js",
     "lib/client.js",
     "lib/types/**/*.d.ts"
-  ]
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-api-remotes": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-locale": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-runtime": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-ui-slots": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-ui-settings": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-ui-sidebar": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-ui-conversation": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-ui-layout": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-client-web-react": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-invariants": ">=0.1.0-rc.5",
+    "@deepseek-ai/dsh-typert-protocol": ">=0.1.0-rc.5",
+    "@wjnct55555/dsh-achievements": ">=0.1.0",
+    "react": "^18.2.0"
+  }
 }

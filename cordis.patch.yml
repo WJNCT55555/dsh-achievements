@@ -1,0 +1,9 @@
+# dsh-achievements bundle patch: mounts the host engine and the browser UI
+# as web-app rows. Apply over the web profile; the engine observes the agent
+# plane and persists progress to ~/.agent-achievements/state.json.
+- insert:
+    - id: achievements
+      name: '@wjnct55555/dsh-achievements'
+
+    - id: ui-achievements
+      name: '@wjnct55555/dsh-client-ui-achievements'

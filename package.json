@@ -1,0 +1,35 @@
+{
+  "name": "@wjnct55555/dsh-achievements-bundle",
+  "description": "Achievements for DeepSeek Harness Web: gallery, toasts, trophy, dock, and crossover achievements — installable bundle",
+  "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WJNCT55555/dsh-achievements.git"
+  },
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "achievements",
+    "gamification"
+  ],
+  "files": [
+    "cordis.patch.yml",
+    "README.md",
+    "LICENSE"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "dependencies": {
+    "@wjnct55555/dsh-achievements": "^0.1.0",
+    "@wjnct55555/dsh-client-ui-achievements": "^0.1.0"
+  }
+}

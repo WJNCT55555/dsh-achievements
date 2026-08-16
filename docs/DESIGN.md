@@ -20,7 +20,7 @@
 ```
                     ┌──────────────────────────────────────┐
                     │   Host 引擎 (AchievementsService)    │
-                    │   @deepseek-ai/dsh-achievements      │
+                    │   @wjnct55555/dsh-achievements        │
                     │                                      │
    agent/session    │  ctx.on(...)  ──►  计数器/集合/标志    │
    tools/workflow ──┤                                      │
@@ -452,6 +452,7 @@ DSH 是多 provider 架构，`request/header` 携带 provider/model 叶子标量
 | 0.1.0-rc.5+ | 新增第 10 节「成就扩充设计方案」：skill/token/model/联动/workflow/行为/hidden 彩蛋共 30+ 候选成就、信号速查表、新规则能力与优先级（未实现，待决策） |
 | 0.1.0-rc.5+ | **落地扩充方案**：本地持久化（`~/.agent-achievements/state.json`，重启保留）、深度洞察 opt-in（首次运行询问 + 设置开关 + 正文正则/历史扫描，正文不落盘）、新增 model/behavior 分类与 30+ 成就（成就数 50）、设置页深度开关 UI。§10 方案主体已实施 |
 | 0.1.0-rc.5+ | 亿万富翁 target 提升至 1 万亿 token；新增「百发百中」（累计缓存命中率 > 99%，hidden）；修复 token 类成就 checkAll 回归；成就数 51 |
+| 0.1.0 | **可安装化发布**：子包改名 `@wjnct55555/dsh-achievements` / `@wjnct55555/dsh-client-ui-achievements`，根新增 bundle 包 `@wjnct55555/dsh-achievements-bundle`（`dsh.bundle` patch），lib 产物随仓库提交；`dsh plugin --profile web add @wjnct55555/dsh-achievements-bundle` 即装 |
 
 ## 许可
 
