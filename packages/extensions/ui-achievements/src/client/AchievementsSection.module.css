@@ -770,6 +770,7 @@
 }
 
 .icon {
+  --icon-color: #3f4a45;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -779,16 +780,26 @@
   height: 58px;
   align-self: flex-start;
   transform: none;
-  border: 1px solid var(--rarity-color);
-  background: #000;
-  color: var(--rarity-color);
+  border: 1px solid var(--icon-color);
+  background: #020403;
+  color: var(--icon-color);
   font-size: 24px;
+  filter: saturate(.45) brightness(.8);
+  transition: border-color .16s ease, color .16s ease, filter .16s ease;
 }
 
 .icon[data-unlocked="true"] {
-  border-color: var(--rarity-color);
+  border-color: var(--icon-color);
   background: rgba(6, 78, 59, .3);
+  filter: none;
 }
+
+/* unlocked icon color per rarity: common white, rare blue,
+   epic purple, legendary amber */
+[data-rarity="common"] .icon[data-unlocked="true"] { --icon-color: #e8f5ef; }
+[data-rarity="rare"] .icon[data-unlocked="true"] { --icon-color: #60a5fa; }
+[data-rarity="epic"] .icon[data-unlocked="true"] { --icon-color: #a78bfa; }
+[data-rarity="legendary"] .icon[data-unlocked="true"] { --icon-color: #fbbf24; }
 
 .iconImage {
   width: 26px;
